@@ -28,5 +28,29 @@
     <script src="{{ asset('dist-admin/js/scripts.js') }}"></script>
     <script src="{{ asset('dist-admin/js/custom.js') }}"></script>
 
+    <!-- Tost Notification -->
+     @if (session('success'))
+        <script>
+            iziToast.success({
+                message: "{{ session('success') }}",
+                position: 'topRight',
+                timeout: 5000,
+                progressBarColor: '#00FF00'
+            })
+        </script>
+     @endif
+
+     @if (session('error'))
+        <script>
+            iziToast.error({
+                message: "{{ session('error') }}",
+                position: 'topRight',
+                timeout: 5000,
+                transitionIn: 'fadeInDown',
+                transitionOut: 'fadeOutUp',
+                progressBarColor: '#FF0000'
+            })
+        </script>
+     @endif
 </body>
 </html>

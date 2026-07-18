@@ -36,7 +36,9 @@ class AdminController extends Controller
             $request->session()->regenerate();
             return redirect()->route('admin.dashboard');
         } else {
-            return redirect()->back()->with('error', 'Invalid credentials');
+            return redirect()->back()
+                ->withInput($request->only('email'))
+                ->withErrors(['email' => 'Invalid credentials']);
         }
     }
 
