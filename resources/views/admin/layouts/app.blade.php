@@ -5,6 +5,8 @@
     @include('admin.layouts.partials.navbar')
     @include('admin.layouts.partials.sidebar')
 
-    @yield('content')
+    <div class="main-content">
+         @yield('content')
+    </div>
 
 @endsection
