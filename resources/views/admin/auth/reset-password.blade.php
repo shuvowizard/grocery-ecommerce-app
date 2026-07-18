@@ -1,37 +1,40 @@
-<h2>
-    Admin Reset Password
-</h2><br>
+@extends('admin.layouts.base')
 
-@if($errors->any())
-    @foreach($errors->all() as $error)
-        {{ $error }}
-    @endforeach
-@endif
-
-@if(session('success'))
-    {{ session('success') }}
-@endif
-
-@if(session('error'))
-    {{ session('error') }}
-@endif
-
-<div>
-    <form action="{{ route('admin.reset.password.submit') }}" method="post">
-        @csrf
-        <input type="hidden" name="token" value="{{ $token }}">
-        <div>
-            <label for="email">Email:</label>
-            <input type="email" name="email" id="email" value="{{ $email }}" readonly>
-        </div><br>
-        <div>
-            <label for="password">Password:</label>
-            <input type="password" name="password" id="password" placeholder="Enter new password" required>
-        </div><br>
-        <div>
-            <label for="password_confirmation">Confirm Password:</label>
-            <input type="password" name="password_confirmation" id="password_confirmation" placeholder="Confirm new password" required>
-        </div><br>
-        <button type="submit">Submit</button>
-    </form>
-</div>
+@section('childContent')
+    <section class="section">
+        <div class="container container-login">
+            <div class="row">
+                <div class="col-12 col-sm-8 offset-sm-2 col-md-6 offset-md-3 col-lg-6 offset-lg-3 col-xl-4 offset-xl-4">
+                    <div class="card card-primary border-box">
+                        <div class="card-header card-header-auth">
+                            <h4 class="text-center">Reset Password</h4>
+                        </div>
+                        <div class="card-body card-body-auth">
+                            <form action="{{ route('admin.reset.password.submit') }}" method="post">
+                                @csrf
+                                <input type="hidden" name="token" value="{{ $token }}">
+                                <div class="form-group">
+                                    <input type="email" class="form-control" name="email" placeholder="Password" value="{{ $email }}"
+                                        readonly>
+                                </div>
+                                <div class="form-group">
+                                    <input type="password" class="form-control" name="password" placeholder="New Password" value=""
+                                        autofocus>
+                                </div>
+                                <div class="form-group">
+                                    <input type="password" class="form-control" name="password_confirmation" placeholder="Confirm Password"
+                                        value="">
+                                </div>
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-primary btn-lg w_100_p">
+                                        Submit
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+@endsection

@@ -46,8 +46,6 @@
                 message: "{{ session('error') }}",
                 position: 'topRight',
                 timeout: 5000,
-                transitionIn: 'fadeInDown',
-                transitionOut: 'fadeOutUp',
                 progressBarColor: '#FF0000'
             })
         </script>
