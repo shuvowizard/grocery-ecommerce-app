@@ -9,10 +9,16 @@
 
         <ul class="sidebar-menu">
 
-            <li class="active"><a class="nav-link" href="index.html"><i class="fas fa-hand-point-right"></i>
+            <li class="active"><a class="nav-link" href="{{ route('admin.dashboard') }}"><i class="fas fa-home"></i>
                     <span>Dashboard</span></a></li>
 
-            <li class="nav-item dropdown active">
+            <li class="active"><a class="nav-link" href="{{ route('admin.profile') }}"><i class="fas fa-address-book"></i>
+                    <span>Profile</span></a></li>
+
+            <li class="active"><a class="nav-link" href="{{ route('admin.logout') }}"><i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span></a></li>
+
+            <!-- <li class="nav-item dropdown active">
                 <a href="#" class="nav-link has-dropdown"><i class="fas fa-hand-point-right"></i><span>Dropdown
                         Items</span></a>
                 <ul class="dropdown-menu">
@@ -31,7 +37,7 @@
                     <span>Table</span></a></li>
 
             <li class=""><a class="nav-link" href="invoice.html"><i class="fas fa-hand-point-right"></i>
-                    <span>Invoice</span></a></li>
+                    <span>Invoice</span></a></li> -->
 
         </ul>
     </aside>
