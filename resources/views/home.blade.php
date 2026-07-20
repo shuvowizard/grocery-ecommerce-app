@@ -1,3 +1,15 @@
-@include('user.top')
+@extends('frontend.layouts.app')
 
-<p>Welcome to the home page!</p>
+@section('content')
+    <!-- Hero Section -->
+    @include('components.hero-section')
+
+    <!-- Features Section -->
+    @include('components.features')
+
+    <!-- Categories Section -->
+    @include('components.categories')
+
+    <!-- Featured Products Section -->
+    @include('components.featured-products')
+@endsection

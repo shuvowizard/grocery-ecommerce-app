@@ -1,0 +1,477 @@
+/* Custom Styles for FreshMart Grocery Store */
+
+/* General Styles */
+:root {
+    --primary-color: #198754;
+    --secondary-color: #20c997;
+    --dark-color: #212529;
+    --light-color: #f8f9fa;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    color: #333;
+}
+
+/* Top Bar */
+.top-bar {
+    font-size: 0.875rem;
+}
+
+/* Navbar */
+.navbar {
+    padding: 1rem 0;
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+}
+
+.navbar-light .navbar-nav .nav-link {
+    color: #333;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    transition: color 0.3s ease;
+}
+
+.navbar-light .navbar-nav .nav-link:hover,
+.navbar-light .navbar-nav .nav-link.active {
+    color: var(--primary-color);
+}
+
+/* Hero Section */
+.hero-section {
+    margin-top: 0;
+    padding: 0;
+}
+
+.hero-slide {
+    min-height: 500px;
+    display: flex;
+    align-items: center;
+    padding: 4rem 0;
+}
+
+.bg-gradient-1 {
+    background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+}
+
+.bg-gradient-2 {
+    background: linear-gradient(135deg, #f1f8e9 0%, #dcedc8 100%);
+}
+
+.bg-gradient-3 {
+    background: linear-gradient(135deg, #e0f2f1 0%, #b2dfdb 100%);
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    padding: 1.5rem;
+}
+
+/* Features Section */
+.features {
+    position: relative;
+}
+
+.feature-icon {
+    transition: transform 0.3s ease;
+}
+
+.features .text-center:hover .feature-icon {
+    transform: translateY(-5px);
+}
+
+/* Categories */
+.category-card {
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    padding-top: 40px;
+    padding-bottom: 40px;
+}
+
+.category-card:hover {
+    border-color: var(--primary-color);
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.category-icon {
+    transition: transform 0.3s ease;
+}
+
+.category-card:hover .category-icon {
+    transform: scale(1.1);
+}
+
+.category-card h6 {
+    font-size: 22px;
+}
+
+.category-card .icon {
+    margin-top: 20px;
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+    border-radius: 50%;
+    border: 1px solid #fff;
+    background: #fff;
+    color: var(--primary-color);
+}
+
+.category-card .icon i {
+    font-size: 24px;
+    padding: 5px;
+    color: var(--primary-color)!important;
+}
+
+/* Product Cards */
+.product-card {
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15) !important;
+}
+
+.product-image {
+    transition: background-color 0.3s ease;
+    height: 350px;
+}
+
+.product-image img {
+    object-position: center;
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+}
+
+.product-card:hover .product-image {
+    background-color: #e8f5e9 !important;
+}
+
+.product-card .btn {
+    transition: all 0.3s ease;
+}
+
+.product-card:hover .btn {
+    transform: scale(1.1);
+}
+
+/* Newsletter */
+.newsletter {
+    background: linear-gradient(135deg, #198754 0%, #20c997 100%);
+}
+
+.newsletter .form-control:focus {
+    border-color: #fff;
+    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.25);
+}
+
+.newsletter input {
+    font-size: 16px;
+}
+
+.newsletter button {
+    font-size: 18px;
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+}
+.newsletter button:hover {
+    background: #333;
+    border-color: #333;
+}
+
+/* Footer */
+.footer a:hover {
+    color: #fff !important;
+}
+
+.social-links .btn:hover {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 991px) {
+    .navbar-collapse {
+        padding: 1rem 0;
+    }
+    
+    .hero-slide {
+        min-height: 400px;
+        text-align: center;
+    }
+    
+    .hero-slide h1 {
+        font-size: 2rem;
+    }
+    
+    .navbar .input-group {
+        margin-top: 1rem;
+        max-width: 100% !important;
+    }
+    
+    .navbar .d-flex {
+        width: 100%;
+        justify-content: space-between;
+        margin-top: 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .hero-slide h1 {
+        font-size: 1.75rem;
+    }
+    
+    .hero-slide .lead {
+        font-size: 1rem;
+    }
+    
+    .top-bar .col-md-6 {
+        text-align: center !important;
+    }
+    
+    .top-bar small {
+        display: block;
+        margin: 0.25rem 0;
+    }
+}
+
+/* Smooth Scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Loading Animation */
+.product-card .product-image i {
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+/* Badge Styles */
+.badge {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+/* Rating Stars */
+.text-warning i {
+    font-size: 0.875rem;
+}
+
+/* Button Hover Effects */
+.btn-success {
+    transition: all 0.3s ease;
+}
+
+.btn-success:hover {
+    background-color: #146c43;
+    border-color: #146c43;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn-outline-success:hover {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+/* Navbar Scrolled Effect */
+.navbar-scrolled {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Button Click Animation */
+.btn-clicked {
+    animation: btnClick 0.3s ease;
+}
+
+@keyframes btnClick {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(0.95); }
+}
+
+/* Badge Pulse Animation */
+.badge-pulse {
+    animation: badgePulse 0.5s ease;
+}
+
+@keyframes badgePulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.3); }
+}
+
+/* Notification Styles */
+.custom-notification {
+    position: fixed;
+    top: 100px;
+    right: 20px;
+    background-color: var(--primary-color);
+    color: white;
+    padding: 15px 25px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 9999;
+    opacity: 0;
+    transform: translateX(400px);
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.custom-notification.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* Card Shadow */
+.shadow-sm {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Section Padding */
+section {
+    padding: 4rem 0;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #146c43;
+}
+
+.carousel-indicators [data-bs-target] {
+    width: 55px;
+    height: 8px;
+    background-color: var(--primary-color);
+}
+
+/* Blog Post Images */
+.card-img-top {
+    height: 300px;
+    object-fit: cover;
+}
+
+.blog-post-detail {
+    width: 100%;
+    height: auto;
+}
+
+/* Search Input */
+.navbar-search {
+    max-width: 300px;
+}
+
+/* Avatar Circles */
+.avatar-circle-lg {
+    width: 80px;
+    height: 80px;
+}
+
+.avatar-circle-md {
+    width: 60px;
+    height: 60px;
+}
+
+.avatar-circle-sm {
+    width: 50px;
+    height: 50px;
+}
+
+.avatar-circle-xs {
+    width: 40px;
+    height: 40px;
+}
+
+/* Icon Sizes */
+.icon-2xl {
+    font-size: 2.5rem;
+}
+
+.icon-xl {
+    font-size: 2rem;
+}
+
+/* About Hero Image */
+.about-hero-img {
+    width: 100%;
+    aspect-ratio: 16/9;
+    object-fit: cover;
+}
+
+/* Checkout Sticky Card */
+.checkout-sticky {
+    top: 100px;
+}
+
+/* Product Thumbnail */
+.product-thumb {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+}
+
+/* Contact Icon Box */
+.contact-icon-box {
+    width: 60px;
+    height: 60px;
+    min-width: 60px;
+}
+
+/* Wishlist and Cart Product Thumbnails */
+.wishlist-product-thumb,
+.cart-product-thumb {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+}
+
+/* Quantity Input */
+.quantity-input {
+    max-width: 120px;
+}
+
+.product-quantity-input {
+    max-width: 150px;
+}
+
+/* Hero Carousel Images */
+.hero-carousel-img {
+    width: 100%;
+    max-width: 500px;
+    aspect-ratio: 4/3;
+    object-fit: cover;
+}
+
+/* Product Single Page Image */
+.product-single-img {
+    height: 600px;
+    object-fit: cover;
+}
