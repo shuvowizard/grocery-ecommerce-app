@@ -28,7 +28,7 @@
                 <h5 class="fw-bold mb-3">Quick Links</h5>
                 <ul class="list-unstyled">
                     <li class="mb-2">
-                        <a href="about.html" class="text-white-50 text-decoration-none">About Us</a>
+                        <a href="{{ route('about') }}" class="text-white-50 text-decoration-none">About Us</a>
                     </li>
                     <li class="mb-2">
                         <a href="contact.html" class="text-white-50 text-decoration-none">Contact Us</a>
