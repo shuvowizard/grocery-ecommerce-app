@@ -31,7 +31,7 @@
                         <a href="{{ route('about') }}" class="text-white-50 text-decoration-none">About Us</a>
                     </li>
                     <li class="mb-2">
-                        <a href="contact.html" class="text-white-50 text-decoration-none">Contact Us</a>
+                        <a href="{{ route('contact') }}" class="text-white-50 text-decoration-none">Contact Us</a>
                     </li>
                     <li class="mb-2">
                         <a href="privacy.html" class="text-white-50 text-decoration-none">Privacy Policy</a>
