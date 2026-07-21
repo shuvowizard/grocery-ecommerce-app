@@ -21,4 +21,9 @@ class FrontendController extends Controller
     {
         return view('frontend.pages.contact');
     }
+
+    public function faq()
+    {
+        return view('frontend.pages.faq');
+    }
 }

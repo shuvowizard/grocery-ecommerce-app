@@ -40,7 +40,7 @@
                         <a href="terms.html" class="text-white-50 text-decoration-none">Terms & Conditions</a>
                     </li>
                     <li class="mb-2">
-                        <a href="faq.html" class="text-white-50 text-decoration-none">FAQs</a>
+                        <a href="{{ route('faq') }}" class="text-white-50 text-decoration-none">FAQs</a>
                     </li>
                 </ul>
             </div>
