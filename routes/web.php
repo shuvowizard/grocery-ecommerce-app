@@ -11,6 +11,7 @@ Route::get('/contact', [FrontendController::class, 'contact'])->name('contact');
 Route::get('/faq', [FrontendController::class, 'faq'])->name('faq');
 Route::get('/blog', [FrontendController::class, 'blog'])->name('blog');
 Route::get('/post/{slug}', [FrontendController::class, 'post'])->name('post');
+Route::get('/terms', [FrontendController::class, 'terms'])->name('terms');
 
 // -------------- User Route -------------- //
 Route::middleware('user')->group(function () {

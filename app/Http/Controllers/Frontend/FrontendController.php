@@ -36,4 +36,9 @@ class FrontendController extends Controller
     {
         return view('frontend.pages.post', compact('slug'));
     }
+
+    public function terms()
+    {
+        return view('frontend.pages.terms');
+    }
 }

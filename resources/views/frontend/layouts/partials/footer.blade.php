@@ -37,7 +37,7 @@
                         <a href="privacy.html" class="text-white-50 text-decoration-none">Privacy Policy</a>
                     </li>
                     <li class="mb-2">
-                        <a href="terms.html" class="text-white-50 text-decoration-none">Terms & Conditions</a>
+                        <a href="{{ route('terms') }}" class="text-white-50 text-decoration-none">Terms & Conditions</a>
                     </li>
                     <li class="mb-2">
                         <a href="{{ route('faq') }}" class="text-white-50 text-decoration-none">FAQs</a>
