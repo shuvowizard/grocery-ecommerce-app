@@ -91,7 +91,7 @@
         <div class="row">
             <div class="col-lg-12 text-center">
                 <p class="text-white-50 mb-0">
-                    &copy; 2025 FreshMart. All rights reserved.
+                    &copy; {{ date('Y') }} FreshMart. All rights reserved.
                 </p>
             </div>
         </div>

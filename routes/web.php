@@ -9,6 +9,8 @@ Route::get('/', [FrontendController::class, 'index'])->name('home');
 Route::get('/about', [FrontendController::class, 'about'])->name('about');
 Route::get('/contact', [FrontendController::class, 'contact'])->name('contact');
 Route::get('/faq', [FrontendController::class, 'faq'])->name('faq');
+Route::get('/blog', [FrontendController::class, 'blog'])->name('blog');
+Route::get('/post/{slug}', [FrontendController::class, 'post'])->name('post');
 
 // -------------- User Route -------------- //
 Route::middleware('user')->group(function () {

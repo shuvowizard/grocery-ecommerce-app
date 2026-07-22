@@ -26,4 +26,14 @@ class FrontendController extends Controller
     {
         return view('frontend.pages.faq');
     }
+
+    public function blog()
+    {
+        return view('frontend.pages.blog');
+    }
+
+    public function post($slug)
+    {
+        return view('frontend.pages.post', compact('slug'));
+    }
 }
