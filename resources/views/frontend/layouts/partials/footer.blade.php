@@ -34,7 +34,7 @@
                         <a href="{{ route('contact') }}" class="text-white-50 text-decoration-none">Contact Us</a>
                     </li>
                     <li class="mb-2">
-                        <a href="privacy.html" class="text-white-50 text-decoration-none">Privacy Policy</a>
+                        <a href="{{ route('privacy') }}" class="text-white-50 text-decoration-none">Privacy Policy</a>
                     </li>
                     <li class="mb-2">
                         <a href="{{ route('terms') }}" class="text-white-50 text-decoration-none">Terms & Conditions</a>

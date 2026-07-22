@@ -73,7 +73,7 @@
                         purchased.</p>
 
                     <h4>9. Privacy</h4>
-                    <p>Your use of our website is also governed by our <a href="privacy.html" class="text-success">Privacy
+                    <p>Your use of our website is also governed by our <a href="{{ route('privacy') }}" class="text-success">Privacy
                             Policy</a>. Please review our Privacy Policy to understand our practices.</p>
 
                     <h4>10. Changes to Terms</h4>
