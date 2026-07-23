@@ -38,7 +38,7 @@
                             </div>
                         </div>
                     </a>
-                    <button class="btn btn-sm btn-success position-absolute bottom-0 inset-e-0 m-2">
+                    <button class="btn btn-sm btn-success position-absolute bottom-0 end-0 m-2">
                         <i class="bi bi-cart-plus"></i>
                     </button>
                 </div>
@@ -76,7 +76,7 @@
                             </div>
                         </div>
                     </a>
-                    <button class="btn btn-sm btn-success position-absolute bottom-0 inset-e-0 m-2">
+                    <button class="btn btn-sm btn-success position-absolute bottom-0 end-0 m-2">
                         <i class="bi bi-cart-plus"></i>
                     </button>
                 </div>
@@ -113,7 +113,7 @@
                             </div>
                         </div>
                     </a>
-                    <button class="btn btn-sm btn-success position-absolute bottom-0 inset-e-0 m-2">
+                    <button class="btn btn-sm btn-success position-absolute bottom-0 end-0 m-2">
                         <i class="bi bi-cart-plus"></i>
                     </button>
                 </div>
@@ -152,7 +152,7 @@
                             </div>
                         </div>
                     </a>
-                    <button class="btn btn-sm btn-success position-absolute bottom-0 inset-e-0 m-2">
+                    <button class="btn btn-sm btn-success position-absolute bottom-0 end-0 m-2">
                         <i class="bi bi-cart-plus"></i>
                     </button>
                 </div>
@@ -189,7 +189,7 @@
                             </div>
                         </div>
                     </a>
-                    <button class="btn btn-sm btn-success position-absolute bottom-0 inset-e-0 m-2">
+                    <button class="btn btn-sm btn-success position-absolute bottom-0 end-0 m-2">
                         <i class="bi bi-cart-plus"></i>
                     </button>
                 </div>
@@ -227,7 +227,7 @@
                             </div>
                         </div>
                     </a>
-                    <button class="btn btn-sm btn-success position-absolute bottom-0 inset-e-0 m-2">
+                    <button class="btn btn-sm btn-success position-absolute bottom-0 end-0 m-2">
                         <i class="bi bi-cart-plus"></i>
                     </button>
                 </div>
@@ -264,7 +264,7 @@
                             </div>
                         </div>
                     </a>
-                    <button class="btn btn-sm btn-success position-absolute bottom-0 inset-e-0 m-2">
+                    <button class="btn btn-sm btn-success position-absolute bottom-0 end-0 m-2">
                         <i class="bi bi-cart-plus"></i>
                     </button>
                 </div>
@@ -303,7 +303,7 @@
                             </div>
                         </div>
                     </a>
-                    <button class="btn btn-sm btn-success position-absolute bottom-0 inset-e-0 m-2">
+                    <button class="btn btn-sm btn-success position-absolute bottom-0 end-0 m-2">
                         <i class="bi bi-cart-plus"></i>
                     </button>
                 </div>
