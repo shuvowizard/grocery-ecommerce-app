@@ -46,4 +46,14 @@ class FrontendController extends Controller
     {
         return view('frontend.pages.privacy');
     }
+
+    public function products()
+    {
+        return view('frontend.pages.products');
+    }
+
+    public function product($slug)
+    {
+        return view('frontend.pages.product', compact('slug'));
+    }
 }

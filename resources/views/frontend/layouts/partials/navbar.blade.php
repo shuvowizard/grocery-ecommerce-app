@@ -17,24 +17,24 @@
                     </a>
                     <ul class="dropdown-menu">
                         <li>
-                            <a class="dropdown-item" href="products.html">Fresh Fruits</a>
+                            <a class="dropdown-item" href="{{ route('products') }}">Fresh Fruits</a>
                         </li>
                         <li>
-                            <a class="dropdown-item" href="products.html">Fresh Vegetables</a>
+                            <a class="dropdown-item" href="{{ route('products') }}">Fresh Vegetables</a>
                         </li>
                         <li>
-                            <a class="dropdown-item" href="products.html">Seafood & Meat</a>
+                            <a class="dropdown-item" href="{{ route('products') }}">Seafood & Meat</a>
                         </li>
                         <li>
-                            <a class="dropdown-item" href="products.html">Grains & Pulses</a>
+                            <a class="dropdown-item" href="{{ route('products') }}">Grains & Pulses</a>
                         </li>
                         <li>
-                            <a class="dropdown-item" href="products.html">Condiments & Beverages</a>
+                            <a class="dropdown-item" href="{{ route('products') }}">Condiments & Beverages</a>
                         </li>
                     </ul>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="products.html">Products</a>
+                    <a class="nav-link" href="{{ route('products') }}">Products</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('faq') }}">FAQ</a>
