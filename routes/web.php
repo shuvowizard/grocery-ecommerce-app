@@ -15,6 +15,7 @@ Route::get('/terms', [FrontendController::class, 'terms'])->name('terms');
 Route::get('/privacy', [FrontendController::class, 'privacy'])->name('privacy');
 Route::get('/products', [FrontendController::class, 'products'])->name('products');
 Route::get('/product/{slug}', [FrontendController::class, 'product'])->name('product');
+Route::get('/cart', [FrontendController::class, 'cart'])->name('cart');
 
 // -------------- User Route -------------- //
 Route::middleware('user')->group(function () {

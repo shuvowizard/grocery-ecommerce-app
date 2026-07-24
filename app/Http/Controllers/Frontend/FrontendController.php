@@ -56,4 +56,9 @@ class FrontendController extends Controller
     {
         return view('frontend.pages.product', compact('slug'));
     }
+
+    public function cart()
+    {
+        return view('frontend.pages.cart');
+    }
 }

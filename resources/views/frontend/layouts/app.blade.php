@@ -45,6 +45,9 @@
 
     <!-- Custom JS -->
     <script src="{{ asset('dist-frontend/js/script.js') }}"></script>
+
+    <!-- Custom Page JS -->
+    @stack('scripts')
 </body>
 
 </html>
