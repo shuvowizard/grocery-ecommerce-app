@@ -172,7 +172,7 @@
                             </div>
 
                             <!-- Proceed to Checkout -->
-                            <a href="checkout.html" class="btn btn-success w-100 mb-3">
+                            <a href="{{ route('checkout') }}" class="btn btn-success w-100 mb-3">
                                 <i class="bi bi-lock me-2"></i>Proceed to Checkout
                             </a>
                         </div>
