@@ -7,9 +7,9 @@
             </div>
             <div class="col-md-6 text-end">
                 <span class="ms-3"><i class="bi bi-box-arrow-in-right"></i>
-                    <a href="login.html" class="text-white text-decoration-none">Login</a></span>
+                    <a href="{{ route('login') }}" class="text-white text-decoration-none">Login</a></span>
                 <span class="ms-3"><i class="bi bi-person"></i>
-                    <a href="registration.html" class="text-white text-decoration-none">Register</a></span>
+                    <a href="{{ route('register') }}" class="text-white text-decoration-none">Register</a></span>
             </div>
         </div>
     </div>

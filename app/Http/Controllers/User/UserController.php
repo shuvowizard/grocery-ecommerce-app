@@ -84,9 +84,7 @@ class UserController extends Controller
             'status' => 1,
             ];
 
-        $remember = $request->boolean('remember');
-
-        if (Auth::guard('web')->attempt($data, $remember)) {
+        if (Auth::guard('web')->attempt($data)) {
             $request->session()->regenerate();
             return redirect()->route('dashboard');
         } else {

@@ -20,6 +20,7 @@
     <link rel="stylesheet" href="{{ asset('dist-frontend/css/bootstrap.min.css') }}" />
     <link rel="stylesheet" href="{{ asset('dist-frontend/css/spacing.css') }}" />
     <link rel="stylesheet" href="{{ asset('dist-frontend/css/style.css') }}" />
+    <link rel="stylesheet" href="{{ asset('dist-admin/css/iziToast.min.css') }}">
 </head>
 
 <body>
@@ -45,9 +46,33 @@
 
     <!-- Custom JS -->
     <script src="{{ asset('dist-frontend/js/script.js') }}"></script>
+    <script src="{{ asset('dist-admin/js/iziToast.min.js') }}"></script>
 
     <!-- Custom Page JS -->
     @stack('scripts')
+
+    <!-- Tost Notification -->
+    @if (session('success'))
+        <script>
+            iziToast.success({
+                message: "{{ session('success') }}",
+                position: 'topRight',
+                timeout: 5000,
+                progressBarColor: '#00FF00'
+            })
+        </script>
+    @endif
+    
+    @if (session('error'))
+        <script>
+            iziToast.error({
+                message: "{{ session('error') }}",
+                position: 'topRight',
+                timeout: 5000,
+                progressBarColor: '#FF0000'
+            })
+        </script>
+    @endif
 </body>
 
 </html>

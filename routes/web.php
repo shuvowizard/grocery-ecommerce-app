@@ -5,6 +5,7 @@ use App\Http\Controllers\Frontend\FrontendController;
 use App\Http\Controllers\User\UserController;
 use Illuminate\Support\Facades\Route;
 
+// -------------- Frontend Route -------------- //
 Route::get('/', [FrontendController::class, 'index'])->name('home');
 Route::get('/about', [FrontendController::class, 'about'])->name('about');
 Route::get('/contact', [FrontendController::class, 'contact'])->name('contact');
@@ -17,6 +18,8 @@ Route::get('/products', [FrontendController::class, 'products'])->name('products
 Route::get('/product/{slug}', [FrontendController::class, 'product'])->name('product');
 Route::get('/cart', [FrontendController::class, 'cart'])->name('cart');
 Route::get('/checkout', [FrontendController::class, 'checkout'])->name('checkout');
+// -------------- End Frontend Route -------------- //
+
 
 // -------------- User Route -------------- //
 Route::middleware('user')->group(function () {
@@ -44,7 +47,6 @@ Route::post('/forget-password', [UserController::class, 'forgetPasswordSubmit'])
 // -------- Reset Password --------
 Route::get('/reset-password/{token}/{email}', [UserController::class, 'resetPassword'])->name('reset.password');
 Route::post('/reset-password', [UserController::class, 'resetPasswordSubmit'])->name('reset.password.submit');
-
 
 // -------------- End User Route -------------- //
 

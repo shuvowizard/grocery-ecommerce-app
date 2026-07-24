@@ -1,42 +1,57 @@
-@include('user.top')
+@extends('frontend.layouts.app')
 
-<h2>User Login</h2>
+@section('title', 'Login')
 
-@if($errors->any())
-    @foreach($errors->all() as $error)
-        <p style="color: red;">{{ $error }}</p>
-    @endforeach
-@endif
+@section('content')
+    <!-- Login Section -->
+    <section class="login-section py-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-5">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body p-5">
+                            <h3 class="text-center fw-bold mb-4">Login</h3>
 
-@if(session('success'))
-    <p style="color: green;">{{ session('success') }}</p>
-@endif
+                            <form action="{{ route('login') }}" method="post">
+                                @csrf
 
-@if(session('error'))
-    <p style="color: red;">{{ session('error') }}</p>
-@endif
+                                <div class="mb-3">
+                                    <label class="form-label" for="email">Email Address <span class="text-danger">*</span></label>
+                                    <input type="text" name="email" id="email" class="form-control @error('email') is-invalid @enderror">
+                                    @error('email')
+                                        <small class="text-danger">{{ $message }}</small>
+                                    @enderror
+                                </div>
 
-<div>
-    <form action="{{ route('login') }}" method="post">
-        @csrf
-        <div>
-            <label for="email">Email:</label>
-            <input type="email" name="email" id="email">
-        </div><br>
-        <div>
-            <label for="password">Password:</label>
-            <input type="password" name="password" id="password">
-        </div><br>
-        <div>
-            <input type="checkbox" name="remember" id="remember">
-            <label for="remember">Remember Me</label>
-        </div><br>
-        <div>
-            <a href="{{ route('forget.password') }}">Forgot Your Password?</a>
-        </div><br>
-        <div>
-            <a href="{{ route('register') }}">Don't have an account?</a>
-        </div><br>
-        <button type="submit">Login</button>
-    </form>
-</div>
+                                <div class="mb-3">
+                                    <label class="form-label" for="password">Password <span class="text-danger">*</span></label>
+                                    <input type="password" name="password" id="password" class="form-control @error('password') is-invalid @enderror">
+                                    @error('password')
+                                        <small class="text-danger">{{ $message }}</small>
+                                    @enderror
+                                </div>
+
+                                <button type="submit" class="btn btn-success w-100 mb-3">
+                                    <i class="bi bi-box-arrow-in-right me-2"></i>Login
+                                </button>
+
+                                <div class="text-center">
+                                    <a href="{{ route('forget.password') }}" class="text-decoration-none">Forgot
+                                        Password?</a>
+                                </div>
+                            </form>
+
+                            <hr class="my-4">
+
+                            <p class="text-center mb-0">
+                                Don't have an account?
+                                <a href="{{ route('register') }}" class="text-success text-decoration-none fw-bold">Sign
+                                    Up</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+@endsection
