@@ -20,6 +20,9 @@ class UserController extends Controller
 
     public function create()
     {
+        if (Auth::guard('web')->check()) {
+            return to_route('dashboard');
+        }
         return view('user.auth.register');
     }
 
@@ -68,6 +71,9 @@ class UserController extends Controller
 
     public function loginForm()
     {
+        if (Auth::guard('web')->check()) {
+            return to_route('dashboard');
+        }        
         return view('user.auth.login');
     }
 
@@ -102,6 +108,9 @@ class UserController extends Controller
 
     public function forgetPassword()
     {
+        if (Auth::guard('web')->check()) {
+            return to_route('dashboard');
+        }
         return view('user.auth.forget-password');
     }
 
