@@ -86,7 +86,7 @@ class UserController extends Controller
 
         if (Auth::guard('web')->attempt($data)) {
             $request->session()->regenerate();
-            return redirect()->route('dashboard');
+            return redirect()->route('dashboard')->with('success', 'Logged in successfully');
         } else {
             return redirect()->back()->with('error', 'Invalid credentials');
         }
