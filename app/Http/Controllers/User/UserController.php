@@ -234,4 +234,9 @@ class UserController extends Controller
         return back()->with('success', 'Profile updated successfully.');
     }
 
+    public function orders()
+    {
+        return view('user.orders');
+    }
+
 }

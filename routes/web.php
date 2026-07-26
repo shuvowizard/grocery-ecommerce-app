@@ -26,6 +26,7 @@ Route::middleware('user')->group(function () {
     Route::get('/dashboard', [UserController::class, 'dashboard'])->name('dashboard');
     Route::get('/profile', [UserController::class, 'profile'])->name('profile');
     Route::post('/profile', [UserController::class, 'profileUpdate'])->name('profile.update');
+    Route::get('/orders', [UserController::class, 'orders'])->name('orders');
 });
 
 // -------- Authentication --------

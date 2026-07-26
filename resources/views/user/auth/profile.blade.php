@@ -9,7 +9,6 @@
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb mb-0">
                     <li class="breadcrumb-item"><a href="{{ route('home') }}" class="text-success">Home</a></li>
-                    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}" class="text-success">Dashboard</a></li>
                     <li class="breadcrumb-item active" aria-current="page">Profile Settings</li>
                 </ol>
             </nav>

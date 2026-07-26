@@ -17,7 +17,7 @@
                     </a>
                 </li>
                 <li class="list-group-item px-0">
-                    <a href="customer-orders.html" class="text-decoration-none text-dark">
+                    <a href="{{ route('orders') }}" class="text-decoration-none text-dark {{ request()->routeIs('orders') ? 'fw-bold' : '' }}">
                         <i class="bi bi-bag-check me-2"></i>My Orders
                     </a>
                 </li>
