@@ -22,7 +22,7 @@
                     </a>
                 </li>
                 <li class="list-group-item px-0">
-                    <a href="customer-wishlist.html" class="text-decoration-none text-dark">
+                    <a href="{{ route('wishlist') }}" class="text-decoration-none text-dark {{ request()->routeIs('wishlist') ? 'fw-bold' : '' }}">
                         <i class="bi bi-heart me-2"></i>Wishlist
                     </a>
                 </li>
