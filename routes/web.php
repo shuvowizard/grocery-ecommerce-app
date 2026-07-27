@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Frontend\FrontendController;
 use App\Http\Controllers\User\UserController;
 use Illuminate\Support\Facades\Route;
@@ -58,6 +59,8 @@ Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
     Route::get('/profile', [AdminController::class, 'profile'])->name('profile');
     Route::post('/profile', [AdminController::class, 'profileUpdate'])->name('profile.update');
+    # For Admin User Management Routes
+    Route::get('/user/index', [AdminUserController::class, 'index'])->name('user.index');
 });
 
 Route::prefix('admin')->name('admin.')->group(function () {

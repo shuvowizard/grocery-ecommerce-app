@@ -12,8 +12,11 @@
             <li class="{{ request()->is('admin/dashboard') ? 'active' : '' }}"><a class="nav-link" href="{{ route('admin.dashboard') }}"><i class="fas fa-home"></i>
                     <span>Dashboard</span></a></li>
 
-            <li class="{{ request()->is('admin/profile') ? 'active' : '' }}"><a class="nav-link" href="{{ route('admin.profile') }}"><i class="fas fa-address-book"></i>
+            <li class="{{ request()->is('admin/profile') ? 'active' : '' }}"><a class="nav-link" href="{{ route('admin.profile') }}"><i class="fas fa-user"></i>
                     <span>Profile</span></a></li>
+
+            <li class="{{ request()->routeIs('admin.user.index') ? 'active' : '' }}"><a class="nav-link" href="{{ route('admin.user.index') }}"><i class="fas fa-users"></i>
+                    <span>Manage User</span></a></li>
 
             <li><a class="nav-link" href="{{ route('admin.logout') }}"><i class="fas fa-sign-out-alt"></i>
                     <span>Logout</span></a></li>
