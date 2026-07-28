@@ -78,4 +78,10 @@ class AdminUserController extends Controller
 
         return redirect()->route('admin.user.index')->with('success', 'User created successfully.');
     }
+
+    public function edit(String $id)
+    {
+        $user = User::findOrFail($id);
+        return view('admin.user.edit', compact('user'));
+    }
 }

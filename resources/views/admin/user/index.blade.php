@@ -45,7 +45,7 @@
                                                 @endif
                                             </td>
                                             <td>
-                                                <a href="#" class="btn btn-warning btn-md "><i class="fas fa-edit"></i></a>
+                                                <a href="{{ route('admin.user.edit', $user->id) }}" class="btn btn-warning btn-md "><i class="fas fa-edit"></i></a>
                                                 <a href="#" class="btn btn-danger btn-md"
                                                     onclick="return confirm('Are you sure?')"><i class="fas fa-trash"></i></a>
                                             </td>
