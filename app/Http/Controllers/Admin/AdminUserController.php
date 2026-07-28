@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class AdminUserController extends Controller
 {
@@ -79,9 +80,54 @@ class AdminUserController extends Controller
         return redirect()->route('admin.user.index')->with('success', 'User created successfully.');
     }
 
-    public function edit(String $id)
+    public function edit(string $id)
     {
         $user = User::findOrFail($id);
         return view('admin.user.edit', compact('user'));
+    }
+
+    public function update(Request $request, string $id)
+    {
+        $user = User::findOrFail($id);
+
+        $request->validate([
+            'name' => ['required', 'string', 'max:255', 'regex:/^[\pL\s\-\']+$/u'],
+            'email' => ['required', 'string', 'email', 'lowercase', 'max:255', Rule::unique(User::class)->ignore($user->id)],
+            'phone' => ['nullable', 'string', 'max:20', Rule::unique(User::class)->ignore($user->id)],
+            'address' => ['nullable', 'string', 'max:255'],
+            'country' => ['nullable', 'string', 'max:100'],
+            'state' => ['nullable', 'string', 'max:100'],
+            'city' => ['nullable', 'string', 'max:100'],
+            'zip' => ['nullable', 'string', 'max:20'],
+            'status' => ['required', 'string', 'max:100'],
+            'photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,svg', 'max:2048'],
+        ], [
+            'name.regex' => 'Name can only contain letters, spaces, hyphens and apostrophes.',
+        ]);        
+
+        if ($request->hasFile('photo')) {
+            # old photo delete
+            if ($user->photo && file_exists(public_path('uploads/user/' . $user->photo))) {
+                unlink(public_path('uploads/user/' . $user->photo));
+            }
+            # new photo upload
+            $image = $request->file('photo');
+            $imageName = 'user_' . time() . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('uploads/user'), $imageName);
+            $user->photo = $imageName;
+        }
+
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->phone = $request->phone;
+        $user->address = $request->address;
+        $user->country = $request->country;
+        $user->state = $request->state;
+        $user->city = $request->city;
+        $user->zip = $request->zip;
+        $user->status = $request->status;
+        $user->save();
+
+        return redirect()->route('admin.user.index')->with('success', 'User updated successfully.');
     }
 }

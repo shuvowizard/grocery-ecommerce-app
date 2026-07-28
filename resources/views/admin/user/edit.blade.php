@@ -13,8 +13,9 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
-                            <form action="#" method="post" enctype="multipart/form-data">
+                            <form action="{{ route('admin.user.update', $user->id) }}" method="post" enctype="multipart/form-data">                                
                                 @csrf
+                                @method('PUT')
                                 <div class="row">
                                     <div class="col-lg-6 mb-3">
                                         <label class="form-label">Name <span class="text-danger">*</span></label>
@@ -121,7 +122,7 @@
                                         <div class="d-flex align-items-center gap-2">
                                             <div class="rounded-circle border d-flex align-items-center justify-content-center overflow-hidden bg-light flex-shrink-0"
                                                 style="width:50px;height:50px;">
-                                                <img id="photo_preview" src="{{ asset('uploads/user/' . $user->photo) ?? 'uploads/default.png' }}"
+                                                <img id="photo_preview" src="{{ $user->photo ? asset('uploads/user/' . $user->photo) : asset('uploads/default.png') }}"
                                                     alt="Profile Photo"
                                                     style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;">
                                             </div>
@@ -143,7 +144,7 @@
 
                                     <div class="col-lg-12 mb-3">
                                         <button type="submit" class="btn btn-primary w-100">Update</button>
-                                    </div>
+                                  /div>
                                 </div>
                             </form>
                         </div>

@@ -64,6 +64,7 @@ Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/user/create', [AdminUserController::class, 'create'])->name('user.create');
     Route::post('/user/store', [AdminUserController::class, 'store'])->name('user.store');
     Route::get('/user/edit/{id}', [AdminUserController::class, 'edit'])->name('user.edit');
+    Route::put('/user/update/{id}', [AdminUserController::class, 'update'])->name('user.update');
 });
 
 Route::prefix('admin')->name('admin.')->group(function () {
