@@ -61,6 +61,8 @@ Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
     Route::post('/profile', [AdminController::class, 'profileUpdate'])->name('profile.update');
     # For Admin User Management Routes
     Route::get('/user/index', [AdminUserController::class, 'index'])->name('user.index');
+    Route::get('/user/create', [AdminUserController::class, 'create'])->name('user.create');
+    Route::post('/user/store', [AdminUserController::class, 'store'])->name('user.store');
 });
 
 Route::prefix('admin')->name('admin.')->group(function () {

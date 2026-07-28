@@ -13,4 +13,14 @@ class AdminUserController extends Controller
         $users = User::get();
         return view('admin.user.index', compact('users'));
     }
+
+    public function create()
+    {
+        return view('admin.user.create');
+    }
+
+    public function store()
+    {
+        //
+    }
 }
