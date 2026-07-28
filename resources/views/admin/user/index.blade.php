@@ -30,8 +30,8 @@
                                     @foreach ($users as $user)
                                         <tr class="text-center">
                                             <td>{{ $loop->iteration }}</td>
-                                            <td><img src="{{ asset('uploads/user/' . $user->photo ?? 'uploads/default.png') }}"
-                                                    alt="User image" width="100px" height="auto"></td>
+                                            <td><img src="{{ $user->photo ? asset('uploads/user/' . $user->photo) : asset('uploads/default.png') }}"
+                                                    alt="User image" width="50px" height="auto"></td>
                                             <td>{{ $user->name }}</td>
                                             <td>{{ $user->email }}</td>
                                             <td>{{ $user->phone }}</td>
@@ -39,9 +39,9 @@
                                                 @if ($user->status == 1)
                                                     <span class="badge bg-success">Active</span>
                                                 @elseif ($user->status == 0)
-                                                    <span class="badge bg-danger">Pending</span>
+                                                    <span class="badge bg-warning">Pending</span>
                                                 @elseif ($user->status == 2)
-                                                    <span class="badge bg-warning">Suspended</span>
+                                                    <span class="badge bg-danger">Suspended</span>
                                                 @endif
                                             </td>
                                             <td>
