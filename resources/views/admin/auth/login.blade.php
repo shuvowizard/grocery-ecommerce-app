@@ -23,7 +23,11 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <input type="password" class="form-control" name="password" placeholder="Password">
+                                    <input type="password" class="form-control @error('password') is-invalid
+                                    @enderror" name="password" placeholder="Password">
+                                    @error('password')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
 
                                 <div class="form-group d-flex justify-content-between align-items-center mb-3">
