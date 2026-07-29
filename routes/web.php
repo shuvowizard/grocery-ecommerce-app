@@ -65,6 +65,7 @@ Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
     Route::post('/user/store', [AdminUserController::class, 'store'])->name('user.store');
     Route::get('/user/edit/{id}', [AdminUserController::class, 'edit'])->name('user.edit');
     Route::put('/user/update/{id}', [AdminUserController::class, 'update'])->name('user.update');
+    Route::delete('/user/delete/{id}', [AdminUserController::class, 'destroy'])->name('user.delete');
 });
 
 Route::prefix('admin')->name('admin.')->group(function () {

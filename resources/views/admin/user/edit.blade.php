@@ -13,7 +13,8 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
-                            <form action="{{ route('admin.user.update', $user->id) }}" method="post" enctype="multipart/form-data">                                
+                            <form action="{{ route('admin.user.update', $user->id) }}" method="post"
+                                enctype="multipart/form-data">
                                 @csrf
                                 @method('PUT')
                                 <div class="row">
@@ -63,7 +64,8 @@
                                             </option>
                                             <option value="Canada" {{ old('country', $user->country) == 'Canada' ? 'selected' : '' }}>Canada
                                             </option>
-                                            <option value="UK" {{ old('country', $user->country) == 'UK' ? 'selected' : '' }}>United Kingdom
+                                            <option value="UK" {{ old('country', $user->country) == 'UK' ? 'selected' : '' }}>
+                                                United Kingdom
                                             </option>
                                             <option value="Australia" {{ old('country', $user->country) == 'Australia' ? 'selected' : '' }}>
                                                 Australia</option>
@@ -106,9 +108,12 @@
                                         <select name="status" class="form-select @error('status') is-invalid @enderror">
                                             <option value="" disabled {{ old('status', $user->status) == '' ? 'selected' : '' }}>Select
                                                 Status</option>
-                                            <option value="0" {{ old('status', $user->status) == '0' ? 'selected' : '' }}>Pending</option>
-                                            <option value="1" {{ old('status', $user->status) == '1' ? 'selected' : '' }}>Active</option>
-                                            <option value="2" {{ old('status', $user->status) == '2' ? 'selected' : '' }}>Suspended</option>
+                                            <option value="0" {{ old('status', $user->status) == '0' ? 'selected' : '' }}>
+                                                Pending</option>
+                                            <option value="1" {{ old('status', $user->status) == '1' ? 'selected' : '' }}>
+                                                Active</option>
+                                            <option value="2" {{ old('status', $user->status) == '2' ? 'selected' : '' }}>
+                                                Suspended</option>
                                         </select>
                                         @error('status')
                                             <span class="text-danger small">{{ $message }}</span>
@@ -122,7 +127,8 @@
                                         <div class="d-flex align-items-center gap-2">
                                             <div class="rounded-circle border d-flex align-items-center justify-content-center overflow-hidden bg-light flex-shrink-0"
                                                 style="width:50px;height:50px;">
-                                                <img id="photo_preview" src="{{ $user->photo ? asset('uploads/user/' . $user->photo) : asset('uploads/default.png') }}"
+                                                <img id="photo_preview"
+                                                    src="{{ $user->photo ? asset('uploads/user/' . $user->photo) : asset('uploads/default.png') }}"
                                                     alt="Profile Photo"
                                                     style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;">
                                             </div>
@@ -144,7 +150,7 @@
 
                                     <div class="col-lg-12 mb-3">
                                         <button type="submit" class="btn btn-primary w-100">Update</button>
-                                  /div>
+                                    </div>
                                 </div>
                             </form>
                         </div>

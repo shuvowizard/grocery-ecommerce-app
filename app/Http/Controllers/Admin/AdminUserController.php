@@ -103,7 +103,7 @@ class AdminUserController extends Controller
             'photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,svg', 'max:2048'],
         ], [
             'name.regex' => 'Name can only contain letters, spaces, hyphens and apostrophes.',
-        ]);        
+        ]);
 
         if ($request->hasFile('photo')) {
             # old photo delete
@@ -129,5 +129,24 @@ class AdminUserController extends Controller
         $user->save();
 
         return redirect()->route('admin.user.index')->with('success', 'User updated successfully.');
+    }
+
+    public function destroy(string $id)
+    {
+        $user = User::where('id', $id)->first();
+
+        if (!$user) {
+            return redirect()->route('admin.user.index')
+                ->with('error', 'User not found.');
+        }
+
+        # Photo delete
+        if ($user->photo != null && file_exists(public_path('uploads/user/' . $user->photo))) {
+            unlink(public_path('uploads/user/' . $user->photo));
+        }
+
+        # User delete
+        $user->delete();
+        return redirect()->route('admin.user.index')->with('success', 'User deleted successfully.');
     }
 }

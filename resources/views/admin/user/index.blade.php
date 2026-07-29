@@ -46,8 +46,17 @@
                                             </td>
                                             <td>
                                                 <a href="{{ route('admin.user.edit', $user->id) }}" class="btn btn-warning btn-md "><i class="fas fa-edit"></i></a>
-                                                <a href="#" class="btn btn-danger btn-md"
-                                                    onclick="return confirm('Are you sure?')"><i class="fas fa-trash"></i></a>
+                                                    <!-- Delete Button -->
+                                                <form action="{{ route('admin.user.delete', $user->id) }}" 
+                                                    method="POST" 
+                                                    class="d-inline"
+                                                    onsubmit="return confirm('Are you sure you want to delete this user?');">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-danger btn-md">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </form>
                                             </td>
                                         </tr>
                                     @endforeach
