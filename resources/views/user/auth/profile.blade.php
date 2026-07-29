@@ -67,72 +67,98 @@
 
                                     <div class="col-md-6">
                                         <label class="form-label" for="name">Name <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control" id="name" name="name"
-                                            value="{{ auth()->guard('web')->user()->name }}">
+                                        <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name"
+                                            value="{{ old('name', auth()->guard('web')->user()->name) }}">
+                                        @error('name')
+                                            <small class="text-danger d-block mt-1">{{ $message }}</small>
+                                        @enderror
                                     </div>
+
                                     <div class="col-md-6">
-                                        <label class="form-label" for="email">Email Address <span
-                                                class="text-danger">*</span></label>
-                                        <input type="email" class="form-control" id="email" name="email"
-                                            value="{{ auth()->guard('web')->user()->email }}">
+                                        <label class="form-label" for="email">Email Address<span class="text-muted small"> No Change</span></label>
+                                        <input type="email" class="form-control" id="email" name="email" value="{{ auth()->guard('web')->user()->email }}"
+                                            readonly>
                                     </div>
+
                                     <div class="col-md-6">
                                         <label class="form-label" for="new_pass">New Password</label>
-                                        <input type="password" class="form-control" id="new_pass" name="password">
+                                        <input type="password" class="form-control @error('password') is-invalid @enderror" id="new_pass" name="password">
+                                        @error('password')
+                                            <small class="text-danger d-block mt-1">{{ $message }}</small>
+                                        @enderror
                                     </div>
+
                                     <div class="col-md-6">
                                         <label class="form-label" for="con_pass">Confirm New Password</label>
-                                        <input type="password" class="form-control" id="con_pass"
+                                        <input type="password" class="form-control @error('password_confirmation') is-invalid @enderror" id="con_pass"
                                             name="password_confirmation">
+                                        @error('password_confirmation')
+                                            <small class="text-danger d-block mt-1">{{ $message }}</small>
+                                        @enderror
                                     </div>
+
                                     <div class="col-md-6">
-                                        <label class="form-label" for="phone">Phone Number <span
-                                                class="text-danger">*</span></label>
-                                        <input type="tel" class="form-control" id="phone" name="phone"
-                                            value="{{ auth()->guard('web')->user()->phone }}">
+                                        <label class="form-label" for="phone">Phone Number <span class="text-danger">*</span></label>
+                                        <input type="tel" class="form-control @error('phone') is-invalid @enderror" id="phone" name="phone"
+                                            value="{{ old('phone', auth()->guard('web')->user()->phone) }}">
+                                        @error('phone')
+                                            <small class="text-danger d-block mt-1">{{ $message }}</small>
+                                        @enderror
                                     </div>
-                                    <div class="col-6">
-                                        <label class="form-label" for="address">Address <span
-                                                class="text-danger">*</span></label>
-                                        <input type="text" class="form-control" id="address" name="address"
-                                            value="{{ auth()->guard('web')->user()->address }}">
-                                    </div>
+
                                     <div class="col-md-6">
-                                        <label class="form-label" for="country">Country <span
-                                                class="text-danger">*</span></label>
+                                        <label class="form-label" for="address">Address <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control @error('address') is-invalid @enderror" id="address" name="address"
+                                            value="{{ old('address', auth()->guard('web')->user()->address) }}">
+                                        @error('address')
+                                            <small class="text-danger d-block mt-1">{{ $message }}</small>
+                                        @enderror
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label" for="country">Country <span class="text-danger">*</span></label>
                                         @php
                                             $selectedCountry = old('country', auth()->guard('web')->user()->country);
                                         @endphp
-                                        <select class="form-select" name="country" id="country">
-                                            <option value="" disabled {{ $selectedCountry == '' ? 'selected' : '' }}>Select
-                                                Country</option>
-                                            <option value="USA" {{ $selectedCountry == 'USA' ? 'selected' : '' }}>United
-                                                States</option>
-                                            <option value="Canada" {{ $selectedCountry == 'Canada' ? 'selected' : '' }}>Canada
-                                            </option>
-                                            <option value="UK" {{ $selectedCountry == 'UK' ? 'selected' : '' }}>United Kingdom
-                                            </option>
-                                            <option value="Australia" {{ $selectedCountry == 'Australia' ? 'selected' : '' }}>
-                                                Australia</option>
+                                        <select class="form-select @error('country') is-invalid @enderror" name="country" id="country">
+                                            <option value="" disabled {{ $selectedCountry == '' ? 'selected' : '' }}>Select Country</option>
+                                            <option value="USA" {{ $selectedCountry == 'USA' ? 'selected' : '' }}>United States</option>
+                                            <option value="Canada" {{ $selectedCountry == 'Canada' ? 'selected' : '' }}>Canada</option>
+                                            <option value="UK" {{ $selectedCountry == 'UK' ? 'selected' : '' }}>United Kingdom</option>
+                                            <option value="Australia" {{ $selectedCountry == 'Australia' ? 'selected' : '' }}>Australia</option>
                                         </select>
+                                        @error('country')
+                                            <small class="text-danger d-block mt-1">{{ $message }}</small>
+                                        @enderror
                                     </div>
+
                                     <div class="col-md-6">
-                                        <label class="form-label" for="state">State <span
-                                                class="text-danger">*</span></label>
-                                        <input type="text" class="form-control" id="state" name="state"
-                                            value="{{ auth()->guard('web')->user()->state }}">
+                                        <label class="form-label" for="state">State <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control @error('state') is-invalid @enderror" id="state" name="state"
+                                            value="{{ old('state', auth()->guard('web')->user()->state) }}">
+                                        @error('state')
+                                            <small class="text-danger d-block mt-1">{{ $message }}</small>
+                                        @enderror
                                     </div>
+
                                     <div class="col-md-6">
                                         <label class="form-label" for="city">City <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control" id="city" name="city"
-                                            value="{{ auth()->guard('web')->user()->city }}">
+                                        <input type="text" class="form-control @error('city') is-invalid @enderror" id="city" name="city"
+                                            value="{{ old('city', auth()->guard('web')->user()->city) }}">
+                                        @error('city')
+                                            <small class="text-danger d-block mt-1">{{ $message }}</small>
+                                        @enderror
                                     </div>
+
                                     <div class="col-md-6">
-                                        <label class="form-label" for="zip">ZIP Code <span
-                                                class="text-danger">*</span></label>
-                                        <input type="text" class="form-control" id="zip" name="zip"
-                                            value="{{ auth()->guard('web')->user()->zip }}">
+                                        <label class="form-label" for="zip">ZIP Code <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control @error('zip') is-invalid @enderror" id="zip" name="zip"
+                                            value="{{ old('zip', auth()->guard('web')->user()->zip) }}">
+                                        @error('zip')
+                                            <small class="text-danger d-block mt-1">{{ $message }}</small>
+                                        @enderror
                                     </div>
+
                                     <div class="col-md-12">
                                         <button type="submit" class="btn btn-success w-100">
                                             <i class="bi bi-check-circle me-2"></i>Update Profile

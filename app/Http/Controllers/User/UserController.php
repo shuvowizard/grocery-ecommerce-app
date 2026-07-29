@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
@@ -186,43 +187,41 @@ class UserController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255', 'regex:/^[\pL\s\-\']+$/u'],
-            'email' => ['required', 'string', 'email', 'lowercase', 'max:255', 'unique:users,email,' . Auth::guard('web')->user()->id],
             'password' => ['nullable', 'min:3', 'confirmed'],
-            'phone' => ['nullable', 'string', 'max:20'],
-            'address' => ['nullable', 'string', 'max:255'],
-            'state' => ['nullable', 'string', 'max:100'],
-            'country' => ['nullable', 'string', 'max:100'],
-            'city' => ['nullable', 'string', 'max:100'],
-            'zip' => ['nullable', 'string', 'max:20'],
-            'photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,svg', 'max:2048'],
+            'phone' => ['required', 'string', 'max:20', 'regex:/^[0-9+\-\s()]+$/', 'unique:users,phone,' . Auth::guard('web')->user()->id],
+            'address' => ['required', 'string', 'max:255'],
+            'state' => ['required', 'string', 'max:100'],
+            'country' => ['required', 'string', 'max:100'],
+            'city' => ['required', 'string', 'max:100'],
+            'zip' => ['required', 'string', 'max:20'],
+            'photo' => ['required', 'image', 'mimes:jpeg,png,jpg,svg', 'max:2048'],
         ], [
             'name.regex' => 'Name can only contain letters, spaces, hyphens and apostrophes.',
+            'phone.regex' => 'Phone can only contain numbers, +, -, spaces and parentheses.',
         ]);
 
         $user = Auth::guard('web')->user();
 
-        // ২. Password update
+        # Password update
         if ($request->filled('password')) {
             $user->password = Hash::make($request->password);
         }
 
-        // ৩. Photo update
+        # Photo update
         if ($request->hasFile('photo')) {
-            // old photo delete
+            # old photo delete
             if ($user->photo && file_exists(public_path('uploads/user/' . $user->photo))) {
                 unlink(public_path('uploads/user/' . $user->photo));
             }
-
-            // new photo upload
+            # new photo upload
             $image = $request->file('photo');
             $imageName = 'user_' . time() . '.' . $image->getClientOriginalExtension();
             $image->move(public_path('uploads/user'), $imageName);
-            $user->photo = $imageName;  // consistent column name
+            $user->photo = $imageName;  # consistent column name
         }
 
-        // ৪. Other fields update
+        // Other fields update
         $user->name = $request->name;
-        $user->email = $request->email;
         $user->phone = $request->phone;
         $user->address = $request->address;
         $user->country = $request->country;

@@ -29,7 +29,7 @@ class AdminUserController extends Controller
         $request->validate([
             'name' => ['required', 'string', 'max:255', 'regex:/^[\pL\s\-\']+$/u'],
             'email' => ['required', 'string', 'email', 'lowercase', 'max:255', 'unique:users,email'],
-            'phone' => ['nullable', 'string', 'max:20', 'unique:users,phone'],
+            'phone' => ['nullable', 'string', 'max:20', 'regex:/^[0-9+\-\s()]+$/', 'unique:users,phone'],
             'address' => ['nullable', 'string', 'max:255'],
             'country' => ['nullable', 'string', 'max:100'],
             'state' => ['nullable', 'string', 'max:100'],
@@ -39,6 +39,7 @@ class AdminUserController extends Controller
             'photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,svg', 'max:2048'],
         ], [
             'name.regex' => 'Name can only contain letters, spaces, hyphens and apostrophes.',
+            'phone.regex' => 'Phone can only contain numbers, +, -, spaces and parentheses.',
         ]);
 
         $user = new User();
@@ -93,7 +94,7 @@ class AdminUserController extends Controller
         $request->validate([
             'name' => ['required', 'string', 'max:255', 'regex:/^[\pL\s\-\']+$/u'],
             'email' => ['required', 'string', 'email', 'lowercase', 'max:255', Rule::unique(User::class)->ignore($user->id)],
-            'phone' => ['nullable', 'string', 'max:20', Rule::unique(User::class)->ignore($user->id)],
+            'phone' => ['nullable', 'string', 'max:20', 'regex:/^[0-9+\-\s()]+$/', Rule::unique(User::class)->ignore($user->id)],
             'address' => ['nullable', 'string', 'max:255'],
             'country' => ['nullable', 'string', 'max:100'],
             'state' => ['nullable', 'string', 'max:100'],
@@ -103,6 +104,7 @@ class AdminUserController extends Controller
             'photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,svg', 'max:2048'],
         ], [
             'name.regex' => 'Name can only contain letters, spaces, hyphens and apostrophes.',
+            'phone.regex' => 'Phone can only contain numbers, +, -, spaces and parentheses.',
         ]);
 
         if ($request->hasFile('photo')) {
