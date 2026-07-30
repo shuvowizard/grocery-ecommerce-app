@@ -34,7 +34,7 @@
                                                 @if ($category->status == 1)
                                                     <span class="badge bg-success">Active</span>
                                                 @elseif ($category->status == 0)
-                                                    <span class="badge bg-warning">Pending</span>
+                                                    <span class="badge bg-warning">Inactive</span>
                                                 @endif
                                             </td>
                                             <td>
