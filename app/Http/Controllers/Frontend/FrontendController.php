@@ -3,13 +3,15 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use Illuminate\Http\Request;
 
 class FrontendController extends Controller
 {
     public function index()
     {
-        return view('home');
+        $categories = Category::where('status', 1)->orderBy('name', 'asc')->get();
+        return view('home', ['categories' => $categories]);
     }
 
     public function about()
