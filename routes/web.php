@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminCategoryController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Frontend\FrontendController;
@@ -66,6 +67,13 @@ Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/user/edit/{id}', [AdminUserController::class, 'edit'])->name('user.edit');
     Route::put('/user/update/{id}', [AdminUserController::class, 'update'])->name('user.update');
     Route::delete('/user/delete/{id}', [AdminUserController::class, 'destroy'])->name('user.delete');
+    # For Admin Category Management Routes
+    Route::get('/category/index', [AdminCategoryController::class, 'index'])->name('category.index');
+    Route::get('/category/create', [AdminCategoryController::class, 'create'])->name('category.create');
+    Route::post('/category/store', [AdminCategoryController::class, 'store'])->name('category.store');
+    Route::get('/category/edit/{id}', [AdminCategoryController::class, 'edit'])->name('category.edit');
+    Route::put('/category/update/{id}', [AdminCategoryController::class, 'update'])->name('category.update');
+    Route::delete('/category/delete/{id}', [AdminCategoryController::class, 'destroy'])->name('category.delete');
 });
 
 Route::prefix('admin')->name('admin.')->group(function () {
