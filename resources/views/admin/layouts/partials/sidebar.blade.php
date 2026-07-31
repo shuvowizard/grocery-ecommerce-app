@@ -21,16 +21,16 @@
                                         href="{{ route('admin.user.index') }}"><i class="fas fa-users"></i>
                                         <span>Manage User</span></a></li>
 
-                        <li class="nav-item dropdown {{ request()->is('admin/category/*') ? 'active' : '' }}">
-                                <a href="#"
-                                        class="nav-link has-dropdown"><i
-                                                class="fas fa-folder"></i><span>Manage Product</span></a>
+                        <li class="nav-item dropdown {{ request()->is('admin/category/*') || request()->is('admin/product/*') ? 'active' : '' }}">
+                                <a href="#" class="nav-link has-dropdown"><i class="fas fa-folder"></i><span>Manage
+                                                Product</span></a>
                                 <ul class="dropdown-menu">
                                         <li class="{{ request()->routeIs('admin.category.index') ? 'active' : '' }}"><a
                                                         class="nav-link" href="{{ route('admin.category.index') }}"><i
                                                                 class="fas fa-angle-right"></i>Category</a></li>
-                                        <li class=""><a class="nav-link" href=""><i
-                                                                class="fas fa-angle-right"></i>Product</a></li>
+                                        <li class="{{ request()->routeIs('admin.product.index') ? 'active' : '' }}"><a
+                                                        class="nav-link" href="{{ route('admin.product.index') }}"><i
+                                                                class=" fas fa-angle-right"></i>Product</a></li>
                                 </ul>
                         </li>
 

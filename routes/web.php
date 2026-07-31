@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AdminCategoryController;
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\AdminProductController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Frontend\FrontendController;
 use App\Http\Controllers\User\UserController;
@@ -74,6 +75,13 @@ Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/category/edit/{id}', [AdminCategoryController::class, 'edit'])->name('category.edit');
     Route::put('/category/update/{id}', [AdminCategoryController::class, 'update'])->name('category.update');
     Route::delete('/category/delete/{id}', [AdminCategoryController::class, 'destroy'])->name('category.delete');
+    # For Admin Product Management Routes
+    Route::get('/product/index', [AdminProductController::class, 'index'])->name('product.index');
+    Route::get('/product/create', [AdminProductController::class, 'create'])->name('product.create');
+    Route::post('/product/store', [AdminProductController::class, 'store'])->name('product.store');
+    Route::get('/product/edit/{id}', [AdminProductController::class, 'edit'])->name('product.edit');
+    Route::put('/product/update/{id}', [AdminProductController::class, 'update'])->name('product.update');
+    Route::delete('/product/delete/{id}', [AdminProductController::class, 'destroy'])->name('product.delete');
 });
 
 Route::prefix('admin')->name('admin.')->group(function () {
