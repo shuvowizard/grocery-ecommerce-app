@@ -2,7 +2,10 @@
     "use strict";
     $(".inputtags").tagsinput('items');
     $(document).ready(function() {
-        $('#example1').DataTable();
+        $('#example1').DataTable({
+            "lengthMenu": [5, 10, 25, 50, 100],
+            "pageLength": 10 
+        });
     });
     $('.icp_demo').iconpicker();
 

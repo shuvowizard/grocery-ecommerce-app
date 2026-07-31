@@ -142,7 +142,7 @@
                                     </div>
 
                                     <div class="col-lg-12 mb-3">
-                                        <button type="submit" class="btn btn-primary w-100">Submit</button>
+                                        <button type="submit" class="btn btn-primary w-100">Save User</button>
                                     </div>
                                 </div>
                             </form>

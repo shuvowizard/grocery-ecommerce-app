@@ -5,7 +5,7 @@
         <div class="section-header justify-content-between">
             <h1>Edit Category</h1>
             <div class="ml-auto">
-                <a href="{{ route('admin.category.index') }}" class="btn btn-primary"><i class="fas fa-users"></i> All
+                <a href="{{ route('admin.category.index') }}" class="btn btn-primary"><i class="fas fa-eye"></i> All
                     Categories</a>
             </div>
         </div>
