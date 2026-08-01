@@ -50,4 +50,53 @@ class AdminProductController extends Controller
 
         return redirect()->route('admin.product.index')->with('success', 'Product created successfully!');
     }
+
+    public function edit(string $id)
+    {
+        $product = Product::findOrFail($id);
+        $categories = Category::orderBy('name', 'asc')->get();
+        return view('admin.product.edit', ['product' => $product, 'categories' => $categories]);
+    }
+
+    public function update(Request $request, string $id)
+    {
+        $product = Product::findOrFail($id);
+
+        # Validate Input
+        $validated = $request->validate([
+            'category_id' => ['required', 'exists:categories,id'],
+            'photo' => ['image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
+            'name' => ['required', 'string', 'max:255', 'unique:products,name,' . $product->id],
+            'short_description' => ['required', 'string', 'max:500'],
+            'description' => ['required', 'string'],
+        ]);
+
+        # Handle Photo Upload
+        if ($request->hasFile('photo')) {
+            # Old photo delete
+            if ($product->photo && file_exists(public_path('uploads/product/' . $product->photo))) {
+                unlink(public_path('uploads/product/' . $product->photo));
+            }
+            $image = $request->file('photo');
+            $imageName = Str::slug($request->name) . '_' . time() . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('uploads/product'), $imageName);
+            $validated['photo'] = $imageName;
+        }
+
+        // Update Product
+        $validated['slug'] = Str::slug($request->name);
+        $product->update($validated);
+
+        return redirect()->route('admin.product.index')->with('success', 'Product updated successfully!');
+    }
+
+    public function destroy(string $id)
+    {
+        $product = Product::findOrFail($id);
+        if ($product->photo && file_exists(public_path('uploads/product/' . $product->photo))) {
+            unlink(public_path('uploads/product/' . $product->photo));
+        }
+        $product->delete();
+        return redirect()->route('admin.product.index')->with('success', 'Product deleted successfully!');
+    }
 }
