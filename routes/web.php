@@ -82,6 +82,12 @@ Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/product/edit/{id}', [AdminProductController::class, 'edit'])->name('product.edit');
     Route::put('/product/update/{id}', [AdminProductController::class, 'update'])->name('product.update');
     Route::delete('/product/delete/{id}', [AdminProductController::class, 'destroy'])->name('product.delete');
+    # Product Variation Management Routes
+    Route::get('/product/variation/{id}', [AdminProductController::class, 'variationIndex'])->name('product.variation');
+    Route::post('/product/variation/{id}', [AdminProductController::class, 'variationStore'])->name('product.variation.store');
+    Route::put('/product/variation/update/{id}', [AdminProductController::class, 'variationUpdate'])->name('product.variation.update');
+    Route::delete('/product/variation/delete/{id}', [AdminProductController::class, 'variationDestroy'])->name('product.variation.delete');
+
 });
 
 Route::prefix('admin')->name('admin.')->group(function () {

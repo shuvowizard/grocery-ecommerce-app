@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\ProductVariation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -98,5 +99,47 @@ class AdminProductController extends Controller
         }
         $product->delete();
         return redirect()->route('admin.product.index')->with('success', 'Product deleted successfully!');
+    }
+
+    public function variationIndex(String $id)
+    {
+        $product = Product::with('variations')->findOrFail($id);
+        return view('admin.product.variations', ['product' => $product]);
+    }
+
+    public function variationStore(Request $request, String $id)
+    {
+        # Validate Input
+        $validated = $request->validate([
+            'label' => ['required', 'string', 'max:255'],
+            'regular_price' => ['required', 'numeric', 'min:0'],
+            'sale_price' => ['required', 'numeric', 'min:0'],
+            'stock' => ['required', 'integer', 'min:0'],
+            'sort_order' => ['required', 'integer', 'min:0'],
+        ]);
+
+        // Create Product Variation
+        $product = Product::findOrFail($id);
+        $product->variations()->create($validated);
+
+        return redirect()->back()->with('success', 'Product variation added successfully!');
+    }
+
+    public function variationUpdate(Request $request, String $id)
+    {
+        # Validate Input
+        $validated = $request->validate([
+            'label' => ['required', 'string', 'max:255'],
+            'regular_price' => ['required', 'numeric', 'min:0'],
+            'sale_price' => ['required', 'numeric', 'min:0'],
+            'stock' => ['required', 'integer', 'min:0'],
+            'sort_order' => ['required', 'integer', 'min:0'],
+        ]);
+
+        // Update Product Variation
+        $variation = ProductVariation::findOrFail($id);
+        $variation->update($validated);
+
+        return redirect()->back()->with('success', 'Product variation updated successfully!');
     }
 }

@@ -36,12 +36,12 @@
                                             <td>{{ $product->slug }}</td>
                                             <td>{{ $product->category->name }}</td>
                                             <td>
-                                                <a href="#" class="btn btn-info btn-md">Variation</a>
+                                                <a href="{{ route('admin.product.variation', $product->id) }}" class="btn btn-info btn-md">Variation</a>
                                             </td>
                                             <td>
                                                 <a href="{{ route('admin.product.edit', $product->id) }}"
                                                     class="btn btn-warning btn-md "><i class="fas fa-edit"></i></a>
-                                                <!-- Delete Button -->
+                                                {{-- Delete Button --}}
                                                 <form action="{{ route('admin.product.delete', $product->id) }}" method="POST"
                                                     class="d-inline"
                                                     onsubmit="return confirm('Are you sure you want to delete this product?');">
