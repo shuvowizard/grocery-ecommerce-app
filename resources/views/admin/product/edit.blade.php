@@ -14,7 +14,8 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
-                            <form action="{{ route('admin.product.update', $product->id) }}" method="post" enctype="multipart/form-data">
+                            <form action="{{ route('admin.product.update', $product->id) }}" method="post"
+                                enctype="multipart/form-data">
                                 @csrf
                                 @method('PUT')
                                 <div class="row">
@@ -24,7 +25,8 @@
                                         <div class="d-flex align-items-center gap-2">
                                             <div class="rounded-circle border d-flex align-items-center justify-content-center overflow-hidden bg-light flex-shrink-0"
                                                 style="width:50px;height:50px;">
-                                                <img id="photo_preview" src="{{ asset('uploads/product/' . $product->photo) }}"
+                                                <img id="photo_preview"
+                                                    src="{{ asset('uploads/product/' . $product->photo) }}"
                                                     alt="Product Photo"
                                                     style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;">
                                             </div>
@@ -77,9 +79,7 @@
                                         <label class="form-label">Short Description <span
                                                 class="text-danger">*</span></label>
                                         <textarea name="short_description"
-                                            class="form-control h_100 @error('short_description') is-invalid @enderror">
-                                                    {{ old('short_description', $product->short_description) }}
-                                                </textarea>
+                                            class="form-control h_100 @error('short_description') is-invalid @enderror">{{ old('short_description', $product->short_description) }}</textarea>
                                         @error('short_description')
                                             <span class="text-danger small">{{ $message }}</span>
                                         @enderror
@@ -89,9 +89,7 @@
                                     <div class="col-lg-12 mb-3">
                                         <label class="form-label">Description <span class="text-danger">*</span></label>
                                         <textarea name="description" rows="4"
-                                            class="form-control editor @error('description') is-invalid @enderror">
-                                                {{ old('description', $product->description) }}
-                                            </textarea>
+                                            class="form-control editor @error('description') is-invalid @enderror">{{ old('description', $product->description) }}</textarea>
                                         @error('description')
                                             <span class="text-danger small">{{ $message }}</span>
                                         @enderror

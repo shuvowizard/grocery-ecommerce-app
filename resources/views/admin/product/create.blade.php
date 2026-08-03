@@ -76,9 +76,7 @@
                                         <label class="form-label">Short Description <span
                                                 class="text-danger">*</span></label>
                                         <textarea name="short_description"
-                                            class="form-control h_100 @error('short_description') is-invalid @enderror">
-                                                {{ old('short_description') }}
-                                            </textarea>
+                                            class="form-control h_100 @error('short_description') is-invalid @enderror">{{ old('short_description') }}</textarea>
                                         @error('short_description')
                                             <span class="text-danger small">{{ $message }}</span>
                                         @enderror
@@ -88,9 +86,7 @@
                                     <div class="col-lg-12 mb-3">
                                         <label class="form-label">Description <span class="text-danger">*</span></label>
                                         <textarea name="description" rows="4"
-                                            class="form-control editor @error('description') is-invalid @enderror">
-                                            {{ old('description') }}
-                                        </textarea>
+                                            class="form-control editor @error('description') is-invalid @enderror">{{ old('description') }}</textarea>
                                         @error('description')
                                             <span class="text-danger small">{{ $message }}</span>
                                         @enderror
