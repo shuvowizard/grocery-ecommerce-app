@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('slug')->nullable()->unique();
             $table->text('short_description')->nullable();
             $table->text('description')->nullable();
+            $table->tinyInteger('status')->default(1)->comment('1=Active, 0=Inactive');
             $table->timestamps();
         });
     }

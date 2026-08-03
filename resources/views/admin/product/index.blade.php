@@ -22,6 +22,7 @@
                                         <th>Name</th>
                                         <th>Slug</th>
                                         <th>Category</th>
+                                        <th>Status</th>
                                         <th>Product Variation</th>
                                         <th>Actions</th>
                                     </tr>
@@ -36,7 +37,15 @@
                                             <td>{{ $product->slug }}</td>
                                             <td>{{ $product->category->name }}</td>
                                             <td>
-                                                <a href="{{ route('admin.product.variation', $product->id) }}" class="btn btn-info btn-md">Variation</a>
+                                                @if ($product->status == 1)
+                                                    <span class="badge bg-success">Active</span>
+                                                @elseif ($product->status == 0)
+                                                    <span class="badge bg-warning">Inactive</span>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                <a href="{{ route('admin.product.variation', $product->id) }}"
+                                                    class="btn btn-info btn-md">Variation</a>
                                             </td>
                                             <td>
                                                 <a href="{{ route('admin.product.edit', $product->id) }}"

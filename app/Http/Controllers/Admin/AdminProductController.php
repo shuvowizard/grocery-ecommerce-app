@@ -70,6 +70,7 @@ class AdminProductController extends Controller
             'name' => ['required', 'string', 'max:255', 'unique:products,name,' . $product->id],
             'short_description' => ['required', 'string', 'max:500'],
             'description' => ['required', 'string'],
+            'status' => ['required', 'in:0,1']
         ]);
 
         # Handle Photo Upload

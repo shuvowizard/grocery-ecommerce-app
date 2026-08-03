@@ -56,7 +56,7 @@
                                     </div>
 
                                     {{-- Category --}}
-                                    <div class="col-lg-6 mb-3">
+                                    <div class="col-lg-3 mb-3">
                                         <label class="form-label">Product Category <span
                                                 class="text-danger">*</span></label>
                                         <select name="category_id"
@@ -70,6 +70,17 @@
                                             @endforeach
                                         </select>
                                         @error('category_id')
+                                            <span class="text-danger small">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+
+                                    <div class="col-lg-3 mb-3">
+                                        <label class="form-label">Status <span class="text-danger">*</span></label>
+                                        <select name="status" class="form-select @error('status') is-invalid @enderror">
+                                            <option value="1" {{ old('status', $product->status) == '1' ? 'selected' : '' }}>Active</option>
+                                            <option value="0" {{ old('status', $product->status) == '0' ? 'selected' : '' }}>Inactive</option>
+                                        </select>
+                                        @error('status')
                                             <span class="text-danger small">{{ $message }}</span>
                                         @enderror
                                     </div>
