@@ -57,9 +57,17 @@ class FrontendController extends Controller
         return view('frontend.pages.products', ['products' => $products]);
     }
 
-    public function product($slug)
+    public function product(string $slug)
     {
-        return view('frontend.pages.product', compact('slug'));
+        $product = Product::where('slug', $slug)->with(['category', 'variations'])->firstOrFail();
+        $relatedProducts = Product::with(['category', 'variations'])
+            ->where('category_id', $product->category_id)
+            ->where('id', '!=', $product->id)
+            ->orderBy('id', 'asc')
+            ->take(4)
+            ->get();
+
+        return view('frontend.pages.product', compact('product', 'relatedProducts'));
     }
 
     public function cart()

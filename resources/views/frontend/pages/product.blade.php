@@ -10,7 +10,7 @@
                 <ol class="breadcrumb mb-0">
                     <li class="breadcrumb-item"><a href="{{ route('home') }}" class="text-success">Home</a></li>
                     <li class="breadcrumb-item"><a href="{{ route('products') }}" class="text-success">Products</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Fresh Green Apples</li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ $product->name }}</li>
                 </ol>
             </nav>
         </div>
@@ -25,7 +25,7 @@
                     <div class="product-images">
                         <!-- Main Image -->
                         <div class="main-image mb-3">
-                            <img src="{{ asset('dist-frontend/images/Green Apple.jpg') }}" alt="Fresh Green Apples"
+                            <img src="{{ asset('uploads/product/' . $product->photo) }}" alt="{{ $product->name }}"
                                 class="rounded shadow-sm w-100 product-single-img">
                         </div>
                     </div>
@@ -35,10 +35,23 @@
                 <div class="col-lg-7">
                     <div class="product-info">
                         <!-- Badge -->
-                        <span class="badge bg-danger mb-2">20% OFF</span>
+                        @php
+                            $firstVariation = $product->variations->first();
+                            $discount = $firstVariation->discount_percentage ?? 0;
+                            $inStock = ($firstVariation->stock ?? 0) > 0;
+                        @endphp
+
+                        <div class="d-flex gap-2 mb-2">
+                            @if($product->is_new)
+                                <span class="badge bg-primary" id="newBadge">New</span>
+                            @endif
+
+                            <span class="badge bg-danger" id="discountBadge" @if(!$inStock || $discount <= 0)
+                            style="display:none;" @endif>-{{ $discount }}% OFF</span>
+                        </div>
 
                         <!-- Product Title -->
-                        <h2 class="fw-bold mb-3">Fresh Green Apples</h2>
+                        <h2 class="fw-bold mb-3">{{ $product->name }}</h2>
 
                         <!-- Rating -->
                         <div class="d-flex align-items-center mb-3">
@@ -53,51 +66,53 @@
                         </div>
 
                         <!-- Price -->
+                        @php
+                            $firstVariation = $product->variations->first();
+                            $hasDiscount = $firstVariation->regular_price > 0;
+                        @endphp
                         <div class="price-section mb-4">
-                            <h3 class="text-success fw-bold d-inline" id="currentPrice">$4.99</h3>
-                            <span class="text-muted text-decoration-line-through fs-5 ms-2" id="originalPrice">$6.99</span>
+                            <h3 class="text-success fw-bold d-inline" id="currentPrice">
+                                ${{ number_format($firstVariation->sale_price, 2) }}
+                            </h3>
+                            <span class="text-muted text-decoration-line-through fs-5 ms-2" id="originalPrice"
+                                @if(!$hasDiscount) style="display:none;"
+                                @endif>${{ number_format($firstVariation->regular_price, 2) }}</span>
                         </div>
 
                         <!-- Short Description -->
                         <p class="text-muted mb-4">
-                            Fresh, crisp, and delicious green apples. Perfect for snacking, salads, or baking.
-                            These apples are handpicked from organic farms and delivered fresh to your doorstep.
+                            {{ $product->short_description }}
                         </p>
 
                         <!-- Availability -->
                         <div class="mb-3">
                             <span class="fw-bold">Availability:</span>
-                            <span class="text-success"><i class="bi bi-check-circle-fill"></i> In Stock</span>
+                            <span class="text-success" id="inStockLabel" style="display:none;"><i
+                                    class="bi bi-check-circle-fill"></i> In Stock</span>
+                            <span class="text-danger" id="outOfStockLabel" style="display:none;"><i
+                                    class="bi bi-x-circle-fill"></i> Out of Stock</span>
                         </div>
 
                         <!-- Category -->
                         <div class="mb-3">
                             <span class="fw-bold">Category:</span>
-                            <a href="{{ route('products') }}" class="text-success text-decoration-none">Fruits &
-                                Vegetables</a>
-                        </div>
-
-                        <!-- Brand -->
-                        <div class="mb-3">
-                            <span class="fw-bold">Brand:</span>
-                            <span class="text-muted">Fresh Harvest</span>
+                            <a href="{{ route('products') }}"
+                                class="text-success text-decoration-none">{{ $product->category->name }}</a>
                         </div>
 
                         <!-- Weight/Size Options -->
                         <div class="mb-4">
                             <label class="fw-bold mb-2">Weight:</label>
                             <div class="btn-group" role="group">
-                                <input type="radio" class="btn-check weight-option" name="weight" id="weight1" value="1"
-                                    data-price="4.99" data-original="6.99" checked>
-                                <label class="btn btn-outline-success" for="weight1">1 kg</label>
-
-                                <input type="radio" class="btn-check weight-option" name="weight" id="weight2" value="2"
-                                    data-price="9.49" data-original="13.49">
-                                <label class="btn btn-outline-success" for="weight2">2 kg</label>
-
-                                <input type="radio" class="btn-check weight-option" name="weight" id="weight3" value="5"
-                                    data-price="22.99" data-original="32.99">
-                                <label class="btn btn-outline-success" for="weight3">5 kg</label>
+                                @foreach ($product->variations as $variation)
+                                    <input type="radio" class="btn-check weight-option" name="weight"
+                                        id="weight{{ $loop->iteration }}" value="1"
+                                        data-price="{{ $variation->sale_price }}"
+                                        data-original="{{ $variation->regular_price }}"
+                                        data-stock="{{ $variation->stock ?? 0 }}"
+                                        data-discount="{{ $variation->discount_percentage }}" {{ $loop->first ? 'checked' : '' }}>
+                                    <label class="btn btn-outline-success" for="weight{{ $loop->iteration }}">{{ $variation->label }}</label>
+                                @endforeach
                             </div>
                         </div>
 
@@ -117,19 +132,19 @@
 
                         <!-- Action Buttons -->
                         <div class="d-flex gap-3 mb-4">
-                            <button class="btn btn-success btn-lg flex-grow-1">
+                            <button class="btn btn-success btn-lg flex-grow-1" id="addToCartBtn">
                                 <i class="bi bi-cart-plus me-2"></i>Add to Cart
                             </button>
-                            <button class="btn btn-outline-success btn-lg">
+                            <button class="btn btn-outline-success btn-lg" id="wishlistBtn">
                                 <i class="bi bi-heart"></i>
                             </button>
-                            <button class="btn btn-outline-success btn-lg">
+                            <button class="btn btn-outline-success btn-lg" id="shareBtn">
                                 <i class="bi bi-share"></i>
                             </button>
                         </div>
 
                         <!-- Buy Now Button -->
-                        <button class="btn btn-dark btn-lg w-100 mb-4">
+                        <button class="btn btn-dark btn-lg w-100 mb-4" id="buyNowBtn">
                             <i class="bi bi-lightning-fill me-2"></i>Buy Now
                         </button>
 
@@ -163,29 +178,7 @@
                     <div class="tab-content border border-top-0 p-4" id="productTabContent">
                         <!-- Description Tab -->
                         <div class="tab-pane fade show active" id="description">
-                            <h5 class="mb-3">Product Description</h5>
-                            <p>
-                                Our Fresh Green Apples are handpicked from the finest organic orchards. These crisp and
-                                juicy apples
-                                are perfect for healthy snacking, adding to salads, or using in your favorite recipes. Each
-                                apple is
-                                carefully selected to ensure the highest quality and freshness.
-                            </p>
-                            <p>
-                                Green apples are known for their slightly tart flavor and firm texture. They're packed with
-                                fiber,
-                                vitamin C, and antioxidants, making them an excellent choice for a healthy lifestyle. Store
-                                them in
-                                a cool place or refrigerate to maintain freshness.
-                            </p>
-                            <h6 class="mt-4 mb-3">Benefits:</h6>
-                            <ul>
-                                <li>Rich in fiber and vitamin C</li>
-                                <li>Low in calories</li>
-                                <li>Supports digestive health</li>
-                                <li>Great for heart health</li>
-                                <li>100% organic and pesticide-free</li>
-                            </ul>
+                            {!! $product->description !!}
                         </div>
 
                         <!-- Additional Info Tab -->
@@ -305,40 +298,51 @@
                     <h3 class="fw-bold mb-4">Related Products</h3>
                     <div class="row g-4">
                         <!-- Related Product 1 -->
-                        <div class="col-lg-3 col-md-6">
-                            <div class="card product-card h-100 border-0 shadow-sm">
-                                <div class="position-relative">
-                                    <a href="{{ route('product', 1) }}">
-                                        <div
-                                            class="product-image bg-light d-flex align-items-center justify-content-center overflow-hidden">
-                                            <img src="{{ asset('dist-frontend/images/Orange.jpg') }}" alt="Fresh Oranges"
-                                                class="img-fluid w-100 h-100">
-                                        </div>
-                                    </a>
-                                    <button class="btn btn-sm btn-success position-absolute bottom-0 end-0 m-2">
-                                        <i class="bi bi-cart-plus"></i>
-                                    </button>
-                                </div>
-                                <div class="card-body">
-                                    <p class="small text-muted mb-1">Fruits</p>
-                                    <h6 class="card-title"><a href="{{ route('product', 1) }}"
-                                            class="text-decoration-none text-dark">Fresh Oranges</a></h6>
-                                    <div class="d-flex align-items-center mb-2">
-                                        <span class="text-warning small">
-                                            <i class="bi bi-star-fill"></i>
-                                            <i class="bi bi-star-fill"></i>
-                                            <i class="bi bi-star-fill"></i>
-                                            <i class="bi bi-star-fill"></i>
-                                            <i class="bi bi-star-half"></i>
-                                        </span>
-                                        <small class="text-muted ms-2">(4.7)</small>
+                        @forelse($relatedProducts as $relatedProduct)
+                            <div class="col-lg-3 col-md-6">
+                                <div class="card product-card h-100 border-0 shadow-sm">
+                                    <div class="position-relative">
+                                        <a href="{{ route('product', $relatedProduct->slug) }}">
+                                            <div
+                                                class="product-image bg-light d-flex align-items-center justify-content-center overflow-hidden">
+                                                <img src="{{ asset('uploads/product/' . $relatedProduct->photo) }}"
+                                                    alt="{{ $relatedProduct->name }}" class="img-fluid w-100 h-100">
+                                            </div>
+                                        </a>
+                                        <button class="btn btn-sm btn-success position-absolute bottom-0 end-0 m-2">
+                                            <i class="bi bi-cart-plus"></i>
+                                        </button>
                                     </div>
-                                    <span class="text-success fw-bold">$6.99</span>
+                                    <div class="card-body">
+                                        <p class="small text-muted mb-1">{{ $relatedProduct->category->name }}</p>
+                                        <h6 class="card-title">
+                                            <a href="{{ route('product', $relatedProduct->slug) }}"
+                                                class="text-decoration-none text-dark">{{ $relatedProduct->name }}
+                                            </a>
+                                        </h6>
+                                        <div class="d-flex align-items-center mb-2">
+                                            <span class="text-warning small">
+                                                <i class="bi bi-star-fill"></i>
+                                                <i class="bi bi-star-fill"></i>
+                                                <i class="bi bi-star-fill"></i>
+                                                <i class="bi bi-star-fill"></i>
+                                                <i class="bi bi-star-half"></i>
+                                            </span>
+                                            <small class="text-muted ms-2">(4.7)</small>
+                                        </div>
+                                        @foreach($relatedProduct->variations as $variation)
+                                            <span
+                                                class="text-success fw-bold fs-5">${{ number_format($variation->sale_price, 2) }}</span>
+                                            <span
+                                                class="text-muted text-decoration-line-through small ms-1">${{ number_format($variation->regular_price, 2) }}</span>
+                                            @break
+                                        @endforeach
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-
-                        <!-- Add more related products -->
+                        @empty
+                            <p class="text-danger">No related products found</p>
+                        @endforelse
                     </div>
                 </div>
             </div>
@@ -351,45 +355,110 @@
         $(document).ready(function () {
             console.log('Script loaded');
 
+            // get sale price and regular price
+            var salePrice = parseFloat('{{ $product->variations->first()->sale_price }}');
+            var regularPrice = parseFloat('{{ $product->variations->first()->regular_price }}');
+
             // Store base unit prices
-            var baseUnitPrice = 4.99;
-            var baseOriginalPrice = 6.99;
+            var baseUnitPrice = salePrice;
+            var baseOriginalPrice = regularPrice;
+
+            // Get initial stock from the first variation
+            var initialStock = parseInt('{{ $product->variations->first()->stock ?? 0 }}');
+
+            // Function to update discount badge based on the selected variation
+            function updateDiscountBadge() {
+                var selectedOption = $('input[name="weight"]:checked');
+                var discount = parseFloat(selectedOption.data('discount') || 0);
+                var stock = parseInt(selectedOption.data('stock') || 0);
+
+                if (stock > 0 && discount > 0) {
+                    $('#discountBadge').text('-' + discount + '% OFF').show();
+                } else {
+                    $('#discountBadge').hide();
+                }
+            }
+
+            // Function to update stock status
+            function updateStockStatus(stock) {
+                if (stock > 0) {
+                    $('#inStockLabel').show();
+                    $('#outOfStockLabel').hide();
+                    $('#addToCartBtn').prop('disabled', false);
+                    updateDiscountBadge();
+                } else {
+                    $('#inStockLabel').hide();
+                    $('#outOfStockLabel').show();
+                    $('#addToCartBtn').prop('disabled', true);
+                    $('#discountBadge').hide();
+                }
+            }
+
+            updateStockStatus(initialStock);
+            
 
             // Function to update total price
             function updateTotalPrice() {
                 var quantity = parseInt($('#quantityInput').val());
+                var currentStock = getCurrentStock();
+
+                if (quantity > currentStock) {
+                    quantity = currentStock;
+                    $('#quantityInput').val(quantity);
+                }
+
                 var totalPrice = baseUnitPrice * quantity;
                 var originalTotal = baseOriginalPrice * quantity;
 
                 $('#currentPrice').text('$' + totalPrice.toFixed(2));
-                $('#originalPrice').text('$' + originalTotal.toFixed(2));
+
+                if (baseOriginalPrice > 0) {
+                    $('#originalPrice').text('$' + originalTotal.toFixed(2)).show();
+                } else {
+                    $('#originalPrice').hide();
+                }
+            }
+
+            // Helper function to get current stock
+            function getCurrentStock() {
+                var selectedOption = $('input[name="weight"]:checked');
+                return parseInt(selectedOption.data('stock') || 0);
             }
 
             // Weight option change handler
             $('input[name="weight"]').on('change', function () {
-                console.log('Weight changed!');
                 baseUnitPrice = parseFloat($(this).data('price'));
                 baseOriginalPrice = parseFloat($(this).data('original'));
 
-                console.log('New Price:', baseUnitPrice);
-                console.log('Original Price:', baseOriginalPrice);
+                var newStock = parseInt($(this).data('stock') || 0);
 
-                // Reset quantity to 1 when weight changes
                 $('#quantityInput').val(1);
 
-                // Update prices
                 $('#currentPrice').text('$' + baseUnitPrice.toFixed(2));
-                $('#originalPrice').text('$' + baseOriginalPrice.toFixed(2));
+
+                if (baseOriginalPrice > 0) {
+                    $('#originalPrice').text('$' + baseOriginalPrice.toFixed(2)).show();
+                } else {
+                    $('#originalPrice').hide();
+                }
+
+                updateStockStatus(newStock);
+                updateTotalPrice();
             });
 
             // Quantity increment/decrement handlers
             $('#incrementBtn').on('click', function () {
                 var input = $('#quantityInput');
                 var currentVal = parseInt(input.val());
-                input.val(currentVal + 1);
-                updateTotalPrice();
+                var currentStock = getCurrentStock();
+
+                if (currentVal < currentStock) {
+                    input.val(currentVal + 1);
+                    updateTotalPrice();
+                }
             });
 
+            // Quantity decrement handler
             $('#decrementBtn').on('click', function () {
                 var input = $('#quantityInput');
                 var currentVal = parseInt(input.val());
@@ -402,8 +471,12 @@
             // Handle manual input change
             $('#quantityInput').on('change', function () {
                 var currentVal = parseInt($(this).val());
+                var currentStock = getCurrentStock();
+
                 if (currentVal < 1 || isNaN(currentVal)) {
                     $(this).val(1);
+                } else if (currentVal > currentStock) {
+                    $(this).val(currentStock);
                 }
                 updateTotalPrice();
             });

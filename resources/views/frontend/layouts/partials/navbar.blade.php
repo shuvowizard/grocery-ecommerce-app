@@ -1,7 +1,7 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
     <div class="container">
         <a class="navbar-brand fw-bold text-success" href="{{ route('home') }}">
-            <img src="{{ ('dist-frontend/images/logo.png') }}" alt="FreshMart" height="40" />
+            <img src="{{ asset('dist-frontend/images/logo.png') }}" alt="FreshMart" height="40" />
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>

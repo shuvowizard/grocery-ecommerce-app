@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Category;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
@@ -24,6 +25,15 @@ class Product extends Model
 
     public function variations()
     {
-        return $this->hasMany(ProductVariation::class)->orderBy('sort_order', 'asc'); ;
+        return $this->hasMany(ProductVariation::class)->orderBy('sort_order', 'asc');
+        ;
     }
+
+    protected function isNew(): Attribute
+    {
+        return Attribute::make(
+            get: fn() => $this->created_at?->diffInDays(now()) <= 7
+        );
+    }
+
 }

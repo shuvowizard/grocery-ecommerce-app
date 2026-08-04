@@ -9,7 +9,7 @@
             @foreach ($products as $product)
                 <div class="col-lg-3 col-md-4 col-sm-6">
                     <div class="card product-card h-100 border-0 shadow-sm">
-                        <a href="product-single.html" class="text-decoration-none text-dark">
+                        <a href="{{ route('product', $product->slug) }}" class="text-decoration-none text-dark">
                             <div class="position-relative">
                                 <div
                                     class="product-image bg-light d-flex align-items-center justify-content-center overflow-hidden">
