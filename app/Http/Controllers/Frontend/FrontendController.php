@@ -53,8 +53,9 @@ class FrontendController extends Controller
 
     public function products()
     {
+        $categories = Category::orderBy('name', 'asc')->get();
         $products = Product::with(['category', 'variations'])->get();
-        return view('frontend.pages.products', ['products' => $products]);
+        return view('frontend.pages.products', compact('categories', 'products'));
     }
 
     public function product(string $slug)

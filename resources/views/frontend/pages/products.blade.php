@@ -31,9 +31,6 @@
                                     All Products
                                 </label>
                             </div>
-                            @php
-                                $categories = \App\Models\Category::orderBy('name', 'asc')->get();
-                            @endphp
                             @foreach($categories as $category)
                                 <div class="form-check mb-2">
                                     <input class="form-check-input" type="radio" name="category" id="cat{{ $category->id }}">
@@ -182,6 +179,12 @@
                     <div class="row g-4">
                         <!-- Product 1 -->
                         @foreach($products as $product)
+                            @php
+                                $variation = $product->variations->first();
+                                $discount = $variation->discount_percentage ?? 0;
+                                $inStock = ($variation->stock ?? 0) > 0;
+                                $hasDiscount = $variation && $variation->regular_price > 0;
+                            @endphp
                             <div class="col-lg-4 col-md-6 col-sm-6">
                                 <div class="card product-card h-100 border-0 shadow-sm">
                                     <div class="position-relative">
@@ -192,7 +195,17 @@
                                                     alt="{{ $product->name }}" class="img-fluid w-100 h-100">
                                             </div>
                                         </a>
-                                        <span class="badge bg-danger position-absolute top-0 end-0 m-2">-20%</span>
+
+                                        <div class="position-absolute top-0 end-0 m-2 d-flex flex-column gap-1 align-items-end">
+                                            @if($product->is_new)
+                                                <span class="badge bg-primary">New</span>
+                                            @endif
+
+                                            @if($inStock && $discount > 0)
+                                                <span class="badge bg-danger">-{{ $discount }}%</span>
+                                            @endif
+                                        </div>
+
                                         <button class="btn btn-sm btn-success position-absolute bottom-0 end-0 m-2">
                                             <i class="bi bi-cart-plus"></i>
                                         </button>
@@ -213,13 +226,14 @@
                                         </div>
                                         <div class="d-flex align-items-center justify-content-between">
                                             <div>
-                                                @foreach($product->variations as $variation)
+                                                @if($variation)
                                                     <span
                                                         class="text-success fw-bold fs-5">${{ number_format($variation->sale_price, 2) }}</span>
-                                                    <span
-                                                        class="text-muted text-decoration-line-through small ms-1">${{ number_format($variation->regular_price, 2) }}</span>
-                                                    @break
-                                                @endforeach
+                                                    @if($hasDiscount)
+                                                        <span
+                                                            class="text-muted text-decoration-line-through small ms-1">${{ number_format($variation->regular_price, 2) }}</span>
+                                                    @endif
+                                                @endif
                                             </div>
                                         </div>
                                     </div>
