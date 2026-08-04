@@ -52,11 +52,11 @@ class FrontendController extends Controller
     }
 
     public function products(Request $request)
-    {        
+    {
         $categories = Category::orderBy('name', 'asc')->get();
-        
+
         $products = Product::with(['category', 'variations'])
-            ->latest()
+            ->withMin('variations', 'sale_price')  # Get the minimum sale price of variations on the product table and alias it as `variations_min_sale_price` 
             ->when($request->filled('category'), function ($query) use ($request) {
                 $query->whereHas('category', function ($query) use ($request) {
                     $query->where('slug', $request->category);
@@ -67,6 +67,19 @@ class FrontendController extends Controller
                     $query->whereBetween('sale_price', [$request->min_price, $request->max_price]);
                 });
             })
+            ->when(
+                $request->filled('sort_by'),
+                function ($query) use ($request) {
+                    match ($request->sort_by) {
+                        'price_asc' => $query->orderBy('variations_min_sale_price'),
+                        'price_desc' => $query->orderByDesc('variations_min_sale_price'),
+                        'name_asc' => $query->orderBy('name'),
+                        'name_desc' => $query->orderByDesc('name'),
+                        default => $query->latest(),
+                    };
+                },
+                fn($query) => $query->latest()  # fallback callback, if no sort_by parameter is provided, default to latest products
+            )
             ->paginate(6);
 
         return view('frontend.pages.products', compact('categories', 'products'));
@@ -75,6 +88,7 @@ class FrontendController extends Controller
     public function product(string $slug)
     {
         $product = Product::where('slug', $slug)->with(['category', 'variations'])->firstOrFail();
+        
         $relatedProducts = Product::with(['category', 'variations'])
             ->where('category_id', $product->category_id)
             ->where('id', '!=', $product->id)

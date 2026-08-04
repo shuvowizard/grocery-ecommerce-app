@@ -49,10 +49,12 @@
                                 <h5 class="fw-bold mb-3">Price Range</h5>
                                 <div class="price d-flex justify-content-start mb-3">
                                     <div class="min mr_5">
-                                        <input type="number" name="min_price" class="form-control" value="{{ request('min_price') }}" min="0" placeholder="Min Price">
+                                        <input type="number" name="min_price" class="form-control"
+                                            value="{{ request('min_price') }}" min="0" placeholder="Min Price">
                                     </div>
                                     <div class="max">
-                                        <input type="number" name="max_price" class="form-control" value="{{ request('max_price') }}" min="0" placeholder="Max Price">
+                                        <input type="number" name="max_price" class="form-control"
+                                            value="{{ request('max_price') }}" min="0" placeholder="Max Price">
                                     </div>
                                 </div>
                             </div>
@@ -128,6 +130,8 @@
                                 </div>
                             </div>
 
+                            <input type="hidden" name="sort_by" id="sortByInput" value="{{ request('sort_by') }}">
+
                             <!-- Reset Filters Button -->
                             <button class="btn btn-outline-success w-100" type="submit">
                                 <i class="bi bi-arrow-clockwise me-2"></i>Apply Filters
@@ -142,17 +146,22 @@
                     <div
                         class="products-toolbar d-flex justify-content-between align-items-center mb-4 p-3 bg-light rounded">
                         <div>
-                            <p class="mb-0 text-muted">Showing <strong>{{ $products->firstItem() }} - {{ $products->lastItem() }}</strong> of <strong> {{ $products->total() }} </strong> results</p>
+                            <p class="mb-0 text-muted">Showing <strong>{{ $products->firstItem() }} -
+                                    {{ $products->lastItem() }}</strong> of <strong> {{ $products->total() }} </strong>
+                                results</p>
                         </div>
                         <div class="d-flex align-items-center">
-                            <label class="me-2 mb-0">Sort by:</label>
-                            <select class="form-select form-select-sm">
-                                <option>Default</option>
-                                <option>Price: Low to High</option>
-                                <option>Price: High to Low</option>
-                                <option>Name: A to Z</option>
-                                <option>Name: Z to A</option>
-                                <option>Rating: High to Low</option>
+                            <label class="me-2 mb-0" style="width:100px;">Sort by:</label>
+                            <select class="form-select form-select-sm" id="sortByDropdown">
+                                <option value="" {{ request('sort_by') == '' ? 'selected' : '' }}>Default</option>
+                                <option value="price_asc" {{ request('sort_by') == 'price_asc' ? 'selected' : '' }}>Price: Low
+                                    to High</option>
+                                <option value="price_desc" {{ request('sort_by') == 'price_desc' ? 'selected' : '' }}>Price:
+                                    High to Low</option>
+                                <option value="name_asc" {{ request('sort_by') == 'name_asc' ? 'selected' : '' }}>Name: A to Z
+                                </option>
+                                <option value="name_desc" {{ request('sort_by') == 'name_desc' ? 'selected' : '' }}>Name: Z to
+                                    A</option>
                             </select>
                         </div>
                     </div>
@@ -231,3 +240,49 @@
         </div>
     </section>
 @endsection
+
+
+@push('scripts')
+    <script>
+        // document.getElementById('sortByDropdown').addEventListener('change', function() {
+        //     const selectedSort = this.value;
+        //     document.getElementById('sortByInput').value = selectedSort;
+        //     document.getElementById('filterForm').submit();
+        // });
+
+        //? submit filter form with disabled empty inputs
+        function submitFilterForm() {
+            $('#filterForm')
+                .find('input, select').each(function () {
+                    if ($(this).val() === '') {
+                        $(this).prop('disabled', true);
+                    } else {
+                        $(this).prop('disabled', false);
+                    }
+                });
+
+            $('input[name="rating"]').prop('disabled', true);
+            $('#filterForm').submit();
+        }
+
+        //? Sort by dropdown
+        $('#sortByDropdown').change(function () {
+            $('#sortByInput').val($(this).val());
+            submitFilterForm();
+        });
+
+        //? Filter by category
+        $('input[name="category"]').on('change', function () {
+            submitFilterForm();
+        });
+
+        //? Filter by price range with debounce
+        let timer;
+        $('input[name="min_price"], input[name="max_price"]').on('input', function () {
+            clearTimeout(timer);
+            timer = setTimeout(function () {
+                submitFilterForm();
+            }, 500);
+        });
+    </script>
+@endpush
