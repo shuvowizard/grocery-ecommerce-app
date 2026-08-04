@@ -21,137 +21,119 @@
             <div class="row">
                 <!-- Sidebar -->
                 <div class="col-lg-3 col-md-4">
-                    <div class="sidebar">
-                        <!-- Categories Filter -->
-                        <div class="filter-widget mb-4">
-                            <h5 class="fw-bold mb-3">Categories</h5>
-                            <div class="form-check mb-2">
-                                <input class="form-check-input" type="radio" name="category" id="catAll" checked>
-                                <label class="form-check-label" for="catAll">
-                                    All Products
-                                </label>
-                            </div>
-                            @foreach($categories as $category)
+                    <form id="filterForm" method="GET" action="{{ route('products') }}">
+                        <div class="sidebar">
+                            <!-- Categories Filter -->
+                            <div class="filter-widget mb-4">
+                                <h5 class="fw-bold mb-3">Categories</h5>
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input" type="radio" name="category" id="cat{{ $category->id }}">
-                                    <label class="form-check-label" for="cat{{ $category->id }}">
-                                        {{ $category->name }}
+                                    <input class="form-check-input" type="radio" name="category" id="catAll" value=""
+                                        checked>
+                                    <label class="form-check-label" for="catAll">
+                                        All Products
                                     </label>
                                 </div>
-                            @endforeach
-                        </div>
+                                @foreach($categories as $category)
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="radio" name="category" id="cat{{ $category->id }}"
+                                            value="{{ $category->slug }}" {{ request('category') == $category->slug ? 'checked' : '' }} >
+                                        <label class="form-check-label" for="cat{{ $category->id }}">
+                                            {{ $category->name }}
+                                        </label>
+                                    </div>
+                                @endforeach
+                            </div>
 
-                        <!-- Price Filter -->
-                        <div class="filter-widget mb-4">
-                            <h5 class="fw-bold mb-3">Price Range</h5>
-                            <div class="form-check mb-2">
-                                <input class="form-check-input" type="radio" name="price" id="priceAll" checked>
-                                <label class="form-check-label" for="priceAll">
-                                    All Prices
-                                </label>
+                            <!-- Price Filter -->
+                            <div class="filter-widget mb-4">
+                                <h5 class="fw-bold mb-3">Price Range</h5>
+                                <div class="price d-flex justify-content-start mb-3">
+                                    <div class="min mr_5">
+                                        <input type="number" name="min_price" class="form-control" value="{{ request('min_price') }}" min="0" placeholder="Min Price">
+                                    </div>
+                                    <div class="max">
+                                        <input type="number" name="max_price" class="form-control" value="{{ request('max_price') }}" min="0" placeholder="Max Price">
+                                    </div>
+                                </div>
                             </div>
-                            <div class="form-check mb-2">
-                                <input class="form-check-input" type="radio" name="price" id="price1">
-                                <label class="form-check-label" for="price1">
-                                    Under $5
-                                </label>
-                            </div>
-                            <div class="form-check mb-2">
-                                <input class="form-check-input" type="radio" name="price" id="price2">
-                                <label class="form-check-label" for="price2">
-                                    $5 - $10
-                                </label>
-                            </div>
-                            <div class="form-check mb-2">
-                                <input class="form-check-input" type="radio" name="price" id="price3">
-                                <label class="form-check-label" for="price3">
-                                    $10 - $20
-                                </label>
-                            </div>
-                            <div class="form-check mb-2">
-                                <input class="form-check-input" type="radio" name="price" id="price4">
-                                <label class="form-check-label" for="price4">
-                                    $20 & Above
-                                </label>
-                            </div>
-                        </div>
 
-                        <!-- Rating Filter -->
-                        <div class="filter-widget mb-4">
-                            <h5 class="fw-bold mb-3">Rating</h5>
-                            <div class="form-check mb-2">
-                                <input class="form-check-input" type="radio" name="rating" id="ratingAll" checked>
-                                <label class="form-check-label" for="ratingAll">
-                                    All Ratings
-                                </label>
+                            <!-- Rating Filter -->
+                            <div class="filter-widget mb-4">
+                                <h5 class="fw-bold mb-3">Rating</h5>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="radio" name="rating" id="ratingAll" checked>
+                                    <label class="form-check-label" for="ratingAll">
+                                        All Ratings
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="radio" name="rating" id="rating5">
+                                    <label class="form-check-label" for="rating5">
+                                        <span class="text-warning">
+                                            <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star-fill"></i>
+                                        </span>
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="radio" name="rating" id="rating4">
+                                    <label class="form-check-label" for="rating4">
+                                        <span class="text-warning">
+                                            <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star"></i>
+                                        </span> & Up
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="radio" name="rating" id="rating3">
+                                    <label class="form-check-label" for="rating3">
+                                        <span class="text-warning">
+                                            <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star"></i>
+                                            <i class="bi bi-star"></i>
+                                        </span> & Up
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="radio" name="rating" id="rating4">
+                                    <label class="form-check-label" for="rating4">
+                                        <span class="text-warning">
+                                            <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star"></i>
+                                            <i class="bi bi-star"></i>
+                                            <i class="bi bi-star"></i>
+                                        </span> & Up
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="radio" name="rating" id="rating5">
+                                    <label class="form-check-label" for="rating5">
+                                        <span class="text-warning">
+                                            <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star"></i>
+                                            <i class="bi bi-star"></i>
+                                            <i class="bi bi-star"></i>
+                                            <i class="bi bi-star"></i>
+                                        </span> & Up
+                                    </label>
+                                </div>
                             </div>
-                            <div class="form-check mb-2">
-                                <input class="form-check-input" type="radio" name="rating" id="rating5">
-                                <label class="form-check-label" for="rating5">
-                                    <span class="text-warning">
-                                        <i class="bi bi-star-fill"></i>
-                                        <i class="bi bi-star-fill"></i>
-                                        <i class="bi bi-star-fill"></i>
-                                        <i class="bi bi-star-fill"></i>
-                                        <i class="bi bi-star-fill"></i>
-                                    </span>
-                                </label>
-                            </div>
-                            <div class="form-check mb-2">
-                                <input class="form-check-input" type="radio" name="rating" id="rating4">
-                                <label class="form-check-label" for="rating4">
-                                    <span class="text-warning">
-                                        <i class="bi bi-star-fill"></i>
-                                        <i class="bi bi-star-fill"></i>
-                                        <i class="bi bi-star-fill"></i>
-                                        <i class="bi bi-star-fill"></i>
-                                        <i class="bi bi-star"></i>
-                                    </span> & Up
-                                </label>
-                            </div>
-                            <div class="form-check mb-2">
-                                <input class="form-check-input" type="radio" name="rating" id="rating3">
-                                <label class="form-check-label" for="rating3">
-                                    <span class="text-warning">
-                                        <i class="bi bi-star-fill"></i>
-                                        <i class="bi bi-star-fill"></i>
-                                        <i class="bi bi-star-fill"></i>
-                                        <i class="bi bi-star"></i>
-                                        <i class="bi bi-star"></i>
-                                    </span> & Up
-                                </label>
-                            </div>
-                            <div class="form-check mb-2">
-                                <input class="form-check-input" type="radio" name="rating" id="rating4">
-                                <label class="form-check-label" for="rating4">
-                                    <span class="text-warning">
-                                        <i class="bi bi-star-fill"></i>
-                                        <i class="bi bi-star-fill"></i>
-                                        <i class="bi bi-star"></i>
-                                        <i class="bi bi-star"></i>
-                                        <i class="bi bi-star"></i>
-                                    </span> & Up
-                                </label>
-                            </div>
-                            <div class="form-check mb-2">
-                                <input class="form-check-input" type="radio" name="rating" id="rating5">
-                                <label class="form-check-label" for="rating5">
-                                    <span class="text-warning">
-                                        <i class="bi bi-star-fill"></i>
-                                        <i class="bi bi-star"></i>
-                                        <i class="bi bi-star"></i>
-                                        <i class="bi bi-star"></i>
-                                        <i class="bi bi-star"></i>
-                                    </span> & Up
-                                </label>
-                            </div>
-                        </div>
 
-                        <!-- Reset Filters Button -->
-                        <button class="btn btn-outline-success w-100">
-                            <i class="bi bi-arrow-clockwise me-2"></i>Reset Filters
-                        </button>
-                    </div>
+                            <!-- Reset Filters Button -->
+                            <button class="btn btn-outline-success w-100" type="submit">
+                                <i class="bi bi-arrow-clockwise me-2"></i>Apply Filters
+                            </button>
+                        </div>
+                    </form>
                 </div>
 
                 <!-- Products Grid -->
@@ -160,7 +142,7 @@
                     <div
                         class="products-toolbar d-flex justify-content-between align-items-center mb-4 p-3 bg-light rounded">
                         <div>
-                            <p class="mb-0 text-muted">Showing <strong>1-12</strong> of <strong>48</strong> results</p>
+                            <p class="mb-0 text-muted">Showing <strong>{{ $products->firstItem() }} - {{ $products->lastItem() }}</strong> of <strong> {{ $products->total() }} </strong> results</p>
                         </div>
                         <div class="d-flex align-items-center">
                             <label class="me-2 mb-0">Sort by:</label>
@@ -240,23 +222,10 @@
                                 </div>
                             </div>
                         @endforeach
+                        <div class="mt-5">
+                            {{ $products->appends(request()->query())->links('pagination::bootstrap-5') }}
+                        </div>
                     </div>
-
-                    <!-- Pagination -->
-                    <nav aria-label="Page navigation" class="mt-5">
-                        <ul class="pagination justify-content-center">
-                            <li class="page-item disabled">
-                                <a class="page-link" href="#" tabindex="-1">Previous</a>
-                            </li>
-                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                            <li class="page-item"><a class="page-link" href="#">2</a></li>
-                            <li class="page-item"><a class="page-link" href="#">3</a></li>
-                            <li class="page-item"><a class="page-link" href="#">4</a></li>
-                            <li class="page-item">
-                                <a class="page-link" href="#">Next</a>
-                            </li>
-                        </ul>
-                    </nav>
                 </div>
             </div>
         </div>

@@ -51,10 +51,24 @@ class FrontendController extends Controller
         return view('frontend.pages.privacy');
     }
 
-    public function products()
-    {
+    public function products(Request $request)
+    {        
         $categories = Category::orderBy('name', 'asc')->get();
-        $products = Product::with(['category', 'variations'])->get();
+        
+        $products = Product::with(['category', 'variations'])
+            ->latest()
+            ->when($request->filled('category'), function ($query) use ($request) {
+                $query->whereHas('category', function ($query) use ($request) {
+                    $query->where('slug', $request->category);
+                });
+            })
+            ->when($request->filled(['min_price', 'max_price']), function ($query) use ($request) {
+                $query->whereHas('variations', function ($query) use ($request) {
+                    $query->whereBetween('sale_price', [$request->min_price, $request->max_price]);
+                });
+            })
+            ->paginate(6);
+
         return view('frontend.pages.products', compact('categories', 'products'));
     }
 

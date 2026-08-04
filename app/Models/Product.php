@@ -26,7 +26,6 @@ class Product extends Model
     public function variations()
     {
         return $this->hasMany(ProductVariation::class)->orderBy('sort_order', 'asc');
-        ;
     }
 
     protected function isNew(): Attribute
