@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\ProductVariation;
 use Illuminate\Http\Request;
 
 class FrontendController extends Controller
@@ -55,16 +56,28 @@ class FrontendController extends Controller
     {
         $categories = Category::orderBy('name', 'asc')->get();
 
-        $products = Product::with(['category', 'variations'])
-            ->withMin('variations', 'sale_price')  # Get the minimum sale price of variations on the product table and alias it as `variations_min_sale_price` 
+        $hasPriceFilter = $request->filled('min_price') || $request->filled('max_price');
+        $min = $request->filled('min_price') ? $request->min_price : 0;
+        $max = $request->filled('max_price') ? $request->max_price : ProductVariation::max('sale_price'); # Get the maximum sale price of all product variations if max_price is not provided
+
+        $products = Product::with(['category'])
+            ->with([
+                'variations' => function ($query) use ($hasPriceFilter, $min, $max) {
+                    if ($hasPriceFilter) {
+                        $query->whereBetween('sale_price', [$min, $max]);
+                    }
+                    $query->orderBy('sale_price', 'asc');
+                }
+            ])
+            ->withMin('variations', 'sale_price') # Get the minimum sale price of variations on the product table and alias it as `variations_min_sale_price` 
             ->when($request->filled('category'), function ($query) use ($request) {
                 $query->whereHas('category', function ($query) use ($request) {
                     $query->where('slug', $request->category);
                 });
             })
-            ->when($request->filled(['min_price', 'max_price']), function ($query) use ($request) {
-                $query->whereHas('variations', function ($query) use ($request) {
-                    $query->whereBetween('sale_price', [$request->min_price, $request->max_price]);
+            ->when($hasPriceFilter, function ($query) use ($min, $max) {
+                $query->whereHas('variations', function ($query) use ($min, $max) {
+                    $query->whereBetween('sale_price', [$min, $max]);
                 });
             })
             ->when(
@@ -78,7 +91,7 @@ class FrontendController extends Controller
                         default => $query->latest(),
                     };
                 },
-                fn($query) => $query->latest()  # fallback callback, if no sort_by parameter is provided, default to latest products
+                fn($query) => $query->latest()  // Fallback callback, to order by latest if no sort_by parameter is provided
             )
             ->paginate(6);
 
