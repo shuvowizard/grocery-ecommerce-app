@@ -112,6 +112,37 @@ class FrontendController extends Controller
         return view('frontend.pages.product', compact('product', 'relatedProducts'));
     }
 
+    public function addToCart(Request $request)
+    {
+        $request->validate([
+            'product_id' => 'required|exists:products,id',
+            'product_variation_id' => 'required|exists:product_variations,id',
+            'quantity' => 'nullable|integer|min:1',
+        ]);
+
+        $quantity = $request->quantity ?? 1;
+
+        $cart = session()->get('cart', []);
+
+        if (isset($cart[$request->product_variation_id])) {
+            $cart[$request->product_variation_id]['quantity'] += $quantity;
+        } else {
+            $cart[$request->product_variation_id] = [
+                'product_id' => $request->product_id,
+                'product_variation_id' => $request->product_variation_id,
+                'quantity' => $quantity,
+            ];
+        }
+
+        session()->put('cart', $cart);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Product added to cart successfully!',
+            'cart_count' => collect($cart)->sum('quantity'),
+        ]);
+    }
+
     public function cart()
     {
         return view('frontend.pages.cart');

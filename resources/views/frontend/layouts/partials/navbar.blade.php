@@ -17,7 +17,7 @@
                     </a>
                     <ul class="dropdown-menu">
                         @php
-                            $categories = \App\Models\Category::orderBy('name', 'asc')->get();
+$categories = \App\Models\Category::orderBy('name', 'asc')->get();
                         @endphp
                         @foreach($categories as $category)
                             <li>
@@ -51,8 +51,8 @@
                 </a>
                 <a href="{{ route('cart') }}" class="btn btn-success position-relative">
                     <i class="bi bi-cart3"></i>
-                    <span class="position-absolute top-0 inset-s-100 translate-middle badge rounded-pill bg-danger">
-                        5
+                    <span id="cartCountBadge" class="position-absolute top-0 inset-s-100 translate-middle badge rounded-pill bg-danger">
+                        {{ session('cart') ? collect(session('cart'))->sum('quantity') : 0 }}
                     </span>
                 </a>
             </div>

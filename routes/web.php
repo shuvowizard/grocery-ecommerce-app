@@ -21,6 +21,7 @@ Route::get('/products', [FrontendController::class, 'products'])->name('products
 Route::get('/product/{slug}', [FrontendController::class, 'product'])->name('product');
 Route::get('/cart', [FrontendController::class, 'cart'])->name('cart');
 Route::get('/checkout', [FrontendController::class, 'checkout'])->name('checkout');
+Route::post('/cart/add', [FrontendController::class, 'addToCart'])->name('cart.add');
 // -------------- End Frontend Route -------------- //
 
 

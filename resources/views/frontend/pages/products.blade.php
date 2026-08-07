@@ -146,9 +146,11 @@
                     <div
                         class="products-toolbar d-flex justify-content-between align-items-center mb-4 p-3 bg-light rounded">
                         <div>
-                            <p class="mb-0 text-muted">Showing <strong>{{ $products->firstItem() }} -
-                                    {{ $products->lastItem() }}</strong> of <strong> {{ $products->total() }} </strong>
-                                results</p>
+                           @if($products->total() > 0)
+                                <p class="mb-0 text-muted">Showing <strong>{{ $products->firstItem() }} - {{ $products->lastItem() }}</strong> of <strong> {{ $products->total() }} </strong>results</p>
+                            @else 
+                                <p class="mb-0 text-muted">No products found</p>
+                            @endif
                         </div>
                         <div class="d-flex align-items-center">
                             <label class="me-2 mb-0" style="width:100px;">Sort by:</label>
@@ -168,7 +170,7 @@
 
                     <!-- Products Grid -->
                     <div class="row g-4">
-                        <!-- Product 1 -->
+                        <!-- Product cart -->
                         @foreach($products as $product)
                             @php
                                 $variation = $product->variations->first();
@@ -197,7 +199,8 @@
                                             @endif
                                         </div>
 
-                                        <button class="btn btn-sm btn-success position-absolute bottom-0 end-0 m-2">
+                                        <button type="button" class="btn btn-sm btn-success position-absolute bottom-0 end-0 m-2 add-to-cart-btn"
+                                            data-product-id="{{ $product->id }}" data-variation-id="{{ $variation->id ?? '' }}" {{ !$variation || !$inStock ? 'disabled' : '' }}>
                                             <i class="bi bi-cart-plus"></i>
                                         </button>
                                     </div>
@@ -284,5 +287,55 @@
                 submitFilterForm();
             }, 500);
         });
+
+        //? Add to cart (async/await)
+        async function addToCart(productId, variationId, quantity = 1) {
+                try {
+                    const response = await axios.post("{{ route('cart.add') }}", {
+                        product_id: productId,
+                        product_variation_id: variationId,
+                        quantity: quantity,
+                    });
+
+                    const data = response.data;
+                    document.getElementById('cartCountBadge').textContent = data.cart_count;
+
+                    iziToast.success({
+                        message: data.message,
+                        position: 'topRight',
+                        timeout: 5000,
+                        progressBarColor: '#00FF00'
+                    });
+                } catch (error) {
+                    const message = error.response?.data?.message || 'Something went wrong. Please try again.';
+                    iziToast.error({
+                        message: message,
+                        position: 'topRight',
+                        timeout: 5000,
+                        progressBarColor: '#FF0000'
+                    });
+                }
+            }
+
+            document.addEventListener('DOMContentLoaded', function () {              
+                document.body.addEventListener('click', function (e) {
+                    const btn = e.target.closest('.add-to-cart-btn');
+                    if (!btn) return;
+
+                    const productId = btn.dataset.productId;
+                    const variationId = btn.dataset.variationId;
+
+                    if (!variationId) {
+                        iziToast.error({
+                            message: 'This product is currently unavailable.',
+                            position: 'topRight',
+                            timeout: 5000,
+                        });
+                        return;
+                    }
+
+                    addToCart(productId, variationId, 1);
+                });
+            });
     </script>
 @endpush
