@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Home') - {{ config('app.name', 'Laravel') }}</title>
     <link rel="icon" type="image/png" href="{{ asset('dist-frontend/images/favicon.png') }}" />
 
@@ -44,6 +45,13 @@
     <!-- Bootstrap Bundle JS -->
     <script src="{{ asset('dist-frontend/js/bootstrap.bundle.min.js') }}"></script>
 
+    <!-- Axios -->
+    <script src="{{ asset('dist-frontend/js/axios.min.js') }}"></script>
+    <script>
+        axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+        axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    </script>
+
     <!-- Custom JS -->
     <script src="{{ asset('dist-frontend/js/script.js') }}"></script>
     <script src="{{ asset('dist-admin/js/iziToast.min.js') }}"></script>
@@ -62,7 +70,7 @@
             })
         </script>
     @endif
-    
+
     @if (session('error'))
         <script>
             iziToast.error({
