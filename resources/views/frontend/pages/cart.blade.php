@@ -37,86 +37,62 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <!-- Cart Item 1 -->
-                                        <tr class="cart-item" data-price="4.00">
-                                            <td class="px-4 py-3">
-                                                <div class="d-flex align-items-center">
-                                                    <img src="{{ asset('dist-frontend/images/Green Apple.jpg') }}"
-                                                        alt="Fresh Green Apples" class="rounded me-3 cart-product-thumb">
-                                                    <div>
-                                                        <h6 class="mb-1">Fresh Green Apples</h6>
-                                                        <small class="text-muted">1 kg</small>
+                                        @php
+                                            $subTotal = 0;
+                                        @endphp
+                                        @foreach ($cart as $item)
+                                            @php
+                                                $variation = $variations->get($item['product_variation_id']);
+                                                $product = $variation?->product;
+                                                $price = $variation?->sale_price ?? 0;
+                                                $total = $price * $item['quantity'];
+                                            @endphp
+                                            <!-- Cart Item -->
+                                            <tr class="cart-item" data-price="{{ $price }}"
+                                                data-quantity="{{ $item['quantity'] }}">
+                                                <td class="px-4 py-3">
+                                                    <div class="d-flex align-items-center">
+                                                        <img src="{{ asset('uploads/product/' . $product->photo) }}"
+                                                            alt="{{ $product->photo }}"
+                                                            class="rounded me-3 cart-product-thumb">
+                                                        <div>
+                                                            <h6 class="mb-1">{{ $product->name }}</h6>
+                                                            <small class="text-muted">{{ $variation->label }}</small>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </td>
-                                            <td class="py-3 align-middle">
-                                                <span class="fw-bold text-success item-price">$4.00</span>
-                                            </td>
-                                            <td class="py-3 align-middle">
-                                                <div class="input-group quantity-input">
-                                                    <button class="btn btn-sm btn-outline-secondary qty-decrease"
-                                                        type="button">
-                                                        <i class="bi bi-dash"></i>
-                                                    </button>
-                                                    <input type="text"
-                                                        class="form-control form-control-sm text-center qty-input"
-                                                        value="1">
-                                                    <button class="btn btn-sm btn-outline-secondary qty-increase"
-                                                        type="button">
-                                                        <i class="bi bi-plus"></i>
-                                                    </button>
-                                                </div>
-                                            </td>
-                                            <td class="py-3 align-middle">
-                                                <span class="fw-bold item-total">$4.00</span>
-                                            </td>
-                                            <td class="py-3 align-middle">
-                                                <button class="btn btn-sm btn-outline-danger">
-                                                    <i class="bi bi-trash"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-
-                                        <!-- Cart Item 2 -->
-                                        <tr class="cart-item" data-price="5.00">
-                                            <td class="px-4 py-3">
-                                                <div class="d-flex align-items-center">
-                                                    <img src="{{ asset('dist-frontend/images/Egg.jpg') }}"
-                                                        alt="Farm Fresh Eggs" class="rounded me-3 cart-product-thumb">
-                                                    <div>
-                                                        <h6 class="mb-1">Farm Fresh Eggs</h6>
-                                                        <small class="text-muted">12 pieces</small>
+                                                </td>
+                                                <td class="py-3 align-middle">
+                                                    <span
+                                                        class="fw-bold text-success item-price">${{ number_format($price, 2) }}</span>
+                                                </td>
+                                                <td class="py-3 align-middle">
+                                                    <div class="input-group quantity-input">
+                                                        <button class="btn btn-sm btn-outline-secondary qty-decrease"
+                                                            type="button">
+                                                            <i class="bi bi-dash"></i>
+                                                        </button>
+                                                        <input type="text"
+                                                            class="form-control form-control-sm text-center qty-input"
+                                                            value="{{ $item['quantity'] }}">
+                                                        <button class="btn btn-sm btn-outline-secondary qty-increase"
+                                                            type="button">
+                                                            <i class="bi bi-plus"></i>
+                                                        </button>
                                                     </div>
-                                                </div>
-                                            </td>
-                                            <td class="py-3 align-middle">
-                                                <span class="fw-bold text-success item-price">$5.00</span>
-                                            </td>
-                                            <td class="py-3 align-middle">
-                                                <div class="input-group quantity-input">
-                                                    <button class="btn btn-sm btn-outline-secondary qty-decrease"
-                                                        type="button">
-                                                        <i class="bi bi-dash"></i>
+                                                </td>
+                                                <td class="py-3 align-middle">
+                                                    <span class="fw-bold item-total">${{ number_format($total, 2) }}</span>
+                                                </td>
+                                                <td class="py-3 align-middle">
+                                                    <button class="btn btn-sm btn-outline-danger">
+                                                        <i class="bi bi-trash"></i>
                                                     </button>
-                                                    <input type="text"
-                                                        class="form-control form-control-sm text-center qty-input"
-                                                        value="2">
-                                                    <button class="btn btn-sm btn-outline-secondary qty-increase"
-                                                        type="button">
-                                                        <i class="bi bi-plus"></i>
-                                                    </button>
-                                                </div>
-                                            </td>
-                                            <td class="py-3 align-middle">
-                                                <span class="fw-bold item-total">$10.00</span>
-                                            </td>
-                                            <td class="py-3 align-middle">
-                                                <button class="btn btn-sm btn-outline-danger">
-                                                    <i class="bi bi-trash"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-
+                                                </td>
+                                            </tr>
+                                            @php
+                                                $subTotal += $total;
+                                            @endphp
+                                        @endforeach
                                     </tbody>
                                 </table>
                             </div>
@@ -142,7 +118,7 @@
 
                             <div class="d-flex justify-content-between mb-3">
                                 <span class="text-muted">Subtotal:</span>
-                                <span class="fw-bold" id="subtotal">$14.00</span>
+                                <span class="fw-bold" id="subtotal">{{ number_format($subTotal, 2) }}</span>
                             </div>
 
                             <div class="d-flex justify-content-between mb-3">
@@ -159,7 +135,8 @@
 
                             <div class="d-flex justify-content-between mb-4">
                                 <span class="fw-bold fs-5">Total:</span>
-                                <span class="fw-bold fs-5 text-success" id="total">$17.00</span>
+                                <span class="fw-bold fs-5 text-success"
+                                    id="total">$200</span>
                             </div>
 
                             <!-- Coupon Code -->
@@ -185,7 +162,7 @@
 
 @push('scripts')
     <script>
-        $(document).ready(function () {
+        $(document).ready(function() {
             // Fixed values
             const discountAmount = 2.00;
             const deliveryFee = 5.00;
@@ -195,7 +172,7 @@
                 let subtotal = 0;
 
                 // Calculate subtotal from all cart items
-                $('.cart-item').each(function () {
+                $('.cart-item').each(function() {
                     let price = parseFloat($(this).data('price'));
                     let quantity = parseInt($(this).find('.qty-input').val());
                     let itemTotal = price * quantity;
@@ -216,7 +193,7 @@
             }
 
             // Quantity increase handler
-            $('.qty-increase').on('click', function () {
+            $('.qty-increase').on('click', function() {
                 let input = $(this).closest('.input-group').find('.qty-input');
                 let currentVal = parseInt(input.val());
                 input.val(currentVal + 1);
@@ -224,7 +201,7 @@
             });
 
             // Quantity decrease handler
-            $('.qty-decrease').on('click', function () {
+            $('.qty-decrease').on('click', function() {
                 let input = $(this).closest('.input-group').find('.qty-input');
                 let currentVal = parseInt(input.val());
                 if (currentVal > 1) {
@@ -234,7 +211,7 @@
             });
 
             // Handle manual quantity input
-            $('.qty-input').on('change', function () {
+            $('.qty-input').on('change', function() {
                 let currentVal = parseInt($(this).val());
                 if (currentVal < 1 || isNaN(currentVal)) {
                     $(this).val(1);

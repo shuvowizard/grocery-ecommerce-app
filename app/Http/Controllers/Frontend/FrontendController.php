@@ -145,7 +145,16 @@ class FrontendController extends Controller
 
     public function cart()
     {
-        return view('frontend.pages.cart');
+        $cart = session()->get('cart', []);
+
+        $variationIds = collect($cart)->pluck('product_variation_id')->unique()->values();
+
+        $variations = ProductVariation::whereIn('id', $variationIds)
+            ->with('product')
+            ->get()
+            ->keyBy('id');
+
+        return view('frontend.pages.cart', compact('cart', 'variations'));
     }
 
     public function checkout()
