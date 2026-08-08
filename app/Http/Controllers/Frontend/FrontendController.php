@@ -101,7 +101,7 @@ class FrontendController extends Controller
     public function product(string $slug)
     {
         $product = Product::where('slug', $slug)->with(['category', 'variations'])->firstOrFail();
-        
+
         $relatedProducts = Product::with(['category', 'variations'])
             ->where('category_id', $product->category_id)
             ->where('id', '!=', $product->id)
@@ -155,6 +155,45 @@ class FrontendController extends Controller
             ->keyBy('id');
 
         return view('frontend.pages.cart', compact('cart', 'variations'));
+    }
+
+    public function cartUpdate(Request $request)
+    {
+        $request->validate([
+            'product_variation_id' => 'required|exists:product_variations,id',
+            'quantity' => 'required|integer',
+        ]);
+
+        $cart = session()->get('cart', []);
+        $variationId = $request->product_variation_id;
+
+        if (!isset($cart[$variationId])) {
+            return response()->json(['status' => false, 'message' => 'Item not found in cart.']);
+        }
+
+        // Quantity never less than 1
+        if ($request->quantity < 1) {
+            return response()->json(['status' => false, 'message' => 'Quantity cannot be less than 1.']);
+        }
+
+        // Quantity never greater than stock
+        $variation = ProductVariation::find($variationId);
+        if ($request->quantity > $variation->stock) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Only ' . $variation->stock . ' items available in stock.',
+            ]);
+        }
+
+        $cart[$variationId]['quantity'] = $request->quantity;
+        session()->put('cart', $cart);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Cart updated successfully!',
+            'item_total' => $variation->sale_price * $request->quantity,
+            'cart_count' => collect($cart)->sum('quantity'),
+        ]);
     }
 
     public function checkout()

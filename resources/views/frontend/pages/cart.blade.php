@@ -48,8 +48,8 @@
                                                 $total = $price * $item['quantity'];
                                             @endphp
                                             <!-- Cart Item -->
-                                            <tr class="cart-item" data-price="{{ $price }}"
-                                                data-quantity="{{ $item['quantity'] }}">
+                                            <tr class="cart-item" data-variation-id="{{ $item['product_variation_id'] }}"
+                                                data-stock="{{ $variation->stock ?? 0 }}" data-price="{{ $price }}">
                                                 <td class="px-4 py-3">
                                                     <div class="d-flex align-items-center">
                                                         <img src="{{ asset('uploads/product/' . $product->photo) }}"
@@ -84,7 +84,7 @@
                                                     <span class="fw-bold item-total">${{ number_format($total, 2) }}</span>
                                                 </td>
                                                 <td class="py-3 align-middle">
-                                                    <button class="btn btn-sm btn-outline-danger">
+                                                    <button class="btn btn-sm btn-outline-danger remove-item-btn">
                                                         <i class="bi bi-trash"></i>
                                                     </button>
                                                 </td>
@@ -135,8 +135,7 @@
 
                             <div class="d-flex justify-content-between mb-4">
                                 <span class="fw-bold fs-5">Total:</span>
-                                <span class="fw-bold fs-5 text-success"
-                                    id="total">$200</span>
+                                <span class="fw-bold fs-5 text-success" id="total">$200</span>
                             </div>
 
                             <!-- Coupon Code -->
@@ -192,22 +191,74 @@
                 $('#total').text('$' + total.toFixed(2));
             }
 
-            // Quantity increase handler
+            // Update cart quantity 
+            async function updateCartQuantity($row, quantity) {
+                const variationId = $row.data('variation-id');
+
+                try {
+                    const {
+                        data
+                    } = await axios.post("{{ route('cart.update') }}", {
+                        product_variation_id: variationId,
+                        quantity: quantity,
+                    });
+
+                    $row.find('.item-total').text('$' + data.item_total.toFixed(2));
+                    document.getElementById('cartCountBadge').textContent = data.cart_count;
+
+                    iziToast.success({
+                        message: data.message,
+                        position: 'topRight',
+                        timeout: 3000,
+                    });
+
+                } catch (error) {
+                    const message = error.response?.data?.message || 'Something went wrong. Please try again.';
+                    iziToast.error({
+                        message: message,
+                        position: 'topRight',
+                        timeout: 3000,
+                    });
+                }
+            }
+
+            // Increase quantity handler
             $('.qty-increase').on('click', function() {
-                let input = $(this).closest('.input-group').find('.qty-input');
+                const $row = $(this).closest('.cart-item');
+                const input = $row.find('.qty-input');
+                const stock = parseInt($row.data('stock'));
                 let currentVal = parseInt(input.val());
+
+                if (currentVal >= stock) {
+                    iziToast.warning({
+                        message: 'Cannot add more than available stock.',
+                        position: 'topRight',
+                        timeout: 3000,
+                    });
+                    return;
+                }
+
                 input.val(currentVal + 1);
-                updateCartTotals();
+                updateCartQuantity($row, currentVal + 1);
             });
 
-            // Quantity decrease handler
+            // Decrease quantity handler
             $('.qty-decrease').on('click', function() {
-                let input = $(this).closest('.input-group').find('.qty-input');
+                const $row = $(this).closest('.cart-item');
+                const input = $row.find('.qty-input');
                 let currentVal = parseInt(input.val());
-                if (currentVal > 1) {
-                    input.val(currentVal - 1);
-                    updateCartTotals();
+
+                if (currentVal <= 1) {
+                    iziToast.warning({
+                        message: 'Quantity cannot be less than 1.',
+                        position: 'topRight',
+                        timeout: 3000,
+                    });
+                    return;
                 }
+
+                input.val(currentVal - 1);
+                updateCartQuantity($row, currentVal - 1);
             });
 
             // Handle manual quantity input

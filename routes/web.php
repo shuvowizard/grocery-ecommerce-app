@@ -19,9 +19,10 @@ Route::get('/terms', [FrontendController::class, 'terms'])->name('terms');
 Route::get('/privacy', [FrontendController::class, 'privacy'])->name('privacy');
 Route::get('/products', [FrontendController::class, 'products'])->name('products');
 Route::get('/product/{slug}', [FrontendController::class, 'product'])->name('product');
-Route::get('/cart', [FrontendController::class, 'cart'])->name('cart');
-Route::get('/checkout', [FrontendController::class, 'checkout'])->name('checkout');
 Route::post('/cart/add', [FrontendController::class, 'addToCart'])->name('cart.add');
+Route::get('/cart', [FrontendController::class, 'cart'])->name('cart');
+Route::post('/cart/update', [FrontendController::class, 'cartUpdate'])->name('cart.update');
+Route::get('/checkout', [FrontendController::class, 'checkout'])->name('checkout');
 // -------------- End Frontend Route -------------- //
 
 
