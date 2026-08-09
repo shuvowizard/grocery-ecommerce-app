@@ -188,11 +188,61 @@ class FrontendController extends Controller
         $cart[$variationId]['quantity'] = $request->quantity;
         session()->put('cart', $cart);
 
+        // Subtotal calculation
+        $subtotal = 0;
+        foreach ($cart as $item) {
+            $v = ProductVariation::find($item['product_variation_id']);
+            $subtotal += ($v->sale_price ?? 0) * $item['quantity'];
+        }
+
         return response()->json([
             'status' => true,
             'message' => 'Cart updated successfully!',
+            'subtotal' => $subtotal,
             'item_total' => $variation->sale_price * $request->quantity,
             'cart_count' => collect($cart)->sum('quantity'),
+        ]);
+    }
+
+    public function cartItemRemove(Request $request)
+    {
+        $request->validate([
+            'product_variation_id' => 'required|exists:product_variations,id',
+        ]);
+
+        $cart = session()->get('cart', []);
+        $variationId = $request->product_variation_id;
+
+        if (!isset($cart[$variationId])) {
+            return response()->json(['status' => false, 'message' => 'Item not found in cart.']);
+        }
+
+        unset($cart[$variationId]);
+        session()->put('cart', $cart);
+
+        // Subtotal calculation
+        $subtotal = 0;
+        foreach ($cart as $item) {
+            $v = ProductVariation::find($item['product_variation_id']);
+            $subtotal += ($v->sale_price ?? 0) * $item['quantity'];
+        }
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Item removed from cart.',
+            'subtotal' => $subtotal,
+            'cart_count' => collect($cart)->sum('quantity'),
+        ]);
+    }
+
+    public function cartClear(Request $request)
+    {
+        session()->forget('cart');
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Cart cleared successfully!',
+            'cart_count' => 0,
         ]);
     }
 

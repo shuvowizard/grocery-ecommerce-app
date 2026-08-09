@@ -17,9 +17,9 @@
                     </a>
                     <ul class="dropdown-menu">
                         @php
-$categories = \App\Models\Category::orderBy('name', 'asc')->get();
+                            $categories = \App\Models\Category::orderBy('name', 'asc')->get();
                         @endphp
-                        @foreach($categories as $category)
+                        @foreach ($categories as $category)
                             <li>
                                 <a class="dropdown-item" href="{{ route('products') }}">{{ $category->name }}</a>
                             </li>
@@ -51,9 +51,12 @@ $categories = \App\Models\Category::orderBy('name', 'asc')->get();
                 </a>
                 <a href="{{ route('cart') }}" class="btn btn-success position-relative">
                     <i class="bi bi-cart3"></i>
-                    <span id="cartCountBadge" class="position-absolute top-0 inset-s-100 translate-middle badge rounded-pill bg-danger">
-                        {{ session('cart') ? collect(session('cart'))->sum('quantity') : 0 }}
-                    </span>
+                    @if (session()->has('cart'))
+                        <span id="cartCountBadge"
+                            class="position-absolute top-0 inset-s-100 translate-middle badge rounded-pill bg-danger">
+                            {{ session('cart') ? collect(session('cart'))->sum('quantity') : 0 }}
+                        </span>
+                    @endif
                 </a>
             </div>
         </div>

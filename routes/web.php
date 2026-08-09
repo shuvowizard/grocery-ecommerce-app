@@ -22,6 +22,8 @@ Route::get('/product/{slug}', [FrontendController::class, 'product'])->name('pro
 Route::post('/cart/add', [FrontendController::class, 'addToCart'])->name('cart.add');
 Route::get('/cart', [FrontendController::class, 'cart'])->name('cart');
 Route::post('/cart/update', [FrontendController::class, 'cartUpdate'])->name('cart.update');
+Route::post('/cart/remove', [FrontendController::class, 'cartItemRemove'])->name('cart.remove');
+Route::post('/cart/clear', [FrontendController::class, 'cartClear'])->name('cart.clear');
 Route::get('/checkout', [FrontendController::class, 'checkout'])->name('checkout');
 // -------------- End Frontend Route -------------- //
 

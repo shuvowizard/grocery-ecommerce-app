@@ -20,141 +20,151 @@
         <div class="container">
             <h2 class="fw-bold mb-4">Shopping Cart</h2>
 
-            <div class="row g-4">
-                <!-- Cart Items -->
-                <div class="col-lg-8">
-                    <div class="card border-0 shadow-sm">
-                        <div class="card-body p-0">
-                            <div class="table-responsive">
-                                <table class="table table-hover mb-0">
-                                    <thead class="bg-light">
-                                        <tr>
-                                            <th scope="col" class="px-4 py-3">Product</th>
-                                            <th scope="col" class="py-3">Price</th>
-                                            <th scope="col" class="py-3">Quantity</th>
-                                            <th scope="col" class="py-3">Total</th>
-                                            <th scope="col" class="py-3">Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @php
-                                            $subTotal = 0;
-                                        @endphp
-                                        @foreach ($cart as $item)
-                                            @php
-                                                $variation = $variations->get($item['product_variation_id']);
-                                                $product = $variation?->product;
-                                                $price = $variation?->sale_price ?? 0;
-                                                $total = $price * $item['quantity'];
-                                            @endphp
-                                            <!-- Cart Item -->
-                                            <tr class="cart-item" data-variation-id="{{ $item['product_variation_id'] }}"
-                                                data-stock="{{ $variation->stock ?? 0 }}" data-price="{{ $price }}">
-                                                <td class="px-4 py-3">
-                                                    <div class="d-flex align-items-center">
-                                                        <img src="{{ asset('uploads/product/' . $product->photo) }}"
-                                                            alt="{{ $product->photo }}"
-                                                            class="rounded me-3 cart-product-thumb">
-                                                        <div>
-                                                            <h6 class="mb-1">{{ $product->name }}</h6>
-                                                            <small class="text-muted">{{ $variation->label }}</small>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td class="py-3 align-middle">
-                                                    <span
-                                                        class="fw-bold text-success item-price">${{ number_format($price, 2) }}</span>
-                                                </td>
-                                                <td class="py-3 align-middle">
-                                                    <div class="input-group quantity-input">
-                                                        <button class="btn btn-sm btn-outline-secondary qty-decrease"
-                                                            type="button">
-                                                            <i class="bi bi-dash"></i>
-                                                        </button>
-                                                        <input type="text"
-                                                            class="form-control form-control-sm text-center qty-input"
-                                                            value="{{ $item['quantity'] }}">
-                                                        <button class="btn btn-sm btn-outline-secondary qty-increase"
-                                                            type="button">
-                                                            <i class="bi bi-plus"></i>
-                                                        </button>
-                                                    </div>
-                                                </td>
-                                                <td class="py-3 align-middle">
-                                                    <span class="fw-bold item-total">${{ number_format($total, 2) }}</span>
-                                                </td>
-                                                <td class="py-3 align-middle">
-                                                    <button class="btn btn-sm btn-outline-danger remove-item-btn">
-                                                        <i class="bi bi-trash"></i>
-                                                    </button>
-                                                </td>
+            @if (session()->has('cart') && count(session()->get('cart')) > 0)
+                <div class="row g-4">
+                    <!-- Cart Items -->
+                    <div class="col-lg-8">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-hover mb-0">
+                                        <thead class="bg-light">
+                                            <tr>
+                                                <th scope="col" class="px-4 py-3">Product</th>
+                                                <th scope="col" class="py-3">Price</th>
+                                                <th scope="col" class="py-3">Quantity</th>
+                                                <th scope="col" class="py-3">Total</th>
+                                                <th scope="col" class="py-3">Action</th>
                                             </tr>
+                                        </thead>
+                                        <tbody>
                                             @php
-                                                $subTotal += $total;
+                                                $subTotal = 0;
                                             @endphp
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Action Buttons -->
-                    <div class="d-flex justify-content-between mt-4">
-                        <a href="{{ route('products') }}" class="btn btn-outline-success">
-                            <i class="bi bi-arrow-left me-2"></i>Continue Shopping
-                        </a>
-                        <button class="btn btn-outline-danger">
-                            <i class="bi bi-trash me-2"></i>Clear Cart
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Order Summary -->
-                <div class="col-lg-4">
-                    <div class="card border-0 shadow-sm">
-                        <div class="card-body">
-                            <h5 class="fw-bold mb-4">Order Summary</h5>
-
-                            <div class="d-flex justify-content-between mb-3">
-                                <span class="text-muted">Subtotal:</span>
-                                <span class="fw-bold" id="subtotal">{{ number_format($subTotal, 2) }}</span>
-                            </div>
-
-                            <div class="d-flex justify-content-between mb-3">
-                                <span class="text-muted">Discount:</span>
-                                <span class="text-success fw-bold" id="discount">-$2.00</span>
-                            </div>
-
-                            <div class="d-flex justify-content-between mb-3">
-                                <span class="text-muted">Delivery Fee:</span>
-                                <span class="fw-bold" id="delivery">$5.00</span>
-                            </div>
-
-                            <hr>
-
-                            <div class="d-flex justify-content-between mb-4">
-                                <span class="fw-bold fs-5">Total:</span>
-                                <span class="fw-bold fs-5 text-success" id="total">$200</span>
-                            </div>
-
-                            <!-- Coupon Code -->
-                            <div class="mb-4">
-                                <label class="form-label fw-bold">Have a Coupon?</label>
-                                <div class="input-group">
-                                    <input type="text" class="form-control" placeholder="Enter coupon code">
-                                    <button class="btn btn-outline-success" type="button">Apply</button>
+                                            @foreach ($cart as $item)
+                                                @php
+                                                    $variation = $variations->get($item['product_variation_id']);
+                                                    $product = $variation?->product;
+                                                    $price = $variation?->sale_price ?? 0;
+                                                    $total = $price * $item['quantity'];
+                                                @endphp
+                                                <!-- Cart Item -->
+                                                <tr class="cart-item"
+                                                    data-variation-id="{{ $item['product_variation_id'] }}"
+                                                    data-stock="{{ $variation->stock ?? 0 }}"
+                                                    data-price="{{ $price }}">
+                                                    <td class="px-4 py-3">
+                                                        <div class="d-flex align-items-center">
+                                                            <img src="{{ asset('uploads/product/' . $product->photo) }}"
+                                                                alt="{{ $product->photo }}"
+                                                                class="rounded me-3 cart-product-thumb">
+                                                            <div>
+                                                                <h6 class="mb-1">{{ $product->name }}</h6>
+                                                                <small class="text-muted">{{ $variation->label }}</small>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td class="py-3 align-middle">
+                                                        <span
+                                                            class="fw-bold text-success item-price">${{ number_format($price, 2) }}</span>
+                                                    </td>
+                                                    <td class="py-3 align-middle">
+                                                        <div class="input-group quantity-input">
+                                                            <button class="btn btn-sm btn-outline-secondary qty-decrease"
+                                                                type="button">
+                                                                <i class="bi bi-dash"></i>
+                                                            </button>
+                                                            <input type="text"
+                                                                class="form-control form-control-sm text-center qty-input"
+                                                                value="{{ $item['quantity'] }}">
+                                                            <button class="btn btn-sm btn-outline-secondary qty-increase"
+                                                                type="button">
+                                                                <i class="bi bi-plus"></i>
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                    <td class="py-3 align-middle">
+                                                        <span
+                                                            class="fw-bold item-total">${{ number_format($total, 2) }}</span>
+                                                    </td>
+                                                    <td class="py-3 align-middle">
+                                                        <button class="btn btn-sm btn-outline-danger remove-item-btn">
+                                                            <i class="bi bi-trash"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                @php
+                                                    $subTotal += $total;
+                                                @endphp
+                                            @endforeach
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
+                        </div>
 
-                            <!-- Proceed to Checkout -->
-                            <a href="{{ route('checkout') }}" class="btn btn-success w-100 mb-3">
-                                <i class="bi bi-lock me-2"></i>Proceed to Checkout
+                        <!-- Action Buttons -->
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="{{ route('products') }}" class="btn btn-outline-success">
+                                <i class="bi bi-arrow-left me-2"></i>Continue Shopping
                             </a>
+                            <button class="btn btn-outline-danger" id="clearCartBtn">
+                                <i class="bi bi-trash me-2"></i>Clear Cart
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Order Summary -->
+                    <div class="col-lg-4">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-body">
+                                <h5 class="fw-bold mb-4">Order Summary</h5>
+
+                                <div class="d-flex justify-content-between mb-3">
+                                    <span class="text-muted">Subtotal:</span>
+                                    <span class="fw-bold" id="subtotal">${{ number_format($subTotal, 2) }}</span>
+                                </div>
+
+                                <div class="d-flex justify-content-between mb-3">
+                                    <span class="text-muted">Discount:</span>
+                                    <span class="text-success fw-bold" id="discount">-$2.00</span>
+                                </div>
+
+                                <div class="d-flex justify-content-between mb-3">
+                                    <span class="text-muted">Delivery Fee:</span>
+                                    <span class="fw-bold" id="delivery">$5.00</span>
+                                </div>
+
+                                <hr>
+
+                                <div class="d-flex justify-content-between mb-4">
+                                    <span class="fw-bold fs-5">Total:</span>
+                                    <span class="fw-bold fs-5 text-success" id="total">$200</span>
+                                </div>
+
+                                <!-- Coupon Code -->
+                                <div class="mb-4">
+                                    <label class="form-label fw-bold">Have a Coupon?</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" placeholder="Enter coupon code">
+                                        <button class="btn btn-outline-success" type="button">Apply</button>
+                                    </div>
+                                </div>
+
+                                <!-- Proceed to Checkout -->
+                                <a href="{{ route('checkout') }}" class="btn btn-success w-100 mb-3">
+                                    <i class="bi bi-lock me-2"></i>Proceed to Checkout
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            @else
+                <div class="col-lg-12">
+                    <p class="text-danger">Your cart is empty. <a href="{{ route('products') }}"
+                            class="text-success" style="text-decoration: none;">Continue Shopping...</a></p>
+                </div>
+            @endif
         </div>
     </section>
 @endsection
@@ -205,6 +215,11 @@
 
                     $row.find('.item-total').text('$' + data.item_total.toFixed(2));
                     document.getElementById('cartCountBadge').textContent = data.cart_count;
+
+                    // subtotal + total update
+                    $('#subtotal').text('$' + data.subtotal.toFixed(2));
+                    let total = data.subtotal - discountAmount + deliveryFee;
+                    $('#total').text('$' + total.toFixed(2));
 
                     iziToast.success({
                         message: data.message,
@@ -268,6 +283,70 @@
                     $(this).val(1);
                 }
                 updateCartTotals();
+            });
+
+            // Remove single item from cart
+            $(document).on('click', '.remove-item-btn', async function() {
+                const $row = $(this).closest('.cart-item');
+                const variationId = $row.data('variation-id');
+
+                try {
+                    const {
+                        data
+                    } = await axios.post("{{ route('cart.remove') }}", {
+                        product_variation_id: variationId,
+                    });
+
+                    $row.remove();
+                    document.getElementById('cartCountBadge').textContent = data.cart_count;
+
+                    // subtotal + total update
+                    $('#subtotal').text('$' + data.subtotal.toFixed(2));
+                    let total = data.subtotal - discountAmount + deliveryFee;
+                    $('#total').text('$' + total.toFixed(2));
+
+                    iziToast.success({
+                        message: data.message,
+                        position: 'topRight',
+                        timeout: 3000,
+                    });
+
+                    if (data.cart_count === 0) {
+                        location.reload(); // Reload the page if the cart is empty
+                    }
+                } catch (error) {
+                    const message = error.response?.data?.message || 'Something went wrong.';
+                    iziToast.error({
+                        message: message,
+                        position: 'topRight',
+                        timeout: 3000,
+                    });
+                }
+            });
+
+            // Clear entire cart
+            $('#clearCartBtn').on('click', async function() {
+                try {
+                    const {
+                        data
+                    } = await axios.post("{{ route('cart.clear') }}");
+
+                    document.getElementById('cartCountBadge').textContent = data.cart_count;
+
+                    iziToast.success({
+                        message: data.message,
+                        position: 'topRight',
+                        timeout: 3000,
+                    });
+
+                    location.reload(); // Reload the page after clearing the cart
+                } catch (error) {
+                    iziToast.error({
+                        message: 'Something went wrong.',
+                        position: 'topRight',
+                        timeout: 3000,
+                    });
+                }
             });
         });
     </script>
