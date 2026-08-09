@@ -49,14 +49,16 @@
                 <a href="{{ route('wishlist') }}" class="btn btn-outline-success position-relative me-2">
                     <i class="bi bi-heart"></i>
                 </a>
+                @php
+                    $cartCount = session('cart') ? collect(session('cart'))->sum('quantity') : 0;
+                @endphp
+
                 <a href="{{ route('cart') }}" class="btn btn-success position-relative">
                     <i class="bi bi-cart3"></i>
-                    @if (session()->has('cart'))
-                        <span id="cartCountBadge"
-                            class="position-absolute top-0 inset-s-100 translate-middle badge rounded-pill bg-danger">
-                            {{ session('cart') ? collect(session('cart'))->sum('quantity') : 0 }}
-                        </span>
-                    @endif
+                    <span id="cartCountBadge"
+                        class="position-absolute top-0 inset-s-100 translate-middle badge rounded-pill bg-danger {{ $cartCount == 0 ? 'd-none' : '' }}">
+                        {{ $cartCount }}
+                    </span>
                 </a>
             </div>
         </div>
