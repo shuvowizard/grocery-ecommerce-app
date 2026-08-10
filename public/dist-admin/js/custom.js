@@ -9,7 +9,7 @@
     });
     $('.icp_demo').iconpicker();
 
-    $('#datepicker').datepicker({
+    const dateOptions = {
         dateFormat: 'yyyy-mm-dd',
         language: {
             today: 'Today',
@@ -19,7 +19,11 @@
             months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
             monthsShort: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
         }
-    });
+    };
+
+    $('#datepicker').datepicker(dateOptions);
+    $('#datepicker2').datepicker(dateOptions);
+
     $('#timepicker').datepicker({
         language: 'en',
         timepicker: true,

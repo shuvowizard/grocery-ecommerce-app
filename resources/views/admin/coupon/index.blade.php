@@ -35,9 +35,15 @@
                                             <td>{{ $loop->iteration }}</td>                                            
                                             <td>{{ $coupon->code }}</td>
                                             <td>{{ $coupon->discount_type }}</td>
-                                            <td>{{ $coupon->discount_value }}</td>
-                                            <td>{{ $coupon->starts_at }}</td>
-                                            <td>{{ $coupon->expires_at }}</td>
+                                            <td>
+                                                @if($coupon->discount_type == 'fixed')
+                                                    {{ $coupon->discount_value }}$
+                                                @else
+                                                    {{ $coupon->discount_value }}%
+                                                @endif
+                                            </td>
+                                            <td>{{ $coupon->starts_at->format('Y-m-d') }}</td>
+                                            <td>{{ $coupon->expires_at->format('Y-m-d') }}</td>
                                             <td>{{ $coupon->usage_limit }}</td>
                                             <td>{{ $coupon->used_count }}</td>
                                             <td>
