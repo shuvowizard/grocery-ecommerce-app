@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AdminCategoryController;
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\AdminCouponCodeController;
 use App\Http\Controllers\Admin\AdminProductController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Frontend\FrontendController;
@@ -91,6 +92,13 @@ Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
     Route::post('/product/variation/{id}', [AdminProductController::class, 'variationStore'])->name('product.variation.store');
     Route::put('/product/variation/update/{id}', [AdminProductController::class, 'variationUpdate'])->name('product.variation.update');
     Route::delete('/product/variation/delete/{id}', [AdminProductController::class, 'variationDestroy'])->name('product.variation.delete');
+    # For Admin Coupon Code Management Routes
+    Route::get('/coupon/index', [AdminCouponCodeController::class, 'index'])->name('coupon.index');
+    Route::get('/coupon/create', [AdminCouponCodeController::class, 'create'])->name('coupon.create');
+    Route::post('/coupon/store', [AdminCouponCodeController::class, 'store'])->name('coupon.store');
+    Route::get('/coupon/edit/{id}', [AdminCouponCodeController::class, 'edit'])->name('coupon.edit');
+    Route::put('/coupon/update/{id}', [AdminCouponCodeController::class, 'update'])->name('coupon.update');
+    Route::delete('/coupon/delete/{id}', [AdminCouponCodeController::class, 'destroy'])->name('coupon.delete');
 
 });
 
