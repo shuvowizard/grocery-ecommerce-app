@@ -120,13 +120,39 @@ class FrontendController extends Controller
             'quantity' => 'nullable|integer|min:1',
         ]);
 
+        $variation = ProductVariation::findOrFail($request->product_variation_id);
+        if ($variation->stock == 0) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Product is out of stock.',
+            ], 422);
+        }
+
         $quantity = $request->quantity ?? 1;
 
         $cart = session()->get('cart', []);
 
         if (isset($cart[$request->product_variation_id])) {
-            $cart[$request->product_variation_id]['quantity'] += $quantity;
+            $newQuantity = $cart[$request->product_variation_id]['quantity'] + $quantity;
+
+            // Stock Check after adding new Quantity
+            if ($newQuantity > $variation->stock) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'No more stock available for this product.',
+                ], 422);
+            }
+
+            $cart[$request->product_variation_id]['quantity'] = $newQuantity;
         } else {
+            // Stock Check after adding new Variation Item
+            if ($quantity > $variation->stock) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'No more stock available for this product.',
+                ], 422);
+            }
+
             $cart[$request->product_variation_id] = [
                 'product_id' => $request->product_id,
                 'product_variation_id' => $request->product_variation_id,
@@ -161,19 +187,19 @@ class FrontendController extends Controller
     {
         $request->validate([
             'product_variation_id' => 'required|exists:product_variations,id',
-            'quantity' => 'required|integer',
+            'quantity' => 'nullable|integer|min:1',
         ]);
 
         $cart = session()->get('cart', []);
         $variationId = $request->product_variation_id;
 
         if (!isset($cart[$variationId])) {
-            return response()->json(['status' => false, 'message' => 'Item not found in cart.']);
+            return response()->json(['status' => false, 'message' => 'Item not found in cart.'], 404);
         }
 
         // Quantity never less than 1
         if ($request->quantity < 1) {
-            return response()->json(['status' => false, 'message' => 'Quantity cannot be less than 1.']);
+            return response()->json(['status' => false, 'message' => 'Quantity cannot be less than 1.'], 422);
         }
 
         // Quantity never greater than stock
@@ -182,7 +208,7 @@ class FrontendController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => 'Only ' . $variation->stock . ' items available in stock.',
-            ]);
+            ], 422);
         }
 
         $cart[$variationId]['quantity'] = $request->quantity;
@@ -214,7 +240,7 @@ class FrontendController extends Controller
         $variationId = $request->product_variation_id;
 
         if (!isset($cart[$variationId])) {
-            return response()->json(['status' => false, 'message' => 'Item not found in cart.']);
+            return response()->json(['status' => false, 'message' => 'Item not found in cart.'], 404);
         }
 
         unset($cart[$variationId]);

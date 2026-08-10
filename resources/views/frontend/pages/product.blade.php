@@ -36,18 +36,19 @@
                     <div class="product-info">
                         <!-- Badge -->
                         @php
-                            $firstVariation = $product->variations->first();
-                            $discount = $firstVariation->discount_percentage ?? 0;
-                            $inStock = ($firstVariation->stock ?? 0) > 0;
+$firstVariation = $product->variations->first();
+$discount = $firstVariation->discount_percentage ?? 0;
+$inStock = ($firstVariation->stock ?? 0) > 0;
                         @endphp
 
                         <div class="d-flex gap-2 mb-2">
-                            @if($product->is_new)
+                            @if ($product->is_new)
                                 <span class="badge bg-primary" id="newBadge">New</span>
                             @endif
 
-                            <span class="badge bg-danger" id="discountBadge" @if(!$inStock || $discount <= 0)
-                            style="display:none;" @endif>-{{ $discount }}% OFF</span>
+                            <span class="badge bg-danger" id="discountBadge"
+                                @if (!$inStock || $discount <= 0) style="display:none;" @endif>-{{ $discount }}%
+                                OFF</span>
                         </div>
 
                         <!-- Product Title -->
@@ -67,16 +68,15 @@
 
                         <!-- Price -->
                         @php
-                            $firstVariation = $product->variations->first();
-                            $hasDiscount = $firstVariation->regular_price > 0;
+$firstVariation = $product->variations->first();
+$hasDiscount = $firstVariation->regular_price > 0;
                         @endphp
                         <div class="price-section mb-4">
                             <h3 class="text-success fw-bold d-inline" id="currentPrice">
                                 ${{ number_format($firstVariation->sale_price, 2) }}
                             </h3>
                             <span class="text-muted text-decoration-line-through fs-5 ms-2" id="originalPrice"
-                                @if(!$hasDiscount) style="display:none;"
-                                @endif>${{ number_format($firstVariation->regular_price, 2) }}</span>
+                                @if (!$hasDiscount) style="display:none;" @endif>${{ number_format($firstVariation->regular_price, 2) }}</span>
                         </div>
 
                         <!-- Short Description -->
@@ -107,12 +107,13 @@
                                 @foreach ($product->variations as $variation)
                                     <input type="radio" class="btn-check weight-option" name="weight"
                                         id="weight{{ $loop->iteration }}" value="1"
-                                        data-variation-id="{{ $variation->id }}"
-                                        data-price="{{ $variation->sale_price }}"
+                                        data-variation-id="{{ $variation->id }}" data-price="{{ $variation->sale_price }}"
                                         data-original="{{ $variation->regular_price }}"
                                         data-stock="{{ $variation->stock ?? 0 }}"
-                                        data-discount="{{ $variation->discount_percentage }}" {{ $loop->first ? 'checked' : '' }}>
-                                    <label class="btn btn-outline-success" for="weight{{ $loop->iteration }}">{{ $variation->label }}</label>
+                                        data-discount="{{ $variation->discount_percentage }}"
+                                        {{ $loop->first ? 'checked' : '' }}>
+                                    <label class="btn btn-outline-success"
+                                        for="weight{{ $loop->iteration }}">{{ $variation->label }}</label>
                                 @endforeach
                             </div>
                         </div>
@@ -124,7 +125,8 @@
                                 <button class="btn btn-outline-success" type="button" id="decrementBtn">
                                     <i class="bi bi-dash"></i>
                                 </button>
-                                <input type="number" class="form-control text-center" id="quantityInput" value="1" min="1">
+                                <input type="number" class="form-control text-center" id="quantityInput" value="1"
+                                    min="1">
                                 <button class="btn btn-outline-success" type="button" id="incrementBtn">
                                     <i class="bi bi-plus"></i>
                                 </button>
@@ -133,7 +135,8 @@
 
                         <!-- Action Buttons -->
                         <div class="d-flex gap-3 mb-4">
-                            <button class="btn btn-success btn-lg flex-grow-1" id="addToCartBtn" data-product-id="{{ $product->id }}">
+                            <button class="btn btn-success btn-lg flex-grow-1" id="addToCartBtn"
+                                data-product-id="{{ $product->id }}">
                                 <i class="bi bi-cart-plus me-2"></i>Add to Cart
                             </button>
                             <button class="btn btn-outline-success btn-lg" id="wishlistBtn">
@@ -331,199 +334,220 @@
                                             </span>
                                             <small class="text-muted ms-2">(4.7)</small>
                                         </div>
-                                        @foreach($relatedProduct->variations as $variation)
+                                        @foreach ($relatedProduct->variations as $variation)
                                             <span
                                                 class="text-success fw-bold fs-5">${{ number_format($variation->sale_price, 2) }}</span>
                                             <span
                                                 class="text-muted text-decoration-line-through small ms-1">${{ number_format($variation->regular_price, 2) }}</span>
-                                            @break
-                                        @endforeach
-                                    </div>
+                                        @break
+                                    @endforeach
                                 </div>
                             </div>
-                        @empty
-                            <p class="text-danger">No related products found</p>
-                        @endforelse
-                    </div>
+                        </div>
+                    @empty
+                        <p class="text-danger">No related products found</p>
+                    @endforelse
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 @endsection
 
 @push('scripts')
-        <script>
-            $(document).ready(function () {
-                console.log('Script loaded');
+    <script>
+        $(document).ready(function() {
+            console.log('Script loaded');
 
-                // get sale price and regular price
-                var salePrice = parseFloat('{{ $product->variations->first()->sale_price }}');
-                var regularPrice = parseFloat('{{ $product->variations->first()->regular_price }}');
+            // get sale price and regular price
+            var salePrice = parseFloat('{{ $product->variations->first()->sale_price }}');
+            var regularPrice = parseFloat('{{ $product->variations->first()->regular_price }}');
 
-                // Store base unit prices
-                var baseUnitPrice = salePrice;
-                var baseOriginalPrice = regularPrice;
+            // Store base unit prices
+            var baseUnitPrice = salePrice;
+            var baseOriginalPrice = regularPrice;
 
-                // Get initial stock from the first variation
-                var initialStock = parseInt('{{ $product->variations->first()->stock ?? 0 }}');
+            // Get initial stock from the first variation
+            var initialStock = parseInt('{{ $product->variations->first()->stock ?? 0 }}');
 
-                // Function to update discount badge based on the selected variation
-                function updateDiscountBadge() {
-                    var selectedOption = $('input[name="weight"]:checked');
-                    var discount = parseFloat(selectedOption.data('discount') || 0);
-                    var stock = parseInt(selectedOption.data('stock') || 0);
+            // Function to update discount badge based on the selected variation
+            function updateDiscountBadge() {
+                var selectedOption = $('input[name="weight"]:checked');
+                var discount = parseFloat(selectedOption.data('discount') || 0);
+                var stock = parseInt(selectedOption.data('stock') || 0);
 
-                    if (stock > 0 && discount > 0) {
-                        $('#discountBadge').text('-' + discount + '% OFF').show();
-                    } else {
-                        $('#discountBadge').hide();
-                    }
-                }
-
-                // Function to update stock status
-                function updateStockStatus(stock) {
-                    if (stock > 0) {
-                        $('#inStockLabel').show();
-                        $('#outOfStockLabel').hide();
-                        $('#addToCartBtn').prop('disabled', false);
-                        updateDiscountBadge();
-                    } else {
-                        $('#inStockLabel').hide();
-                        $('#outOfStockLabel').show();
-                        $('#addToCartBtn').prop('disabled', true);
-                        $('#discountBadge').hide();
-                    }
-                }
-
-                updateStockStatus(initialStock);
-
-
-                // Function to update total price
-                function updateTotalPrice() {
-                    var quantity = parseInt($('#quantityInput').val());
-                    var currentStock = getCurrentStock();
-
-                    if (quantity > currentStock) {
-                        quantity = currentStock;
-                        $('#quantityInput').val(quantity);
-                    }
-
-                    var totalPrice = baseUnitPrice * quantity;
-                    var originalTotal = baseOriginalPrice * quantity;
-
-                    $('#currentPrice').text('$' + totalPrice.toFixed(2));
-
-                    if (baseOriginalPrice > 0) {
-                        $('#originalPrice').text('$' + originalTotal.toFixed(2)).show();
-                    } else {
-                        $('#originalPrice').hide();
-                    }
-                }
-
-                // Helper function to get current stock
-                function getCurrentStock() {
-                    var selectedOption = $('input[name="weight"]:checked');
-                    return parseInt(selectedOption.data('stock') || 0);
-                }
-
-                // Weight option change handler
-                $('input[name="weight"]').on('change', function () {
-                    baseUnitPrice = parseFloat($(this).data('price'));
-                    baseOriginalPrice = parseFloat($(this).data('original'));
-
-                    var newStock = parseInt($(this).data('stock') || 0);
-
-                    $('#quantityInput').val(1);
-
-                    $('#currentPrice').text('$' + baseUnitPrice.toFixed(2));
-
-                    if (baseOriginalPrice > 0) {
-                        $('#originalPrice').text('$' + baseOriginalPrice.toFixed(2)).show();
-                    } else {
-                        $('#originalPrice').hide();
-                    }
-
-                    updateStockStatus(newStock);
-                    updateTotalPrice();
-                });
-
-                // Quantity increment/decrement handlers
-                $('#incrementBtn').on('click', function () {
-                    var input = $('#quantityInput');
-                    var currentVal = parseInt(input.val());
-                    var currentStock = getCurrentStock();
-
-                    if (currentVal < currentStock) {
-                        input.val(currentVal + 1);
-                        updateTotalPrice();
-                    }
-                });
-
-                // Quantity decrement handler
-                $('#decrementBtn').on('click', function () {
-                    var input = $('#quantityInput');
-                    var currentVal = parseInt(input.val());
-                    if (currentVal > 1) {
-                        input.val(currentVal - 1);
-                        updateTotalPrice();
-                    }
-                });
-
-                // Handle manual input change
-                $('#quantityInput').on('change', function () {
-                    var currentVal = parseInt($(this).val());
-                    var currentStock = getCurrentStock();
-
-                    if (currentVal < 1 || isNaN(currentVal)) {
-                        $(this).val(1);
-                    } else if (currentVal > currentStock) {
-                        $(this).val(currentStock);
-                    }
-                    updateTotalPrice();
-                });
-            });
-
-            //? Add to cart (async/await)
-            async function addToCart(productId, variationId, quantity = 1) {
-                try {
-                    const { data } = await axios.post('{{ route("cart.add") }}', {
-                        product_id: productId,
-                        product_variation_id: variationId,
-                        quantity: quantity,
-                    });
-
-                    document.getElementById('cartCountBadge').textContent = data.cart_count;
-                    iziToast.success({
-                        message: data.message,
-                        position: 'topRight',
-                        timeout: 5000,
-                    });
-                } catch (error) {
-                    const message = error.response?.data?.message || 'Something went wrong. Please try again.';
-                    iziToast.error({
-                        message: message,
-                        position: 'topRight',
-                        timeout: 5000,
-                    });
+                if (stock > 0 && discount > 0) {
+                    $('#discountBadge').text('-' + discount + '% OFF').show();
+                } else {
+                    $('#discountBadge').hide();
                 }
             }
 
-            // Add to cart button click handler
-            $('#addToCartBtn').on('click', function () {
-                var productId = $(this).data('product-id');
-                var variationId = $('input[name="weight"]:checked').data('variation-id');
-                var quantity = parseInt($('#quantityInput').val());
+            // Function to update stock status
+            function updateStockStatus(stock) {
+                if (stock > 0) {
+                    $('#inStockLabel').show();
+                    $('#outOfStockLabel').hide();
+                    $('#addToCartBtn').prop('disabled', false);
+                    updateDiscountBadge();
+                } else {
+                    $('#inStockLabel').hide();
+                    $('#outOfStockLabel').show();
+                    $('#addToCartBtn').prop('disabled', true);
+                    $('#discountBadge').hide();
+                }
+            }
 
-                if (!variationId) {
-                    iziToast.error({
-                        message: 'Please select a valid option.',
-                        position: 'topRight',
-                        timeout: 5000,
-                    });
-                    return;
+            updateStockStatus(initialStock);
+
+
+            // Function to update total price
+            function updateTotalPrice() {
+                var quantity = parseInt($('#quantityInput').val());
+                var currentStock = getCurrentStock();
+
+                if (quantity > currentStock) {
+                    quantity = currentStock;
+                    $('#quantityInput').val(quantity);
                 }
 
-                addToCart(productId, variationId, quantity);
+                var totalPrice = baseUnitPrice * quantity;
+                var originalTotal = baseOriginalPrice * quantity;
+
+                $('#currentPrice').text('$' + totalPrice.toFixed(2));
+
+                if (baseOriginalPrice > 0) {
+                    $('#originalPrice').text('$' + originalTotal.toFixed(2)).show();
+                } else {
+                    $('#originalPrice').hide();
+                }
+            }
+
+            // Helper function to get current stock
+            function getCurrentStock() {
+                var selectedOption = $('input[name="weight"]:checked');
+                return parseInt(selectedOption.data('stock') || 0);
+            }
+
+            // Weight option change handler
+            $('input[name="weight"]').on('change', function() {
+                baseUnitPrice = parseFloat($(this).data('price'));
+                baseOriginalPrice = parseFloat($(this).data('original'));
+
+                var newStock = parseInt($(this).data('stock') || 0);
+
+                $('#quantityInput').val(1);
+
+                $('#currentPrice').text('$' + baseUnitPrice.toFixed(2));
+
+                if (baseOriginalPrice > 0) {
+                    $('#originalPrice').text('$' + baseOriginalPrice.toFixed(2)).show();
+                } else {
+                    $('#originalPrice').hide();
+                }
+
+                updateStockStatus(newStock);
+                updateTotalPrice();
             });
+
+            // Quantity increment/decrement handlers
+            $('#incrementBtn').on('click', function() {
+                var input = $('#quantityInput');
+                var currentVal = parseInt(input.val());
+                var currentStock = getCurrentStock();
+
+                if (currentVal < currentStock) {
+                    input.val(currentVal + 1);
+                    updateTotalPrice();
+                } else {
+                    iziToast.warning({
+                        message: 'No more stock available for this product.',
+                        position: 'topRight',
+                        timeout: 5000,
+                        progressBarColor: '#00FF00'
+                    });
+                }
+            });
+
+            // Quantity decrement handler
+            $('#decrementBtn').on('click', function() {
+                var input = $('#quantityInput');
+                var currentVal = parseInt(input.val());
+                if (currentVal > 1) {
+                    input.val(currentVal - 1);
+                    updateTotalPrice();
+                } else {
+                    iziToast.warning({
+                        message: 'Quantity cannot be less than 1.',
+                        position: 'topRight',
+                        timeout: 5000,
+                        progressBarColor: '#00FF00'
+                    });
+                }
+            });
+
+            // Handle manual input change
+            $('#quantityInput').on('change', function() {
+                var currentVal = parseInt($(this).val());
+                var currentStock = getCurrentStock();
+
+                if (currentVal < 1 || isNaN(currentVal)) {
+                    $(this).val(1);
+                } else if (currentVal > currentStock) {
+                    $(this).val(currentStock);
+                }
+                updateTotalPrice();
+            });
+        });
+
+        //? Add to cart (async/await)
+        async function addToCart(productId, variationId, quantity = 1) {
+            try {
+                const {
+                    data
+                } = await axios.post('{{ route('cart.add') }}', {
+                    product_id: productId,
+                    product_variation_id: variationId,
+                    quantity: quantity,
+                });
+
+                const badge = document.getElementById('cartCountBadge');
+                if (badge) {
+                    badge.textContent = data.cart_count;
+                    badge.classList.toggle('d-none', data.cart_count === 0);
+                }
+
+                iziToast.success({
+                    message: data.message,
+                    position: 'topRight',
+                    timeout: 5000,
+                });
+            } catch (error) {
+                const message = error.response?.data?.message || 'Something went wrong. Please try again.';
+                iziToast.error({
+                    message: message,
+                    position: 'topRight',
+                    timeout: 5000,
+                });
+            }
+        }
+
+        // Add to cart button click handler
+        $('#addToCartBtn').on('click', function() {
+            var productId = $(this).data('product-id');
+            var variationId = $('input[name="weight"]:checked').data('variation-id');
+            var quantity = parseInt($('#quantityInput').val());
+
+            if (!variationId) {
+                iziToast.error({
+                    message: 'Please select a valid option.',
+                    position: 'topRight',
+                    timeout: 5000,
+                });
+                return;
+            }
+
+            addToCart(productId, variationId, quantity);
+        });
     </script>
 @endpush

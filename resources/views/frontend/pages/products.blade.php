@@ -298,7 +298,12 @@
                     });
 
                     const data = response.data;
-                    document.getElementById('cartCountBadge').textContent = data.cart_count;
+                    
+                    const badge = document.getElementById('cartCountBadge');
+                    if (badge) {
+                        badge.textContent = data.cart_count;
+                        badge.classList.toggle('d-none', data.cart_count === 0);
+                    }
 
                     iziToast.success({
                         message: data.message,
