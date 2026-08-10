@@ -47,22 +47,15 @@
             <div class="col-lg-3 col-md-6">
                 <h5 class="fw-bold mb-3">Categories</h5>
                 <ul class="list-unstyled">
-                    <li class="mb-2">
-                        <a href="products.html" class="text-white-50 text-decoration-none">Fresh Fruits</a>
-                    </li>
-                    <li class="mb-2">
-                        <a href="products.html" class="text-white-50 text-decoration-none">Fresh Vegetables</a>
-                    </li>
-                    <li class="mb-2">
-                        <a href="products.html" class="text-white-50 text-decoration-none">Seafood & Meat</a>
-                    </li>
-                    <li class="mb-2">
-                        <a href="products.html" class="text-white-50 text-decoration-none">Grains & Pulses</a>
-                    </li>
-                    <li class="mb-2">
-                        <a href="products.html" class="text-white-50 text-decoration-none">Condiments &
-                            Beverages</a>
-                    </li>
+                    @php
+                        $categories = \App\Models\Category::orderBy('name', 'asc')->get();
+                    @endphp
+                    @foreach ($categories as $category)
+                        <li class="mb-2">
+                            <a class="text-white-50 text-decoration-none"
+                                href="{{ route('products') }}?category={{ $category->slug }}">{{ $category->name }}</a>
+                        </li>
+                    @endforeach
                 </ul>
             </div>
             <div class="col-lg-3 col-md-6">
