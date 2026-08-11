@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AdminCategoryController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\AdminCouponCodeController;
+use App\Http\Controllers\Admin\AdminDeliveryOptionController;
 use App\Http\Controllers\Admin\AdminProductController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Frontend\FrontendController;
@@ -99,6 +100,13 @@ Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/coupon/edit/{id}', [AdminCouponCodeController::class, 'edit'])->name('coupon.edit');
     Route::put('/coupon/update/{id}', [AdminCouponCodeController::class, 'update'])->name('coupon.update');
     Route::delete('/coupon/delete/{id}', [AdminCouponCodeController::class, 'destroy'])->name('coupon.delete');
+    # For Admin Delivery Options Management Routes
+    Route::get('/delivery/index', [AdminDeliveryOptionController::class, 'index'])->name('delivery.index');
+    Route::get('/delivery/create', [AdminDeliveryOptionController::class, 'create'])->name('delivery.create');
+    Route::post('/delivery/store', [AdminDeliveryOptionController::class, 'store'])->name('delivery.store');
+    Route::get('/delivery/edit/{id}', [AdminDeliveryOptionController::class, 'edit'])->name('delivery.edit');
+    Route::put('/delivery/update/{id}', [AdminDeliveryOptionController::class, 'update'])->name('delivery.update');
+    Route::delete('/delivery/delete/{id}', [AdminDeliveryOptionController::class, 'destroy'])->name('delivery.delete');
 
 });
 

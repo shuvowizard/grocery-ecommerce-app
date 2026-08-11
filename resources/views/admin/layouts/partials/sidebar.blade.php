@@ -22,7 +22,7 @@
                     <span>Manage User</span></a></li>
 
             <li
-                class="nav-item dropdown {{ request()->is('admin/category/*') || request()->is('admin/product/*') || request()->is('admin/coupon/*')? 'active' : '' }}">
+                class="nav-item dropdown {{ request()->is('admin/category/*', 'admin/product/*', 'admin/coupon/*', 'admin/delivery/*') ? 'active' : '' }}">
                 <a href="#" class="nav-link has-dropdown">
                     <i class="fas fa-folder"></i>
                     <span>Manage Product</span>
@@ -42,6 +42,11 @@
                     <li class="{{ request()->is('admin/coupon/*') ? 'active' : '' }}">
                         <a class="nav-link" href="{{ route('admin.coupon.index') }}">
                             <i class=" fas fa-angle-right"></i>Coupon
+                        </a>
+                    </li>
+                    <li class="{{ request()->is('admin/delivery/*') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('admin.delivery.index') }}">
+                            <i class=" fas fa-angle-right"></i>Delivery
                         </a>
                     </li>
                 </ul>
