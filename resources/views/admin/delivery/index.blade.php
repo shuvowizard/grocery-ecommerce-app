@@ -28,10 +28,10 @@
                                 <tbody>
                                     @foreach ($delivery_data as $delivery)
                                         <tr class="text-center">
-                                            <td>{{ $loop->iteration }}</td>                                            
-                                            <td>{{ $delivery->name }}</td>                                            
-                                            <td>{{ $delivery->description }}</td>                                            
-                                            <td>{{ $delivery->charge }}</td>                                            
+                                            <td>{{ $loop->iteration }}</td>
+                                            <td>{{ $delivery->name }}</td>
+                                            <td>{{ $delivery->description }}</td>
+                                            <td>{{ $delivery->charge }}</td>
                                             <td>
                                                 @if ($delivery->status == 1)
                                                     <span class="badge bg-success">Yes</span>
