@@ -3,7 +3,7 @@
 @section('content')
     <section class="section">
         <div class="section-header justify-content-between">
-            <h1>Create New Coupon</h1>
+            <h1>Edit Coupon</h1>
             <div class="ml-auto">
                 <a href="{{ route('admin.coupon.index') }}" class="btn btn-primary"><i class="fas fa-eye"></i> All
                     Coupons</a>
@@ -14,13 +14,14 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
-                            <form action="{{ route('admin.coupon.store') }}" method="post">
+                            <form action="{{ route('admin.coupon.update', $coupon->id) }}" method="post">
                                 @csrf
+                                @method('PUT')
                                 <div class="row">
                                     {{-- Coupon Code --}}
                                     <div class="col-lg-4 mb-3">
                                         <label class="form-label">Coupon Code<span class="text-danger">*</span></label>
-                                        <input type="text" name="code" value="{{ old('code') }}"
+                                        <input type="text" name="code" value="{{ old('code', $coupon->code) }}"
                                             class="form-control @error('code') is-invalid @enderror"
                                             placeholder="e.g. SAVE20">
                                         @error('code')
@@ -32,8 +33,8 @@
                                     <div class="col-lg-4 mb-3">
                                         <label class="form-label">Status<span class="text-danger">*</span></label>
                                         <select name="status" class="form-control @error('status') is-invalid @enderror">
-                                            <option value="1" {{ old('status', '1') == '1' ? 'selected' : '' }}>Active</option>
-                                            <option value="0" {{ old('status') == '0' ? 'selected' : '' }}>Inactive</option>
+                                            <option value="1" {{ old('status', $coupon->status) == '1' ? 'selected' : '' }}>Active</option>
+                                            <option value="0" {{ old('status', $coupon->status) == '0' ? 'selected' : '' }}>Inactive</option>
                                         </select>
                                         @error('status')
                                             <span class="text-danger small">{{ $message }}</span>
@@ -45,8 +46,8 @@
                                         <label class="form-label">Discount Type<span class="text-danger">*</span></label>
                                         <select name="discount_type" id="discountType"
                                             class="form-control @error('discount_type') is-invalid @enderror">
-                                            <option value="percentage" {{ old('discount_type', 'percentage') == 'percentage' ? 'selected' : '' }}>Percentage (%)</option>
-                                            <option value="fixed" {{ old('discount_type') == 'fixed' ? 'selected' : '' }}>Fixed Amount ($)</option>
+                                            <option value="percentage" {{ old('discount_type', $coupon->discount_type) == 'percentage' ? 'selected' : '' }}>Percentage (%)</option>
+                                            <option value="fixed" {{ old('discount_type', $coupon->discount_type) == 'fixed' ? 'selected' : '' }}>Fixed Amount ($)</option>
                                         </select>
                                         @error('discount_type')
                                             <span class="text-danger small">{{ $message }}</span>
@@ -56,7 +57,7 @@
                                     {{-- Discount Value --}}
                                     <div class="col-lg-6 mb-3">
                                         <label class="form-label">Discount Value<span class="text-danger">*</span></label>
-                                        <input type="number" name="discount_value" value="{{ old('discount_value') }}"
+                                        <input type="number" name="discount_value" value="{{ old('discount_value', $coupon->discount_value) }}"
                                             class="form-control @error('discount_value') is-invalid @enderror"
                                             placeholder="e.g. 20" id="discountValueInput">
                                         <small class="text-muted" id="discountHint">Enter percentage (0-100)</small>
@@ -68,7 +69,7 @@
                                     {{-- Usage Limit --}}
                                     <div class="col-lg-6 mb-3">
                                         <label class="form-label">Usage Limit</label>
-                                        <input type="number" name="usage_limit" value="{{ old('usage_limit') }}"
+                                        <input type="number" name="usage_limit" value="{{ old('usage_limit', $coupon->usage_limit) }}"
                                             class="form-control @error('usage_limit') is-invalid @enderror"
                                             placeholder="Leave empty for unlimited">
                                         @error('usage_limit')
@@ -79,7 +80,8 @@
                                     {{-- Starts At --}}
                                     <div class="col-lg-6 mb-3">
                                         <label class="form-label">Starts At<span class="text-danger">*</span></label>
-                                        <input id="datepicker" type="date" name="starts_at" value="{{ old('starts_at') }}"
+                                        <input id="datepicker" type="date" name="starts_at"
+                                            value="{{ old('starts_at', $coupon->starts_at?->format('Y-m-d')) }}"
                                             class="form-control @error('starts_at') is-invalid @enderror">
                                         @error('starts_at')
                                             <span class="text-danger small">{{ $message }}</span>
@@ -89,7 +91,8 @@
                                     {{-- Expires At --}}
                                     <div class="col-lg-6 mb-3">
                                         <label class="form-label">Expires At<span class="text-danger">*</span></label>
-                                        <input id="datepicker2" type="date" name="expires_at" value="{{ old('expires_at') }}"
+                                        <input id="datepicker2" type="date" name="expires_at"
+                                            value="{{ old('expires_at', $coupon->expires_at?->format('Y-m-d')) }}"
                                             class="form-control @error('expires_at') is-invalid @enderror">
                                         @error('expires_at')
                                             <span class="text-danger small">{{ $message }}</span>
@@ -97,7 +100,7 @@
                                     </div>
 
                                     <div class="col-lg-12 mb-3">
-                                        <button type="submit" class="btn btn-primary w-100">Save Coupon</button>
+                                        <button type="submit" class="btn btn-primary w-100">Update Coupon</button>
                                     </div>
                                 </div>
                             </form>
@@ -111,7 +114,6 @@
 
 @push('scripts')
     <script>
-        // Hint text change based on discount type (UX improvement)
         document.getElementById('discountType').addEventListener('change', function () {
             const hint = document.getElementById('discountHint');
             const input = document.getElementById('discountValueInput');
