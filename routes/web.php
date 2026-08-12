@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\AdminCouponCodeController;
 use App\Http\Controllers\Admin\AdminDeliveryOptionController;
 use App\Http\Controllers\Admin\AdminProductController;
 use App\Http\Controllers\Admin\AdminUserController;
+use App\Http\Controllers\Frontend\CartController;
 use App\Http\Controllers\Frontend\FrontendController;
 use App\Http\Controllers\User\UserController;
 use Illuminate\Support\Facades\Route;
@@ -21,13 +22,13 @@ Route::get('/terms', [FrontendController::class, 'terms'])->name('terms');
 Route::get('/privacy', [FrontendController::class, 'privacy'])->name('privacy');
 Route::get('/products', [FrontendController::class, 'products'])->name('products');
 Route::get('/product/{slug}', [FrontendController::class, 'product'])->name('product');
-Route::post('/cart/add', [FrontendController::class, 'addToCart'])->name('cart.add');
-Route::get('/cart', [FrontendController::class, 'cart'])->name('cart');
-Route::post('/cart/update', [FrontendController::class, 'cartUpdate'])->name('cart.update');
-Route::post('/cart/remove', [FrontendController::class, 'cartItemRemove'])->name('cart.remove');
-Route::post('/cart/clear', [FrontendController::class, 'cartClear'])->name('cart.clear');
-Route::post('/cart/coupon/apply', [FrontendController::class, 'applyCoupon'])->name('cart.coupon.apply');
-Route::post('/cart/coupon/remove', [FrontendController::class, 'removeCoupon'])->name('cart.coupon.remove');
+Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add');
+Route::get('/cart', [CartController::class, 'cart'])->name('cart');
+Route::post('/cart/update', [CartController::class, 'cartUpdate'])->name('cart.update');
+Route::post('/cart/remove', [CartController::class, 'cartItemRemove'])->name('cart.remove');
+Route::post('/cart/clear', [CartController::class, 'cartClear'])->name('cart.clear');
+Route::post('/cart/coupon/apply', [CartController::class, 'applyCoupon'])->name('cart.coupon.apply');
+Route::post('/cart/coupon/remove', [CartController::class, 'removeCoupon'])->name('cart.coupon.remove');
 Route::get('/checkout', [FrontendController::class, 'checkout'])->name('checkout');
 // -------------- End Frontend Route -------------- //
 
