@@ -125,29 +125,47 @@
                                     <span class="fw-bold" id="subtotal">${{ number_format($subTotal, 2) }}</span>
                                 </div>
 
-                                <div class="d-flex justify-content-between mb-3">
-                                    <span class="text-muted">Discount:</span>
-                                    <span class="text-success fw-bold" id="discount">-$2.00</span>
-                                </div>
+                                @php
+                                    $deliveryCharge = session('delivery_option_charge', 0);
+                                    $couponDiscount = $appliedCoupon['discount_amount'] ?? 0;
+                                    $grandTotal = $subTotal - $couponDiscount + $deliveryCharge;
+                                @endphp
 
                                 <div class="d-flex justify-content-between mb-3">
                                     <span class="text-muted">Delivery Fee:</span>
-                                    <span class="fw-bold" id="delivery">$5.00</span>
+                                    <span class="fw-bold" id="delivery">(+)
+                                        ${{ number_format($deliveryCharge, 2) }}</span>
+                                </div>
+
+                                <div class="d-flex justify-content-between mb-3">
+                                    <span class="text-muted">Discount:</span>
+                                    <span class="text-success fw-bold" id="discount">(-)
+                                        ${{ number_format($couponDiscount, 2) }}</span>
                                 </div>
 
                                 <hr>
 
                                 <div class="d-flex justify-content-between mb-4">
                                     <span class="fw-bold fs-5">Total:</span>
-                                    <span class="fw-bold fs-5 text-success" id="total">$200</span>
+                                    <span class="fw-bold fs-5 text-success"
+                                        id="total">${{ number_format($grandTotal, 2) }}</span>
                                 </div>
 
                                 <!-- Coupon Code -->
                                 <div class="mb-4">
                                     <label class="form-label fw-bold">Have a Coupon?</label>
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" placeholder="Enter coupon code">
-                                        <button class="btn btn-outline-success" type="button">Apply</button>
+                                    <div class="input-group {{ $appliedCoupon ? 'd-none' : '' }}" id="couponInputGroup">
+                                        <input type="text" class="form-control" id="couponInput"
+                                            placeholder="Enter coupon code">
+                                        <button class="btn btn-outline-success" type="button"
+                                            id="applyCouponBtn">Apply</button>
+                                    </div>
+
+                                    <div id="appliedCouponInfo" class="{{ $appliedCoupon ? '' : 'd-none' }} mt-2">
+                                        <span class="badge bg-success"
+                                            id="appliedCouponCode">{{ $appliedCoupon['code'] ?? '' }}</span>
+                                        <button class="btn btn-sm btn-link text-danger p-0 ms-2"
+                                            id="removeCouponBtn">Remove</button>
                                     </div>
                                 </div>
 
@@ -161,8 +179,8 @@
                 </div>
             @else
                 <div class="col-lg-12">
-                    <p class="text-danger">Your cart is empty. <a href="{{ route('products') }}"
-                            class="text-success" style="text-decoration: none;">Continue Shopping...</a></p>
+                    <p class="text-danger">Your cart is empty. <a href="{{ route('products') }}" class="text-success"
+                            style="text-decoration: none;">Continue Shopping...</a></p>
                 </div>
             @endif
         </div>
@@ -172,36 +190,58 @@
 @push('scripts')
     <script>
         $(document).ready(function() {
-            // Fixed values
-            const discountAmount = 2.00;
-            const deliveryFee = 5.00;
 
-            // Function to calculate and update cart totals
+            /* =========================================================
+             * INITIAL VALUES (from Blade/session on page load)
+             * ========================================================= */
+            let currentDiscount = {{ $couponDiscount ?? 0 }}; // Coupon discount (0 if no coupon applied)
+            const deliveryFee = {{ $deliveryCharge ?? 0 }}; // Delivery charge (fixed per session)
+
+            /* =========================================================
+             * HELPER FUNCTIONS
+             * ========================================================= */
+
+            // Read the current subtotal value from the DOM (strip "$" and commas)
+            function getCurrentSubtotal() {
+                return parseFloat($('#subtotal').text().replace(/[^0-9.]/g, '')) || 0;
+            }
+
+            // Recalculate and display the grand total using subtotal, discount, and delivery fee
+            function recalculateTotal() {
+                const subtotal = getCurrentSubtotal();
+                const total = (subtotal - currentDiscount) + deliveryFee;
+                $('#total').text('$' + total.toFixed(2));
+            }
+
+            // Recalculate subtotal from all visible cart rows (used for local/manual quantity edits)
             function updateCartTotals() {
                 let subtotal = 0;
-
-                // Calculate subtotal from all cart items
+                // Calculate subtotal from all visible cart rows
                 $('.cart-item').each(function() {
                     let price = parseFloat($(this).data('price'));
                     let quantity = parseInt($(this).find('.qty-input').val());
                     let itemTotal = price * quantity;
 
-                    // Update item total
+                    // Update this row's total
                     $(this).find('.item-total').text('$' + itemTotal.toFixed(2));
 
-                    // Add to subtotal
                     subtotal += itemTotal;
                 });
 
-                // Calculate total
-                let total = subtotal - discountAmount + deliveryFee;
-
-                // Update summary
                 $('#subtotal').text('$' + subtotal.toFixed(2));
-                $('#total').text('$' + total.toFixed(2));
+                recalculateTotal();
             }
 
-            // Update cart quantity 
+            // Get the stock limit for a specific cart row
+            function getRowStock($row) {
+                return parseInt($row.data('stock')) || 0;
+            }
+
+            /* =========================================================
+             * QUANTITY UPDATE (server sync)
+             * ========================================================= */
+
+            // Send updated quantity to backend and refresh totals from server response
             async function updateCartQuantity($row, quantity) {
                 const variationId = $row.data('variation-id');
 
@@ -216,17 +256,21 @@
                     $row.find('.item-total').text('$' + data.item_total.toFixed(2));
                     document.getElementById('cartCountBadge').textContent = data.cart_count;
 
-                    // subtotal + total update
+                    // Update subtotal
                     $('#subtotal').text('$' + data.subtotal.toFixed(2));
-                    let total = data.subtotal - discountAmount + deliveryFee;
-                    $('#total').text('$' + total.toFixed(2));
+
+                    // Update discount (directly from server response - no need to recalculate)  
+                    currentDiscount = data.discount_amount;
+                    $('#discount').text('(-) $' + data.discount_amount.toFixed(2));
+
+                    // Update total (directly from server response - no need to recalculate)
+                    $('#total').text('$' + data.total.toFixed(2));
 
                     iziToast.success({
                         message: data.message,
                         position: 'topRight',
                         timeout: 3000,
                     });
-
                 } catch (error) {
                     const message = error.response?.data?.message || 'Something went wrong. Please try again.';
                     iziToast.error({
@@ -237,11 +281,15 @@
                 }
             }
 
-            // Increase quantity handler
+            /* =========================================================
+             * QUANTITY BUTTONS (+ / -) AND MANUAL INPUT
+             * ========================================================= */
+
+            // Increase quantity button
             $('.qty-increase').on('click', function() {
                 const $row = $(this).closest('.cart-item');
                 const input = $row.find('.qty-input');
-                const stock = parseInt($row.data('stock'));
+                const stock = getRowStock($row);
                 let currentVal = parseInt(input.val());
 
                 if (currentVal >= stock) {
@@ -257,7 +305,7 @@
                 updateCartQuantity($row, currentVal + 1);
             });
 
-            // Decrease quantity handler
+            // Decrease quantity button
             $('.qty-decrease').on('click', function() {
                 const $row = $(this).closest('.cart-item');
                 const input = $row.find('.qty-input');
@@ -276,16 +324,31 @@
                 updateCartQuantity($row, currentVal - 1);
             });
 
-            // Handle manual quantity input
+            // Manual quantity input change (typed directly into the box)
             $('.qty-input').on('change', function() {
+                const $row = $(this).closest('.cart-item');
+                const stock = getRowStock($row);
                 let currentVal = parseInt($(this).val());
+
+                // Clamp value between 1 and available stock
                 if (currentVal < 1 || isNaN(currentVal)) {
-                    $(this).val(1);
+                    currentVal = 1;
+                } else if (currentVal > stock) {
+                    currentVal = stock;
+                    iziToast.warning({
+                        message: 'Cannot add more than available stock.',
+                        position: 'topRight',
+                        timeout: 3000,
+                    });
                 }
-                updateCartTotals();
+
+                $(this).val(currentVal);
+                updateCartQuantity($row, currentVal);
             });
 
-            // Remove single item from cart
+            /* =========================================================
+             * REMOVE SINGLE ITEM
+             * ========================================================= */
             $(document).on('click', '.remove-item-btn', async function() {
                 const $row = $(this).closest('.cart-item');
                 const variationId = $row.data('variation-id');
@@ -298,12 +361,14 @@
                     });
 
                     $row.remove();
-                    document.getElementById('cartCountBadge').textContent = data.cart_count;
 
-                    // subtotal + total update
+                    document.getElementById('cartCountBadge').textContent = data.cart_count;
                     $('#subtotal').text('$' + data.subtotal.toFixed(2));
-                    let total = data.subtotal - discountAmount + deliveryFee;
-                    $('#total').text('$' + total.toFixed(2));
+
+                    // Update discount + total from server response
+                    currentDiscount = data.discount_amount;
+                    $('#discount').text('(-) $' + data.discount_amount.toFixed(2));
+                    $('#total').text('$' + data.total.toFixed(2));
 
                     iziToast.success({
                         message: data.message,
@@ -312,7 +377,7 @@
                     });
 
                     if (data.cart_count === 0) {
-                        location.reload(); // Reload the page if the cart is empty
+                        location.reload();
                     }
                 } catch (error) {
                     const message = error.response?.data?.message || 'Something went wrong.';
@@ -324,7 +389,9 @@
                 }
             });
 
-            // Clear entire cart
+            /* =========================================================
+             * CLEAR ENTIRE CART
+             * ========================================================= */
             $('#clearCartBtn').on('click', async function() {
                 try {
                     const {
@@ -339,7 +406,8 @@
                         timeout: 3000,
                     });
 
-                    location.reload(); // Reload the page after clearing the cart
+                    // Reload to show the empty cart state
+                    location.reload();
                 } catch (error) {
                     iziToast.error({
                         message: 'Something went wrong.',
@@ -348,6 +416,97 @@
                     });
                 }
             });
+
+            /* =========================================================
+             * COUPON: APPLY
+             * ========================================================= */
+            $('#applyCouponBtn').on('click', async function() {
+                const code = $('#couponInput').val().trim();
+
+                if (!code) {
+                    iziToast.warning({
+                        message: 'Please enter a coupon code.',
+                        position: 'topRight',
+                        timeout: 3000,
+                    });
+                    return;
+                }
+
+                const subtotal = getCurrentSubtotal();
+
+                try {
+                    const {
+                        data
+                    } = await axios.post("{{ route('cart.coupon.apply') }}", {
+                        code: code,
+                        subtotal: subtotal,
+                    });
+
+                    // Update discount value used in all future total calculations
+                    currentDiscount = data.discount_amount;
+
+                    $('#discount').text('(-) $' + data.discount_amount.toFixed(2));
+                    $('#total').text('$' + data.total.toFixed(2));
+                    $('#appliedCouponCode').text(data.coupon_code);
+
+                    // Hide input box, show "applied coupon" badge + remove button
+                    $('#couponInputGroup').addClass('d-none');
+                    $('#appliedCouponInfo').removeClass('d-none');
+
+                    iziToast.success({
+                        message: data.message,
+                        position: 'topRight',
+                        timeout: 3000,
+                    });
+                } catch (error) {
+                    const message = error.response?.data?.message ||
+                        'Something went wrong. Please try again.';
+                    iziToast.error({
+                        message: message,
+                        position: 'topRight',
+                        timeout: 3000,
+                    });
+                }
+            });
+
+            /* =========================================================
+             * COUPON: REMOVE
+             * ========================================================= */
+            $('#removeCouponBtn').on('click', async function() {
+                const subtotal = getCurrentSubtotal();
+
+                try {
+                    const {
+                        data
+                    } = await axios.post("{{ route('cart.coupon.remove') }}", {
+                        subtotal: subtotal,
+                    });
+
+                    // Reset discount to zero for future calculations
+                    currentDiscount = 0;
+
+                    $('#discount').text('(-) $0.00');
+                    $('#total').text('$' + data.total.toFixed(2));
+                    $('#couponInput').val('');
+
+                    // Show input box again, hide "applied coupon" badge
+                    $('#couponInputGroup').removeClass('d-none');
+                    $('#appliedCouponInfo').addClass('d-none');
+
+                    iziToast.success({
+                        message: data.message,
+                        position: 'topRight',
+                        timeout: 3000,
+                    });
+                } catch (error) {
+                    iziToast.error({
+                        message: 'Something went wrong.',
+                        position: 'topRight',
+                        timeout: 3000,
+                    });
+                }
+            });
+
         });
     </script>
 @endpush
