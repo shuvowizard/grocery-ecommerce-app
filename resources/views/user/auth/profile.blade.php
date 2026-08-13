@@ -56,8 +56,11 @@
                                                 </span>
                                             </div>
                                             <div>
-                                                <input type="file" class="form-control" id="photo" name="photo"
-                                                    accept="image/*">
+                                                <input type="file" class="form-control @error('photo') is-invalid @enderror"" id="photo" name="photo"
+                                                    accept="image/*">                                                    
+                                                @error('photo')
+                                                    <small class="text-danger d-block mt-1">{{ $message }}</small>
+                                                @enderror
                                                 <small class="text-muted d-block mt-1">Allowed: JPG, PNG. Max size:
                                                     2MB.</small>
                                             </div>

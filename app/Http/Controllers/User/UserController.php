@@ -56,7 +56,8 @@ class UserController extends Controller
         return redirect()->back()->with('success', 'Registration successful. Please check your email for verify your account.');
     }
 
-    public function verifyEmail($token ,$email) {
+    public function verifyEmail($token, $email)
+    {
         $user = User::where('email', $email)->where('token', $token)->first();
 
         if ($user) {
@@ -74,7 +75,7 @@ class UserController extends Controller
     {
         if (Auth::guard('web')->check()) {
             return to_route('dashboard');
-        }        
+        }
         return view('user.auth.login');
     }
 
@@ -89,7 +90,7 @@ class UserController extends Controller
             'email' => $credentials['email'],
             'password' => $credentials['password'],
             'status' => 1,
-            ];
+        ];
 
         if (Auth::guard('web')->attempt($data)) {
             $request->session()->regenerate();
@@ -178,14 +179,15 @@ class UserController extends Controller
         }
     }
 
-    public function profile() {
+    public function profile()
+    {
         $user = Auth::guard('web')->user();
         return view('user.auth.profile', compact('user'));
     }
 
     public function profileUpdate(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'name' => ['required', 'string', 'max:255', 'regex:/^[\pL\s\-\']+$/u'],
             'password' => ['nullable', 'min:3', 'confirmed'],
             'phone' => ['required', 'string', 'max:20', 'regex:/^[0-9+\-\s()]+$/', 'unique:users,phone,' . Auth::guard('web')->user()->id],
@@ -194,7 +196,7 @@ class UserController extends Controller
             'country' => ['required', 'string', 'max:100'],
             'city' => ['required', 'string', 'max:100'],
             'zip' => ['required', 'string', 'max:20'],
-            'photo' => ['required', 'image', 'mimes:jpeg,png,jpg,svg', 'max:2048'],
+            'photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
         ], [
             'name.regex' => 'Name can only contain letters, spaces, hyphens and apostrophes.',
             'phone.regex' => 'Phone can only contain numbers, +, -, spaces and parentheses.',
@@ -202,33 +204,32 @@ class UserController extends Controller
 
         $user = Auth::guard('web')->user();
 
-        # Password update
+        // Update password
         if ($request->filled('password')) {
-            $user->password = Hash::make($request->password);
+            $user->password = Hash::make($validated['password']);
         }
 
-        # Photo update
+        // Upload photo
         if ($request->hasFile('photo')) {
-            # old photo delete
+            // Delete old photo
             if ($user->photo && file_exists(public_path('uploads/user/' . $user->photo))) {
                 unlink(public_path('uploads/user/' . $user->photo));
             }
-            # new photo upload
+            // Upload new photo
             $image = $request->file('photo');
             $imageName = 'user_' . time() . '.' . $image->getClientOriginalExtension();
             $image->move(public_path('uploads/user'), $imageName);
-            $user->photo = $imageName;  # consistent column name
+            $user->photo = $imageName;
         }
 
-        // Other fields update
-        $user->name = $request->name;
-        $user->phone = $request->phone;
-        $user->address = $request->address;
-        $user->country = $request->country;
-        $user->state = $request->state;
-        $user->city = $request->city;
-        $user->zip = $request->zip;
-        $user->update();
+        $user->name = $validated['name'];
+        $user->phone = $validated['phone'];
+        $user->address = $validated['address'];
+        $user->country = $validated['country'];
+        $user->state = $validated['state'];
+        $user->city = $validated['city'];
+        $user->zip = $validated['zip'];
+        $user->save();
 
         return back()->with('success', 'Profile updated successfully.');
     }
