@@ -28,61 +28,71 @@
                     <div class="card border-0 shadow-sm mb-4">
                         <div class="card-body p-4">
                             <h5 class="fw-bold mb-4">Billing Details</h5>
-                            <form>
+                            <form method="POST" action="#" id="checkoutForm">
+                                @csrf
                                 <div class="row g-3">
                                     <div class="col-md-6">
-                                        <label class="form-label">First Name <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control" required>
+                                        <label class="form-label">Name <span class="text-danger">*</span></label>
+                                        <input type="text" name="name" class="form-control"
+                                            value="{{ old('name', auth()->user()?->name) }}" placeholder="Enter your name">
                                     </div>
                                     <div class="col-md-6">
-                                        <label class="form-label">Last Name <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control" required>
-                                    </div>
-                                    <div class="col-12">
                                         <label class="form-label">Email Address <span class="text-danger">*</span></label>
-                                        <input type="email" class="form-control" required>
+                                        <input type="email" name="email" class="form-control"
+                                            value="{{ old('email', auth()->user()?->email) }}"
+                                            placeholder="Enter your email">
                                     </div>
-                                    <div class="col-12">
+                                    <div class="col-md-6">
                                         <label class="form-label">Phone Number <span class="text-danger">*</span></label>
-                                        <input type="tel" class="form-control" required>
+                                        <input type="tel" name="phone" class="form-control"
+                                            value="{{ old('phone', auth()->user()?->phone) }}"
+                                            placeholder="Enter your phone number">
                                     </div>
-                                    <div class="col-12">
-                                        <label class="form-label">Street Address <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control" placeholder="House number and street name"
-                                            required>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Address <span class="text-danger">*</span></label>
+                                        <input type="text" name="address" class="form-control"
+                                            value="{{ old('address', auth()->user()?->address) }}"
+                                            placeholder="Enter your address">
                                     </div>
-                                    <div class="col-12">
-                                        <input type="text" class="form-control"
-                                            placeholder="Apartment, suite, unit etc. (optional)">
+                                    <div class="col-md-6">
+                                        <label class="form-label" for="country">Country <span
+                                                class="text-danger">*</span></label>
+                                        @php $selectedCountry = old('country', auth()->user()?->country); @endphp
+                                        <select class="form-select" name="country" id="country" required>
+                                            <option value="" disabled {{ $selectedCountry == '' ? 'selected' : '' }}>
+                                                Select Country</option>
+                                            <option value="USA" {{ $selectedCountry == 'USA' ? 'selected' : '' }}>United
+                                                States</option>
+                                            <option value="Canada" {{ $selectedCountry == 'Canada' ? 'selected' : '' }}>
+                                                Canada</option>
+                                            <option value="UK" {{ $selectedCountry == 'UK' ? 'selected' : '' }}>United
+                                                Kingdom</option>
+                                            <option value="Australia"
+                                                {{ $selectedCountry == 'Australia' ? 'selected' : '' }}>Australia</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">State <span class="text-danger">*</span></label>
+                                        <input type="text" name="state" class="form-control"
+                                            value="{{ old('state', auth()->user()?->state) }}"
+                                            placeholder="Enter your state">
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label">City <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control" required>
+                                        <input type="text" name="city" class="form-control"
+                                            value="{{ old('city', auth()->user()?->city) }}" placeholder="Enter your city">
                                     </div>
                                     <div class="col-md-6">
-                                        <label class="form-label">State / Province <span
-                                                class="text-danger">*</span></label>
-                                        <input type="text" class="form-control" required>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">ZIP / Postal Code <span
-                                                class="text-danger">*</span></label>
-                                        <input type="text" class="form-control" required>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Country <span class="text-danger">*</span></label>
-                                        <select class="form-select" required>
-                                            <option selected>United States</option>
-                                            <option>Canada</option>
-                                            <option>United Kingdom</option>
-                                            <option>Australia</option>
-                                            <option>Other</option>
-                                        </select>
+                                        <label class="form-label">Zip Code <span class="text-danger">*</span></label>
+                                        <input type="text" name="zip" class="form-control"
+                                            value="{{ old('zip', auth()->user()?->zip) }}"
+                                            placeholder="Enter your zip code">
                                     </div>
                                     <div class="col-12">
-                                        <label class="form-label">Order Notes (Optional)</label>
-                                        <textarea class="form-control" rows="3"
-                                            placeholder="Notes about your order, e.g. special notes for delivery"></textarea>
+                                        <label class="form-label">Order Notes <span
+                                                class="text-muted small">(Optional)</span></label>
+                                        <textarea class="form-control" name="order_notes" rows="3"
+                                            placeholder="Notes about your order, e.g. special notes for delivery">{{ old('order_notes') }}</textarea>
                                     </div>
                                 </div>
                             </form>
@@ -93,39 +103,23 @@
                     <div class="card border-0 shadow-sm mb-4">
                         <div class="card-body p-4">
                             <h5 class="fw-bold mb-4">Shipping Method</h5>
-                            <div class="form-check mb-3 p-3 border rounded">
-                                <input class="form-check-input shipping-method" type="radio" name="shipping" id="standard"
-                                    value="5.00" checked>
-                                <label class="form-check-label w-100 d-flex justify-content-between" for="standard">
-                                    <div>
-                                        <strong>Standard Delivery</strong>
-                                        <div class="small text-muted">Delivery in 12 hours</div>
-                                    </div>
-                                    <strong class="text-success">$5.00</strong>
-                                </label>
-                            </div>
-                            <div class="form-check mb-3 p-3 border rounded">
-                                <input class="form-check-input shipping-method" type="radio" name="shipping" id="express"
-                                    value="8.00">
-                                <label class="form-check-label w-100 d-flex justify-content-between" for="express">
-                                    <div>
-                                        <strong>Express Delivery</strong>
-                                        <div class="small text-muted">Delivery in 6 hours</div>
-                                    </div>
-                                    <strong class="text-success">$8.00</strong>
-                                </label>
-                            </div>
-                            <div class="form-check p-3 border rounded">
-                                <input class="form-check-input shipping-method" type="radio" name="shipping" id="sameday"
-                                    value="10.00">
-                                <label class="form-check-label w-100 d-flex justify-content-between" for="sameday">
-                                    <div>
-                                        <strong>Fast Delivery</strong>
-                                        <div class="small text-muted">Delivery in 2 hours</div>
-                                    </div>
-                                    <strong class="text-success">$10.00</strong>
-                                </label>
-                            </div>
+
+                            @foreach ($delivery_options as $item)
+                                <div class="form-check mb-3 p-3 border rounded">
+                                    <input class="form-check-input shipping-method" type="radio"
+                                        name="delivery_option_id" id="current_item_{{ $loop->iteration }}"
+                                        data-charge="{{ $item->charge }}" value="{{ $item->id }}"
+                                        {{ session()->get('delivery_option_id') == $item->id ? 'checked' : '' }}>
+                                    <label class="form-check-label w-100 d-flex justify-content-between"
+                                        for="current_item_{{ $loop->iteration }}">
+                                        <div>
+                                            <strong>{{ $item->name }}</strong>
+                                            <div class="small text-muted">{{ $item->description }}</div>
+                                        </div>
+                                        <strong class="text-success">${{ number_format($item->charge, 2) }}</strong>
+                                    </label>
+                                </div>
+                            @endforeach
                         </div>
                     </div>
 
@@ -169,24 +163,23 @@
 
                             <!-- Cart Items -->
                             <div class="cart-items-summary mb-4">
-                                <div class="d-flex align-items-center mb-3">
-                                    <img src="{{ asset('dist-frontend/images/Green Apple.jpg') }}" alt="Product"
-                                        class="rounded me-2 product-thumb">
-                                    <div class="flex-grow-1">
-                                        <small class="d-block">Fresh Green Apples</small>
-                                        <small class="text-muted">1 kg × 1</small>
+                                @foreach ($cart as $item)
+                                    @php
+                                        $variation = $variations->get($item['product_variation_id']);
+                                        $product = $variation?->product;
+                                        $itemTotal = ($variation?->sale_price ?? 0) * $item['quantity'];
+                                    @endphp
+                                    <div class="d-flex align-items-center mb-3">
+                                        <img src="{{ asset('uploads/product/' . $product->photo) }}"
+                                            alt="{{ $product->name }}" class="rounded me-2 product-thumb">
+                                        <div class="flex-grow-1">
+                                            <small class="d-block">{{ $product->name }}</small>
+                                            <small class="text-muted">{{ $variation->label }} ×
+                                                {{ $item['quantity'] }}</small>
+                                        </div>
+                                        <span class="fw-bold">${{ number_format($itemTotal, 2) }}</span>
                                     </div>
-                                    <span class="fw-bold">$4.00</span>
-                                </div>
-                                <div class="d-flex align-items-center mb-3">
-                                    <img src="{{ asset('dist-frontend/images/Egg.jpg') }}" alt="Product"
-                                        class="rounded me-2 product-thumb">
-                                    <div class="flex-grow-1">
-                                        <small class="d-block">Farm Fresh Eggs</small>
-                                        <small class="text-muted">1 box × 2</small>
-                                    </div>
-                                    <span class="fw-bold">$10.00</span>
-                                </div>
+                                @endforeach
                             </div>
 
                             <hr>
@@ -194,22 +187,24 @@
                             <!-- Pricing Details -->
                             <div class="d-flex justify-content-between mb-2">
                                 <span class="text-muted">Subtotal:</span>
-                                <span id="subtotal">$14.00</span>
-                            </div>
-                            <div class="d-flex justify-content-between mb-2">
-                                <span class="text-muted">Discount:</span>
-                                <span class="text-success" id="discount">-$2.00</span>
+                                <span id="subtotal">${{ number_format($subtotal, 2) }}</span>
                             </div>
                             <div class="d-flex justify-content-between mb-3">
                                 <span class="text-muted">Delivery Fee:</span>
-                                <span id="deliveryFee">$5.00</span>
+                                <span id="deliveryFee">${{ number_format($delivery_charge, 2) }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted">Discount:</span>
+                                <span class="text-success"
+                                    id="discount">-${{ number_format($discount_amount, 2) }}</span>
                             </div>
 
                             <hr>
 
                             <div class="d-flex justify-content-between mb-4">
                                 <span class="fw-bold fs-5">Total:</span>
-                                <span class="fw-bold fs-5 text-success" id="total">$17.00</span>
+                                <span class="fw-bold fs-5 text-success"
+                                    id="total">${{ number_format($total, 2) }}</span>
                             </div>
 
                             <!-- Place Order Button -->
@@ -234,28 +229,41 @@
 
 @push('scripts')
     <script>
-        $(document).ready(function () {
-            // Fixed values
-            const subtotalAmount = 14.00;
-            const discountAmount = 2.00;
-
-            // Function to update order summary
-            function updateOrderSummary() {
-                // Get selected shipping fee
-                let deliveryFee = parseFloat($('.shipping-method:checked').val());
-
-                // Calculate total
-                let total = subtotalAmount - discountAmount + deliveryFee;
-
-                // Update display
-                $('#deliveryFee').text('$' + deliveryFee.toFixed(2));
-                $('#total').text('$' + total.toFixed(2));
-            }
+        $(document).ready(function() {
 
             // Shipping method change handler
-            $('.shipping-method').on('change', function () {
-                updateOrderSummary();
+            $('.shipping-method').on('change', async function() {
+                const deliveryOptionId = $(this).val();
+                const charge = parseFloat($(this).data('charge'));
+
+                // Optimistic update
+                $('#deliveryFee').text('$' + charge.toFixed(2));
+
+                try {
+                    const {
+                        data
+                    } = await axios.post("{{ route('checkout.shipping.update') }}", {
+                        delivery_option_id: deliveryOptionId,
+                    });
+
+                    $('#deliveryFee').text('$' + data.delivery_charge.toFixed(2));
+                    $('#total').text('$' + data.total.toFixed(2));
+
+                    iziToast.success({
+                        message: data.message,
+                        position: 'topRight',
+                        timeout: 3000,
+                    });
+                } catch (error) {
+                    const message = error.response?.data?.message || 'Something went wrong. Please try again.';
+                    iziToast.error({
+                        message: message,
+                        position: 'topRight',
+                        timeout: 3000,
+                    });
+                }
             });
+
         });
     </script>
 @endpush

@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Models\CouponCode;
+use App\Models\DeliveryOption;
 use App\Models\Product;
 use App\Models\ProductVariation;
 use Illuminate\Http\Request;
@@ -114,6 +116,106 @@ class FrontendController extends Controller
 
     public function checkout()
     {
-        return view('frontend.pages.checkout');
+        $cart = session()->get('cart', []);
+
+        if (!auth()->guard('web')->check()) {
+            return redirect()->route('login')->with('error', 'Please login to checkout.');
+        }
+        if (empty($cart)) {
+            return redirect()->route('cart')->with('error', 'Your cart is empty.');
+        }
+
+        $delivery_options = DeliveryOption::orderBy('id', 'asc')->get();
+
+        $variationIds = collect($cart)->pluck('product_variation_id')->unique()->values();
+        $variations = ProductVariation::whereIn('id', $variationIds)->with('product')->get()->keyBy('id');
+
+        // Subtotal calculation based on cart
+        $subtotal = 0;
+        foreach ($cart as $item) {
+            $variation = ProductVariation::find($item['product_variation_id']);
+            $subtotal += ($variation->sale_price ?? 0) * $item['quantity'];
+        }
+
+        // Coupon discount recalculate
+        $discount_amount = 0;
+        $appliedCoupon = session('coupon');
+
+        if ($appliedCoupon) {
+            $coupon = CouponCode::find($appliedCoupon['id'] ?? null);
+
+            if ($coupon && $coupon->status) {
+                $discount_amount = $coupon->discount_type === 'percentage'
+                    ? $subtotal * ($coupon->discount_value / 100)
+                    : $coupon->discount_value;
+
+                // Discount never greater than subtotal
+                if ($discount_amount > $subtotal) {
+                    $discount_amount = $subtotal;
+                }
+
+                // Keep session in sync with the recalculated discount
+                session()->put('coupon', [
+                    'id' => $coupon->id,
+                    'code' => $coupon->code,
+                    'discount_amount' => $discount_amount,
+                ]);
+            } else {
+                session()->forget('coupon');  // Coupon deleted or deactivated, remove from session
+            }
+        }
+
+        // Delivery charge, Total & cart count
+        $delivery_charge = session('delivery_option_charge', 0);
+        $total = ($subtotal - $discount_amount) + $delivery_charge;
+        $cart_count = collect($cart)->sum('quantity');
+
+        return view('frontend.pages.checkout', compact(
+            'cart',
+            'variations',
+            'delivery_options',
+            'subtotal',
+            'discount_amount',
+            'delivery_charge',
+            'total',
+            'cart_count'
+        ));
+    }
+
+    public function updateShippingMethod(Request $request)
+    {
+        $request->validate([
+            'delivery_option_id' => 'required|exists:delivery_options,id',
+        ]);
+
+        $delivery = DeliveryOption::find($request->delivery_option_id);
+
+        if (!$delivery) {
+            return response()->json(['status' => false, 'message' => 'Invalid shipping method.'], 422);
+        }
+
+        session()->put('delivery_option_id', $delivery->id);
+        session()->put('delivery_option_charge', $delivery->charge);
+
+        $cart = session()->get('cart', []);
+
+        // Subtotal calculation (unchanged, just needed for the total)
+        $subtotal = 0;
+        foreach ($cart as $item) {
+            $variation = ProductVariation::find($item['product_variation_id']);
+            $subtotal += ($variation->sale_price ?? 0) * $item['quantity'];
+        }
+
+        // Discount already fixed from cart page, just read it from session
+        $discount_amount = session('coupon')['discount_amount'] ?? 0;
+        $delivery_charge = $delivery->charge;
+        $total = ($subtotal - $discount_amount) + $delivery_charge;
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Shipping method updated.',
+            'delivery_charge' => $delivery_charge,
+            'total' => $total,
+        ]);
     }
 }

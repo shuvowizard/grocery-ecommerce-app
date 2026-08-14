@@ -22,14 +22,18 @@ Route::get('/terms', [FrontendController::class, 'terms'])->name('terms');
 Route::get('/privacy', [FrontendController::class, 'privacy'])->name('privacy');
 Route::get('/products', [FrontendController::class, 'products'])->name('products');
 Route::get('/product/{slug}', [FrontendController::class, 'product'])->name('product');
-Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add');
+
+# Cart routes (in CartController)
 Route::get('/cart', [CartController::class, 'cart'])->name('cart');
+Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add');
 Route::post('/cart/update', [CartController::class, 'cartUpdate'])->name('cart.update');
 Route::post('/cart/remove', [CartController::class, 'cartItemRemove'])->name('cart.remove');
 Route::post('/cart/clear', [CartController::class, 'cartClear'])->name('cart.clear');
 Route::post('/cart/coupon/apply', [CartController::class, 'applyCoupon'])->name('cart.coupon.apply');
 Route::post('/cart/coupon/remove', [CartController::class, 'removeCoupon'])->name('cart.coupon.remove');
+
 Route::get('/checkout', [FrontendController::class, 'checkout'])->name('checkout');
+Route::post('/checkout/shipping/update', [FrontendController::class, 'updateShippingMethod'])->name('checkout.shipping.update');
 // -------------- End Frontend Route -------------- //
 
 
