@@ -29,4 +29,9 @@ class User extends Authenticatable implements MustVerifyEmail
             'token_expires_at' => 'datetime',
         ];
     }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
 }
