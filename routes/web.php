@@ -65,7 +65,6 @@ Route::post('/forget-password', [UserController::class, 'forgetPasswordSubmit'])
 // -------- Reset Password --------
 Route::get('/reset-password/{token}/{email}', [UserController::class, 'resetPassword'])->name('reset.password');
 Route::post('/reset-password', [UserController::class, 'resetPasswordSubmit'])->name('reset.password.submit');
-
 // -------------- End User Route -------------- //
 
 
