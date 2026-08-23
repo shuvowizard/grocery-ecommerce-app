@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\AdminProductController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Frontend\CartController;
 use App\Http\Controllers\Frontend\FrontendController;
+use App\Http\Controllers\Frontend\PaymentController;
 use App\Http\Controllers\User\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -32,8 +33,14 @@ Route::post('/cart/clear', [CartController::class, 'cartClear'])->name('cart.cle
 Route::post('/cart/coupon/apply', [CartController::class, 'applyCoupon'])->name('cart.coupon.apply');
 Route::post('/cart/coupon/remove', [CartController::class, 'removeCoupon'])->name('cart.coupon.remove');
 
+# Checkout routes
 Route::get('/checkout', [FrontendController::class, 'checkout'])->name('checkout');
 Route::post('/checkout/shipping/update', [FrontendController::class, 'updateShippingMethod'])->name('checkout.shipping.update');
+
+# Payment routes (in PaymentController)
+Route::post('/payment/place-order', [PaymentController::class, 'placeOrder'])->name('order.place');
+Route::get('/payment/paypal/success', [PaymentController::class, 'paypalSuccess'])->name('paypal.success');
+Route::get('/payment/paypal/cancel', [PaymentController::class, 'paypalCancel'])->name('paypal.cancel');
 // -------------- End Frontend Route -------------- //
 
 

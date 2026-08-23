@@ -81,6 +81,17 @@
             })
         </script>
     @endif
+
+    @if (session('warning'))
+        <script>
+            iziToast.warning({
+                message: "{{ session('warning') }}",
+                position: 'topRight',
+                timeout: 5000,
+                progressBarColor: '#FF0000'
+            })
+        </script>
+    @endif
 </body>
 
 </html>
