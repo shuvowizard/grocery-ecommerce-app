@@ -11,6 +11,7 @@ use App\Models\OrderDetail;
 use App\Models\ProductVariation;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
@@ -75,7 +76,6 @@ class PaymentController extends Controller
         //     return $this->createOrder('cod', 'pending', null, null);
         // }
 
-        // Stripe porer dhape korbo
         return back()->with('error', 'This payment method is not available yet.');
     }
 
@@ -98,35 +98,44 @@ class PaymentController extends Controller
         $deliveryCharge = $delivery->charge;
         $total = ($subtotal - $discountAmount) + $deliveryCharge;
 
-        $provider = new PayPalClient;
-        $provider->setApiCredentials(config('paypal'));
-        $provider->getAccessToken();
+        try {
+            $provider = new PayPalClient;
+            $provider->setApiCredentials(config('paypal'));
+            $provider->getAccessToken();
 
-        $response = $provider->createOrder([
-            "intent" => "CAPTURE",
-            "application_context" => [
-                "return_url" => route('paypal.success'),
-                "cancel_url" => route('paypal.cancel'),
-            ],
-            "purchase_units" => [
-                [
-                    "amount" => [
-                        "currency_code" => "USD",
-                        "value" => number_format($total, 2, '.', ''),
-                    ],
-                ]
-            ],
-        ]);
+            $response = $provider->createOrder([
+                "intent" => "CAPTURE",
+                "application_context" => [
+                    "return_url" => route('paypal.success'),
+                    "cancel_url" => route('paypal.cancel'),
+                ],
+                "purchase_units" => [
+                    [
+                        "amount" => [
+                            "currency_code" => "USD",
+                            "value" => number_format($total, 2, '.', ''),
+                        ],
+                    ]
+                ],
+            ]);
 
-        if (isset($response['id']) && $response['id'] != null) {
-            foreach ($response['links'] as $link) {
-                if ($link['rel'] === 'approve') {
-                    return redirect()->away($link['href']);
+            if (isset($response['id']) && $response['id'] != null) {
+                foreach ($response['links'] as $link) {
+                    if ($link['rel'] === 'approve') {
+                        return redirect()->away($link['href']);
+                    }
                 }
             }
-        }
 
-        return back()->with('error', 'Could not connect to PayPal. Please try again.');
+            // Fallback Return: If Response get but "approve" link not found
+            Log::error('PayPal order creation failed: ' . json_encode($response));
+            return back()->with('error', 'Could not connect to PayPal. Please try again.');
+
+        } catch (Exception $e) {
+            // try/catch - unexpected crash (network, timeout, credentials etc...)
+            Log::error('PayPal order creation failed: ' . $e->getMessage());
+            return redirect()->route('checkout')->with('error', 'Could not connect to PayPal. Please try again.');
+        }
     }
 
     /**
@@ -134,20 +143,27 @@ class PaymentController extends Controller
      */
     public function paypalSuccess(Request $request)
     {
-        $provider = new PayPalClient;
-        $provider->setApiCredentials(config('paypal'));
-        $provider->getAccessToken();
+        try {
+            $provider = new PayPalClient;
+            $provider->setApiCredentials(config('paypal'));
+            $provider->getAccessToken();
 
-        $response = $provider->capturePaymentOrder($request->token);
+            $response = $provider->capturePaymentOrder($request->token);
 
-        $currencyCode = $response['purchase_units'][0]['payments']['captures'][0]['amount']['currency_code'];
+            $currencyCode = $response['purchase_units'][0]['payments']['captures'][0]['amount']['currency_code'] ?? 'USD';
 
-        if (isset($response['status']) && $response['status'] === 'COMPLETED') {
-            $transactionId = $response['id'];
-            return $this->createOrder('paypal', 'paid', $transactionId, $currencyCode);
+            if (isset($response['status']) && $response['status'] === 'COMPLETED') {
+                $transactionId = $response['id'];
+                return $this->createOrder('paypal', 'paid', $transactionId, $currencyCode);
+            }
+
+            return redirect()->route('checkout')->with('error', 'Payment was not completed. Please try again.');
+
+        } catch (Exception $e) {
+            // try/catch - unexpected crash (network, timeout, credentials etc...)
+            Log::error('PayPal payment capture failed: ' . $e->getMessage());
+            return redirect()->route('checkout')->with('error', 'Payment was not completed. Please try again.');
         }
-
-        return redirect()->route('checkout')->with('error', 'Payment was not completed.');
     }
 
     public function paypalCancel()
@@ -196,56 +212,70 @@ class PaymentController extends Controller
         $deliveryCharge = $delivery->charge;
         $total = ($subtotal - $couponDiscountAmount) + $deliveryCharge;
 
-        // Create the order
-        $order = Order::create([
-            'user_id' => auth('web')->id(),
-            'order_no' => 'ORD-' . now()->format('Ymd') . '-' . strtoupper(Str::random(6)),
-            'payment_method' => $paymentMethod,
-            'payment_status' => $paymentStatus,
-            'transaction_id' => $transactionId,
-            'currency' => $currencyCode,
-            'subtotal_price' => $subtotal,
-            'delivery_option_cost' => $deliveryCharge,
-            'coupon_code' => $couponCode,
-            'coupon_discount_type' => $couponDiscountType,
-            'coupon_discount_value' => $couponDiscountValue,
-            'coupon_discount_amount' => $couponDiscountAmount,
-            'total_price' => $total,
-            'billing_name' => $checkoutData['name'],
-            'billing_email' => $checkoutData['email'],
-            'billing_phone' => $checkoutData['phone'],
-            'billing_address' => $checkoutData['address'],
-            'billing_country' => $checkoutData['country'],
-            'billing_state' => $checkoutData['state'],
-            'billing_city' => $checkoutData['city'],
-            'billing_zip' => $checkoutData['zip'],
-            'note' => $checkoutData['order_notes'] ?? null,
-            'status' => 'pending',
-        ]);
-
-        // Create order details + reduce stock
-        foreach ($cart as $item) {
-            $variation = ProductVariation::with('product')->find($item['product_variation_id']);
-
-            OrderDetail::create([
-                'order_id' => $order->id,
-                'product_id' => $variation->product->id,
-                'product_variation_id' => $variation->id,
-                'product_name' => $variation->product->name,
-                'label' => $variation->label,
-                'sale_price' => $variation->sale_price,
-                'quantity' => $item['quantity'],
-                'total_price' => $variation->sale_price * $item['quantity'],
+        try {
+            // 1. Start DB Transaction
+            DB::beginTransaction();
+            // Create the order
+            $order = Order::create([
+                'user_id' => auth('web')->id(),
+                'order_no' => 'ORD-' . now()->format('Ymd') . '-' . strtoupper(Str::random(6)),
+                'payment_method' => $paymentMethod,
+                'payment_status' => $paymentStatus,
+                'transaction_id' => $transactionId,
+                'currency' => $currencyCode,
+                'subtotal_price' => round($subtotal, 2),
+                'delivery_option_cost' => $deliveryCharge,
+                'coupon_code' => $couponCode,
+                'coupon_discount_type' => $couponDiscountType,
+                'coupon_discount_value' => $couponDiscountValue,
+                'coupon_discount_amount' => round($couponDiscountAmount, 2),
+                'total_price' => round($total, 2),
+                'billing_name' => $checkoutData['name'],
+                'billing_email' => $checkoutData['email'],
+                'billing_phone' => $checkoutData['phone'],
+                'billing_address' => $checkoutData['address'],
+                'billing_country' => $checkoutData['country'],
+                'billing_state' => $checkoutData['state'],
+                'billing_city' => $checkoutData['city'],
+                'billing_zip' => $checkoutData['zip'],
+                'note' => $checkoutData['order_notes'] ?? null,
+                'status' => 'pending',
             ]);
 
-            // Reduce stock
-            $variation->decrement('stock', $item['quantity']);
-        }
+            // Create order details + reduce stock
+            foreach ($cart as $item) {
+                $variation = ProductVariation::with('product')->find($item['product_variation_id']);
 
-        // Increment coupon usage count
-        if ($appliedCoupon) {
-            $coupon = CouponCode::find($appliedCoupon['id']);
-            $coupon?->increment('used_count');
+                OrderDetail::create([
+                    'order_id' => $order->id,
+                    'product_id' => $variation->product->id,
+                    'product_variation_id' => $variation->id,
+                    'product_name' => $variation->product->name,
+                    'label' => $variation->label,
+                    'sale_price' => $variation->sale_price,
+                    'quantity' => $item['quantity'],
+                    'total_price' => $variation->sale_price * $item['quantity'],
+                ]);
+
+                // Reduce stock
+                $variation->decrement('stock', $item['quantity']);
+            }
+
+            // Increment coupon usage count
+            if ($appliedCoupon) {
+                $coupon = CouponCode::find($appliedCoupon['id']);
+                $coupon?->increment('used_count');
+            }
+
+            // 2. Commit DB Transaction
+            DB::commit();
+
+        } catch (Exception $e) {
+            // 3. If any query fails or throws exception, then Rollback DB Transaction
+            DB::rollBack();
+
+            Log::error('Order creation failed: ' . $e->getMessage());
+            return redirect()->route('checkout')->with('error', 'Order creation failed due to a system error. Please try again.');
         }
 
         // Send order confirmation email
