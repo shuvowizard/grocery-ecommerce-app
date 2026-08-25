@@ -3,12 +3,16 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
+use App\Mail\OrderPlacedMail;
 use App\Models\CouponCode;
 use App\Models\DeliveryOption;
 use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\ProductVariation;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Srmklive\PayPal\Services\PayPal as PayPalClient;
 
@@ -242,6 +246,13 @@ class PaymentController extends Controller
         if ($appliedCoupon) {
             $coupon = CouponCode::find($appliedCoupon['id']);
             $coupon?->increment('used_count');
+        }
+
+        // Send order confirmation email
+        try {
+            Mail::to($order->billing_email)->send(new OrderPlacedMail($order));
+        } catch (Exception $e) {
+            Log::error('Order confirmation email failed: ' . $e->getMessage());
         }
 
         // Clear session data
