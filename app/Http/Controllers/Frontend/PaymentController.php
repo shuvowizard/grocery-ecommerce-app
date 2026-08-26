@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
+use App\Mail\AdminOrderNotificationMail;
 use App\Mail\OrderPlacedMail;
 use App\Models\CouponCode;
 use App\Models\DeliveryOption;
@@ -355,11 +356,18 @@ class PaymentController extends Controller
             return redirect()->route('checkout')->with('error', 'Order creation failed due to a system error. Please try again.');
         }
 
-        // Send order confirmation email
+        // Send order confirmation email to customer
         try {
             Mail::to($order->billing_email)->send(new OrderPlacedMail($order));
         } catch (Exception $e) {
             Log::error('Order confirmation email failed: ' . $e->getMessage());
+        }
+
+        // Send order notification email to admin
+        try {
+            Mail::to(config('mail.admin_email'))->send(new AdminOrderNotificationMail($order));
+        } catch (Exception $e) {
+            Log::error('Admin order notification email failed: ' . $e->getMessage());
         }
 
         // Clear session data

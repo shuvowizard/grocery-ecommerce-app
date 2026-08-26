@@ -115,4 +115,17 @@ return [
         'name' => env('MAIL_FROM_NAME', env('APP_NAME', 'Laravel')),
     ],
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | Admin Email Address
+    |--------------------------------------------------------------------------
+    |
+    | If you want to send multiple admin emails (if you have multiple admins), 
+    | You can split them into a comma-separated array in .env:
+    | Like: ADMIN_EMAIL = admin@example.com,admin2@example.com
+    */
+
+    'admin_email' => env('ADMIN_EMAIL', 'admin@example.com'),
+
 ];
