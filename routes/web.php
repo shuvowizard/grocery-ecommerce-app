@@ -41,6 +41,8 @@ Route::post('/checkout/shipping/update', [FrontendController::class, 'updateShip
 Route::post('/payment/place-order', [PaymentController::class, 'placeOrder'])->name('order.place');
 Route::get('/payment/paypal/success', [PaymentController::class, 'paypalSuccess'])->name('paypal.success');
 Route::get('/payment/paypal/cancel', [PaymentController::class, 'paypalCancel'])->name('paypal.cancel');
+Route::get('/payment/stripe/success', [PaymentController::class, 'stripeSuccess'])->name('stripe.success');
+Route::get('/payment/stripe/cancel', [PaymentController::class, 'stripeCancel'])->name('stripe.cancel');
 // -------------- End Frontend Route -------------- //
 
 

@@ -16,11 +16,12 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Srmklive\PayPal\Services\PayPal as PayPalClient;
+use Stripe\StripeClient;
 
 class PaymentController extends Controller
 {
     /**
-     * Step 1: Validate billing form, then decide flow based on payment method.
+     * Step 1 (Initial Step):  Validate billing form, then decide flow based on payment method.
      */
     public function placeOrder(Request $request)
     {
@@ -48,8 +49,7 @@ class PaymentController extends Controller
             return redirect()->route('cart')->with('error', 'Your cart is empty.');
         }
 
-        // Billing info + Cart summary will temporarily store in session. 
-        // Later we'll use these to create an order and order details.
+        // Billing info + Cart summary will temporarily store in session. Later we'll use these to create an order and order details.
         session()->put('checkout_data', $request->only([
             'name',
             'email',
@@ -68,13 +68,13 @@ class PaymentController extends Controller
             return $this->redirectToPaypal();
         }
 
-        // if ($request->payment_method === 'stripe') {
-        //     // return $this->redirectToStripe();
-        // }
+        if ($request->payment_method === 'stripe') {
+            return $this->redirectToStripe();
+        }
 
-        // if ($request->payment_method === 'cod') {
-        //     return $this->createOrder('cod', 'pending', null, null);
-        // }
+        if ($request->payment_method === 'cod') {
+            return $this->createOrder('cod', 'pending', null);
+        }
 
         return back()->with('error', 'This payment method is not available yet.');
     }
@@ -150,10 +150,9 @@ class PaymentController extends Controller
 
             $response = $provider->capturePaymentOrder($request->token);
 
-            $currencyCode = $response['purchase_units'][0]['payments']['captures'][0]['amount']['currency_code'] ?? 'USD';
-
             if (isset($response['status']) && $response['status'] === 'COMPLETED') {
                 $transactionId = $response['id'];
+                $currencyCode = $response['purchase_units'][0]['payments']['captures'][0]['amount']['currency_code'] ?? 'USD';
                 return $this->createOrder('paypal', 'paid', $transactionId, $currencyCode);
             }
 
@@ -172,10 +171,88 @@ class PaymentController extends Controller
     }
 
     /**
-     * Shared: Create the Order + OrderDetails, reduce stock, clear cart.
+     * Step 4 (Stripe only): Create a Stripe Checkout Session and redirect the user.
+     */
+    private function redirectToStripe()
+    {
+        $cart = session()->get('cart', []);
+        $checkoutData = session('checkout_data');
+
+        $subtotal = 0;
+        foreach ($cart as $item) {
+            $variation = ProductVariation::find($item['product_variation_id']);
+            $subtotal += ($variation->sale_price ?? 0) * $item['quantity'];
+        }
+
+        $discountAmount = session('coupon')['discount_amount'] ?? 0;
+        $delivery = DeliveryOption::find($checkoutData['delivery_option_id']);
+        $deliveryCharge = $delivery->charge;
+        $total = ($subtotal - $discountAmount) + $deliveryCharge;
+
+        try {
+            // Make Client Object using STRIPE secret API key
+            $stripe = new StripeClient(config('stripe.stripe_secret_key'));
+
+            // Create checkout session using the Client Object
+            $session = $stripe->checkout->sessions->create([
+                'payment_method_types' => ['card'],
+                'line_items' => [
+                    [
+                        'price_data' => [
+                            'currency' => 'usd',
+                            'product_data' => [
+                                'name' => 'Order Total',
+                            ],
+                            'unit_amount' => (int) round($total * 100),
+                        ],
+                        'quantity' => 1,
+                    ]
+                ],
+                'mode' => 'payment',
+                'success_url' => route('stripe.success') . '?session_id={CHECKOUT_SESSION_ID}',
+                'cancel_url' => route('stripe.cancel'),
+            ]);
+
+            return redirect()->away($session->url);
+
+        } catch (Exception $e) {
+            Log::error('Stripe session creation failed: ' . $e->getMessage());
+            return redirect()->route('checkout')->with('error', 'Could not connect to Stripe. Please try again.');
+        }
+    }
+
+    /**
+     * Step 5 (Stripe only): Stripe redirects back here after successful payment.
+     */
+    public function stripeSuccess(Request $request)
+    {
+        try {
+            $stripe = new StripeClient(config('stripe.stripe_secret_key'));
+
+            $session = $stripe->checkout->sessions->retrieve($request->session_id);
+
+            if ($session->payment_status === 'paid') {
+                $currencyCode = strtoupper($session->currency ?? 'USD');
+                return $this->createOrder('stripe', 'paid', $session->payment_intent, $currencyCode);
+            }
+
+            return redirect()->route('checkout')->with('error', 'Payment was not completed. Please try again.');
+        } catch (Exception $e) {
+            Log::error('Stripe session retrieve failed: ' . $e->getMessage());
+            return redirect()->route('checkout')->with('error', 'Payment was not completed. Please try again.');
+        }
+    }
+
+    public function stripeCancel()
+    {
+        return redirect()->route('checkout')->with('error', 'You cancelled the Stripe payment.');
+    }
+
+    /**
+     * Step 6 (Shared): Create the Order + OrderDetails, reduce stock, clear cart.
      * Used by PayPal, Stripe, COD (Cash on Delivery)
      */
-    private function createOrder(string $paymentMethod, string $paymentStatus, ?string $transactionId, ?string $currencyCode)
+    private function createOrder(string $paymentMethod, string $paymentStatus, ?string $transactionId, string $currencyCode = 'USD')
     {
         $cart = session()->get('cart', []);
         $checkoutData = session('checkout_data');
