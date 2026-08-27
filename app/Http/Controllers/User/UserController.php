@@ -4,13 +4,13 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Mail\WebsiteMail;
+use App\Models\Order;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
@@ -236,7 +236,8 @@ class UserController extends Controller
 
     public function orders()
     {
-        return view('user.orders');
+        $orders = Order::where('user_id', Auth::guard('web')->user()->id)->orderBy('created_at', 'desc')->paginate(5);
+        return view('user.orders', compact('orders'));
     }
 
     public function wishlist()

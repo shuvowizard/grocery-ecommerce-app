@@ -25,130 +25,83 @@
                 <!-- Orders Content -->
                 <div class="col-lg-9">
                     <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h3 class="fw-bold mb-0">My Orders</h3>
-                        <div>
-                            <select class="form-select">
-                                <option>All Orders</option>
-                                <option>Pending</option>
-                                <option>Processing</option>
-                                <option>Shipped</option>
-                                <option>Delivered</option>
-                                <option>Cancelled</option>
-                            </select>
-                        </div>
+                        <h3 class="fw-bold mb-0">My Orders</h3>                        
                     </div>
 
                     <!-- Orders List -->
                     <div class="card border-0 shadow-sm mb-4">
                         <div class="card-body p-0">
                             <div class="table-responsive">
-                                <table class="table table-hover mb-0">
+                                <table class="table table-hover table-sm mb-0">
                                     <thead class="bg-light">
-                                        <tr>
+                                        <tr class="text-center">
                                             <th class="px-4 py-3">Order ID</th>
                                             <th class="py-3">Date</th>
-                                            <th class="py-3">Items</th>
-                                            <th class="py-3">Total</th>
-                                            <th class="py-3">Status</th>
+                                            <th class="py-3">Payment Method</th>
+                                            <th class="py-3">Total Price</th>
+                                            <th class="py-3">Payment Status</th>
+                                            <th class="py-3">Delivery Status</th>
                                             <th class="py-3">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td class="px-4 py-3 fw-bold">#ORD-2024-1001</td>
-                                            <td class="py-3">Nov 10, 2025</td>
-                                            <td class="py-3">5 items</td>
-                                            <td class="py-3 fw-bold text-success">$45.99</td>
-                                            <td class="py-3"><span class="badge bg-success">Delivered</span></td>
-                                            <td class="py-3">
-                                                <a href="customer-invoice.html" class="btn btn-sm btn-success me-1">
-                                                    <i class="bi bi-eye"></i>
-                                                </a>
-                                                <button class="btn btn-sm btn-outline-success">
-                                                    <i class="bi bi-download"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="px-4 py-3 fw-bold">#ORD-2024-1002</td>
-                                            <td class="py-3">Nov 08, 2025</td>
-                                            <td class="py-3">3 items</td>
-                                            <td class="py-3 fw-bold text-success">$32.50</td>
-                                            <td class="py-3"><span class="badge bg-info">Shipped</span></td>
-                                            <td class="py-3">
-                                                <a href="customer-invoice.html" class="btn btn-sm btn-success me-1">
-                                                    <i class="bi bi-eye"></i>
-                                                </a>
-                                                <button class="btn btn-sm btn-outline-secondary">
-                                                    <i class="bi bi-geo-alt"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="px-4 py-3 fw-bold">#ORD-2024-1003</td>
-                                            <td class="py-3">Nov 05, 2025</td>
-                                            <td class="py-3">7 items</td>
-                                            <td class="py-3 fw-bold text-success">$78.25</td>
-                                            <td class="py-3"><span class="badge bg-warning">Pending</span></td>
-                                            <td class="py-3">
-                                                <a href="customer-invoice.html" class="btn btn-sm btn-success me-1">
-                                                    <i class="bi bi-eye"></i>
-                                                </a>
-                                                <button class="btn btn-sm btn-outline-danger">
-                                                    <i class="bi bi-x-circle"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="px-4 py-3 fw-bold">#ORD-2024-1004</td>
-                                            <td class="py-3">Oct 28, 2025</td>
-                                            <td class="py-3">4 items</td>
-                                            <td class="py-3 fw-bold text-success">$56.75</td>
-                                            <td class="py-3"><span class="badge bg-success">Delivered</span></td>
-                                            <td class="py-3">
-                                                <a href="customer-invoice.html" class="btn btn-sm btn-success me-1">
-                                                    <i class="bi bi-eye"></i>
-                                                </a>
-                                                <button class="btn btn-sm btn-outline-success">
-                                                    <i class="bi bi-download"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="px-4 py-3 fw-bold">#ORD-2024-1005</td>
-                                            <td class="py-3">Oct 20, 2025</td>
-                                            <td class="py-3">2 items</td>
-                                            <td class="py-3 fw-bold text-success">$23.99</td>
-                                            <td class="py-3"><span class="badge bg-success">Delivered</span></td>
-                                            <td class="py-3">
-                                                <a href="customer-invoice.html" class="btn btn-sm btn-success me-1">
-                                                    <i class="bi bi-eye"></i>
-                                                </a>
-                                                <button class="btn btn-sm btn-outline-success">
-                                                    <i class="bi bi-download"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
+                                        @if ($orders->count() > 0)
+                                            @foreach ($orders as $order)
+                                                <tr class="text-center">
+                                                    <td class="py-3 fw-bold">#{{ $order->order_no }}</td>
+                                                    <td class="py-3">{{ $order->created_at->format('d M Y') }}</td>
+                                                    <td class="py-3 fw-bold text-success">
+                                                        {{ strtoupper($order->payment_method) }}</td>
+                                                    <td class="py-3 fw-bold text-success">
+                                                        ${{ number_format($order->total_price, 2) }}</td>
+                                                    <td class="py-3">
+                                                        @if ($order->payment_status === 'paid')
+                                                            <span
+                                                                class="badge bg-success">{{ $order->payment_status }}</span>
+                                                        @elseif($order->payment_status === 'pending')
+                                                            <span
+                                                                class="badge bg-warning">{{ $order->payment_status }}</span>
+                                                        @else
+                                                            <span
+                                                                class="badge bg-danger">{{ $order->payment_status }}</span>
+                                                        @endif
+                                                    </td>
+                                                    <td class="py-3">
+                                                        @if ($order->status === 'pending')
+                                                            <span class="badge bg-warning">{{ $order->status }}</span>
+                                                        @elseif($order->status === 'processing')
+                                                            <span class="badge bg-info">{{ $order->status }}</span>
+                                                        @elseif($order->status === 'shipped')
+                                                            <span class="badge bg-primary">{{ $order->status }}</span>
+                                                        @elseif($order->status === 'delivered')
+                                                            <span class="badge bg-success">{{ $order->status }}</span>
+                                                        @elseif($order->status === 'cancelled')
+                                                            <span class="badge bg-danger">{{ $order->status }}</span>
+                                                        @endif
+                                                    </td>
+                                                    <td class="py-3">
+                                                        <a href="#" class="btn btn-sm btn-success me-1">
+                                                            <i class="bi bi-eye"></i>
+                                                        </a>
+                                                        <button class="btn btn-sm btn-outline-success">
+                                                            <i class="bi bi-download"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        @else
+                                            <tr class="text-center">
+                                                <td colspan="7" class="py-3">No orders found. Please place an order.
+                                                </td>
+                                            </tr>
+                                        @endif
                                     </tbody>
                                 </table>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Pagination -->
-                    <nav>
-                        <ul class="pagination justify-content-center">
-                            <li class="page-item disabled">
-                                <a class="page-link" href="#">Previous</a>
-                            </li>
-                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                            <li class="page-item"><a class="page-link" href="#">2</a></li>
-                            <li class="page-item"><a class="page-link" href="#">3</a></li>
-                            <li class="page-item">
-                                <a class="page-link" href="#">Next</a>
-                            </li>
-                        </ul>
-                    </nav>
+                    {{-- {{ $orders->appends(request()->query())->links('pagination::bootstrap-5') }} --}}
+                    {{ $orders->links() }}
                 </div>
             </div>
         </div>
