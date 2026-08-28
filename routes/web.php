@@ -52,6 +52,7 @@ Route::middleware('user')->group(function () {
     Route::get('/profile', [UserController::class, 'profile'])->name('profile');
     Route::post('/profile', [UserController::class, 'profileUpdate'])->name('profile.update');
     Route::get('/orders', [UserController::class, 'orders'])->name('orders');
+    Route::get('/order/invoice/{order_no}', [UserController::class, 'orderInvoice'])->name('order.invoice');
     Route::get('/wishlist', [UserController::class, 'wishlist'])->name('wishlist');
 });
 

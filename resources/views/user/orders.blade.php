@@ -80,7 +80,7 @@
                                                         @endif
                                                     </td>
                                                     <td class="py-3">
-                                                        <a href="#" class="btn btn-sm btn-success me-1">
+                                                        <a href="{{ route('order.invoice', $order->order_no) }}" class="btn btn-sm btn-success me-1">
                                                             <i class="bi bi-eye"></i>
                                                         </a>
                                                         <button class="btn btn-sm btn-outline-success">

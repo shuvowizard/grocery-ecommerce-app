@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Psy\Util\Str;
 
 class UserController extends Controller
 {
@@ -238,6 +239,15 @@ class UserController extends Controller
     {
         $orders = Order::where('user_id', Auth::guard('web')->user()->id)->orderBy('created_at', 'desc')->paginate(5);
         return view('user.orders', compact('orders'));
+    }
+
+    public function orderInvoice(string $order_no)
+    {
+        $order = Order::with('orderDetails')
+            ->where('order_no', $order_no)
+            ->where('user_id', auth('web')->id())
+            ->firstOrFail();
+        return view('user.invoice', compact('order'));
     }
 
     public function wishlist()
