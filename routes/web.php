@@ -53,6 +53,7 @@ Route::middleware('user')->group(function () {
     Route::post('/profile', [UserController::class, 'profileUpdate'])->name('profile.update');
     Route::get('/orders', [UserController::class, 'orders'])->name('orders');
     Route::get('/order/invoice/{order_no}', [UserController::class, 'orderInvoice'])->name('order.invoice');
+    Route::get('/order/invoice/download/{order_no}', [UserController::class, 'downloadInvoice'])->name('order.invoice.download');
     Route::get('/wishlist', [UserController::class, 'wishlist'])->name('wishlist');
 });
 

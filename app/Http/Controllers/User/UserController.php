@@ -6,12 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Mail\WebsiteMail;
 use App\Models\Order;
 use App\Models\User;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-use Psy\Util\Str;
 
 class UserController extends Controller
 {
@@ -248,6 +248,17 @@ class UserController extends Controller
             ->where('user_id', auth('web')->id())
             ->firstOrFail();
         return view('user.invoice', compact('order'));
+    }
+
+    public function downloadInvoice(string $order_no)
+    {
+        $order = Order::with('orderDetails')
+            ->where('order_no', $order_no)
+            ->where('user_id', auth('web')->id())
+            ->firstOrFail();
+
+        $pdf = Pdf::loadView('user.invoice-pdf', compact('order'));
+        return $pdf->download('order-invoice.pdf');
     }
 
     public function wishlist()

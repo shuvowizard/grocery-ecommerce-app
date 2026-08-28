@@ -25,7 +25,7 @@
                 <!-- Orders Content -->
                 <div class="col-lg-9">
                     <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h3 class="fw-bold mb-0">My Orders</h3>                        
+                        <h3 class="fw-bold mb-0">My Orders</h3>
                     </div>
 
                     <!-- Orders List -->
@@ -80,12 +80,14 @@
                                                         @endif
                                                     </td>
                                                     <td class="py-3">
-                                                        <a href="{{ route('order.invoice', $order->order_no) }}" class="btn btn-sm btn-success me-1">
+                                                        <a href="{{ route('order.invoice', $order->order_no) }}"
+                                                            class="btn btn-sm btn-success me-1">
                                                             <i class="bi bi-eye"></i>
                                                         </a>
-                                                        <button class="btn btn-sm btn-outline-success">
+                                                        <a href="{{ route('order.invoice.download', $order->order_no) }}"
+                                                            class="btn btn-sm btn-outline-success" title="Download PDF">
                                                             <i class="bi bi-download"></i>
-                                                        </button>
+                                                        </a>
                                                     </td>
                                                 </tr>
                                             @endforeach
