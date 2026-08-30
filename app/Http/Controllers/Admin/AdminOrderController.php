@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Mail\WebsiteMail;
 use App\Models\Order;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class AdminOrderController extends Controller
 {
@@ -50,6 +52,11 @@ class AdminOrderController extends Controller
         }
 
         $order->update($updateData);
+
+        // Send email notification to customer for order status
+        $subject = "Order Delivery Status Updated - " . $order->order_no;
+        $message = " Dear " . $order->billing_name . ",\n\nThe delivery status of your order has been updated to " . $newStatus . ". Please check your order details for more information." . "\n\nThank you for shopping with us!";
+        Mail::to($order->billing_email)->send(new WebsiteMail($subject, $message));
 
         return response()->json([
             'status' => true,
