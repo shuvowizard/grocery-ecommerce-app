@@ -25,6 +25,13 @@
         </div>
     </div>
 
+    <!-- Axios -->
+    <script src="{{ asset('dist-frontend/js/axios.min.js') }}"></script>
+    <script>
+        axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+        axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    </script>
+
     <script src="{{ asset('dist-admin/js/scripts.js') }}"></script>
     <script src="{{ asset('dist-admin/js/custom.js') }}"></script>
 

@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AdminCategoryController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\AdminCouponCodeController;
 use App\Http\Controllers\Admin\AdminDeliveryOptionController;
+use App\Http\Controllers\Admin\AdminOrderController;
 use App\Http\Controllers\Admin\AdminProductController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Frontend\CartController;
@@ -124,7 +125,9 @@ Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/delivery/edit/{id}', [AdminDeliveryOptionController::class, 'edit'])->name('delivery.edit');
     Route::put('/delivery/update/{id}', [AdminDeliveryOptionController::class, 'update'])->name('delivery.update');
     Route::delete('/delivery/delete/{id}', [AdminDeliveryOptionController::class, 'destroy'])->name('delivery.delete');
-
+    # For Admin Order Management Routes
+    Route::get('/orders/index', [AdminOrderController::class, 'index'])->name('order.index');
+    Route::patch('/order/{order}/status', [AdminOrderController::class, 'updateOrderStatus'])->name('order.status.update');
 });
 
 Route::prefix('admin')->name('admin.')->group(function () {
