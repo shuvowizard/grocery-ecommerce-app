@@ -63,7 +63,7 @@
                                                     </select>
                                                 </td>
                                                 <td>
-                                                    <a href="#" class="btn btn-info btn-md "><i
+                                                    <a href="{{ route('admin.order.invoice', $order->order_no) }}" class="btn btn-info btn-md "><i
                                                             class="fas fa-file-invoice"></i></a>
                                                     {{-- Delete Button --}}
                                                     <form action="#" method="POST" class="d-inline"

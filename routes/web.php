@@ -128,6 +128,7 @@ Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
     # For Admin Order Management Routes
     Route::get('/orders/index', [AdminOrderController::class, 'index'])->name('order.index');
     Route::patch('/order/{order}/status', [AdminOrderController::class, 'updateOrderStatus'])->name('order.status.update');
+    Route::get('/order/{order_no}/invoice', [AdminOrderController::class, 'orderInvoice'])->name('order.invoice');
 });
 
 Route::prefix('admin')->name('admin.')->group(function () {

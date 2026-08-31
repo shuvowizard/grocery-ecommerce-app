@@ -63,4 +63,17 @@ class AdminOrderController extends Controller
             'message' => 'Order marked as ' . $newStatus . '.',
         ]);
     }
+
+    public function orderInvoice(String $order_no)
+    {  
+        $order = Order::with('orderDetails')
+            ->where('order_no', $order_no)
+            ->first();
+
+        if(!$order) {
+            return back()->with('error', 'Order not found');
+        }
+
+        return view('admin.order.invoice', compact('order'));
+    }
 }

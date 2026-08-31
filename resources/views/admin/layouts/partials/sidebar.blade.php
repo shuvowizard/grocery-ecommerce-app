@@ -52,7 +52,7 @@
                 </ul>
             </li>
 
-            <li class="{{ request()->routeIs('admin.order.index') ? 'active' : '' }}"><a class="nav-link"
+            <li class="{{ request()->is('admin/order/*') ? 'active' : '' }}"><a class="nav-link"
                     href="{{ route('admin.order.index') }}"><i class="fas fa-list"></i>
                     <span>Manage Orders</span></a></li>
 
