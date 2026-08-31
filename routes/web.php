@@ -126,9 +126,10 @@ Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
     Route::put('/delivery/update/{id}', [AdminDeliveryOptionController::class, 'update'])->name('delivery.update');
     Route::delete('/delivery/delete/{id}', [AdminDeliveryOptionController::class, 'destroy'])->name('delivery.delete');
     # For Admin Order Management Routes
-    Route::get('/orders/index', [AdminOrderController::class, 'index'])->name('order.index');
+    Route::get('/order/index', [AdminOrderController::class, 'index'])->name('order.index');
     Route::patch('/order/{order}/status', [AdminOrderController::class, 'updateOrderStatus'])->name('order.status.update');
     Route::get('/order/{order_no}/invoice', [AdminOrderController::class, 'orderInvoice'])->name('order.invoice');
+    Route::delete('/order/{order}/delete', [AdminOrderController::class, 'OrderDestroy'])->name('order.delete');
 });
 
 Route::prefix('admin')->name('admin.')->group(function () {

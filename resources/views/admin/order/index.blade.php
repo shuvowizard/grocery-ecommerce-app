@@ -66,7 +66,7 @@
                                                     <a href="{{ route('admin.order.invoice', $order->order_no) }}" class="btn btn-info btn-md "><i
                                                             class="fas fa-file-invoice"></i></a>
                                                     {{-- Delete Button --}}
-                                                    <form action="#" method="POST" class="d-inline"
+                                                    <form action="{{ route('admin.order.delete', $order->id) }}" method="POST" class="d-inline"
                                                         onsubmit="return confirm('Are you sure you want to delete this order?');">
                                                         @csrf
                                                         @method('DELETE')

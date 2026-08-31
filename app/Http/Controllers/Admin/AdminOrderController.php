@@ -76,4 +76,14 @@ class AdminOrderController extends Controller
 
         return view('admin.order.invoice', compact('order'));
     }
+
+    public function OrderDestroy(Order $order)
+    {
+        if(!$order) {
+            return back()->with('error', 'Order not found');
+        }
+
+        $order->delete();
+        return back()->with('success', 'Order deleted successfully');
+    }
 }
