@@ -27,16 +27,17 @@
                             <div class="filter-widget mb-4">
                                 <h5 class="fw-bold mb-3">Categories</h5>
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input" type="radio" name="category" id="catAll" value=""
-                                        checked>
+                                    <input class="form-check-input" type="radio" name="category" id="catAll"
+                                        value="" checked>
                                     <label class="form-check-label" for="catAll">
                                         All Products
                                     </label>
                                 </div>
-                                @foreach($categories as $category)
+                                @foreach ($categories as $category)
                                     <div class="form-check mb-2">
-                                        <input class="form-check-input" type="radio" name="category" id="cat{{ $category->id }}"
-                                            value="{{ $category->slug }}" {{ request('category') == $category->slug ? 'checked' : '' }} >
+                                        <input class="form-check-input" type="radio" name="category"
+                                            id="cat{{ $category->id }}" value="{{ $category->slug }}"
+                                            {{ request('category') == $category->slug ? 'checked' : '' }}>
                                         <label class="form-check-label" for="cat{{ $category->id }}">
                                             {{ $category->name }}
                                         </label>
@@ -146,9 +147,11 @@
                     <div
                         class="products-toolbar d-flex justify-content-between align-items-center mb-4 p-3 bg-light rounded">
                         <div>
-                           @if($products->total() > 0)
-                                <p class="mb-0 text-muted">Showing <strong>{{ $products->firstItem() }} - {{ $products->lastItem() }}</strong> of <strong> {{ $products->total() }} </strong>results</p>
-                            @else 
+                            @if ($products->total() > 0)
+                                <p class="mb-0 text-muted">Showing <strong>{{ $products->firstItem() }} -
+                                        {{ $products->lastItem() }}</strong> of <strong> {{ $products->total() }}
+                                    </strong>results</p>
+                            @else
                                 <p class="mb-0 text-muted">No products found</p>
                             @endif
                         </div>
@@ -156,13 +159,17 @@
                             <label class="me-2 mb-0" style="width:100px;">Sort by:</label>
                             <select class="form-select form-select-sm" id="sortByDropdown">
                                 <option value="" {{ request('sort_by') == '' ? 'selected' : '' }}>Default</option>
-                                <option value="price_asc" {{ request('sort_by') == 'price_asc' ? 'selected' : '' }}>Price: Low
+                                <option value="price_asc" {{ request('sort_by') == 'price_asc' ? 'selected' : '' }}>Price:
+                                    Low
                                     to High</option>
-                                <option value="price_desc" {{ request('sort_by') == 'price_desc' ? 'selected' : '' }}>Price:
+                                <option value="price_desc" {{ request('sort_by') == 'price_desc' ? 'selected' : '' }}>
+                                    Price:
                                     High to Low</option>
-                                <option value="name_asc" {{ request('sort_by') == 'name_asc' ? 'selected' : '' }}>Name: A to Z
+                                <option value="name_asc" {{ request('sort_by') == 'name_asc' ? 'selected' : '' }}>Name: A
+                                    to Z
                                 </option>
-                                <option value="name_desc" {{ request('sort_by') == 'name_desc' ? 'selected' : '' }}>Name: Z to
+                                <option value="name_desc" {{ request('sort_by') == 'name_desc' ? 'selected' : '' }}>Name:
+                                    Z to
                                     A</option>
                             </select>
                         </div>
@@ -171,7 +178,7 @@
                     <!-- Products Grid -->
                     <div class="row g-4">
                         <!-- Product cart -->
-                        @foreach($products as $product)
+                        @foreach ($products as $product)
                             @php
                                 $variation = $product->variations->first();
                                 $discount = $variation->discount_percentage ?? 0;
@@ -189,20 +196,16 @@
                                             </div>
                                         </a>
 
-                                        <div class="position-absolute top-0 end-0 m-2 d-flex flex-column gap-1 align-items-end">
-                                            @if($product->is_new)
+                                        <div
+                                            class="position-absolute top-0 end-0 m-2 d-flex flex-column gap-1 align-items-end">
+                                            @if ($product->is_new)
                                                 <span class="badge bg-primary">New</span>
                                             @endif
 
-                                            @if($inStock && $discount > 0)
+                                            @if ($inStock && $discount > 0)
                                                 <span class="badge bg-danger">-{{ $discount }}%</span>
                                             @endif
                                         </div>
-
-                                        <button type="button" class="btn btn-sm btn-success position-absolute bottom-0 end-0 m-2 add-to-cart-btn"
-                                            data-product-id="{{ $product->id }}" data-variation-id="{{ $variation->id ?? '' }}" {{ !$variation || !$inStock ? 'disabled' : '' }}>
-                                            <i class="bi bi-cart-plus"></i>
-                                        </button>
                                     </div>
                                     <div class="card-body">
                                         <p class="small text-muted mb-1">{{ $product->category->name }}</p>
@@ -220,15 +223,28 @@
                                         </div>
                                         <div class="d-flex align-items-center justify-content-between">
                                             <div>
-                                                @if($variation)
+                                                @if ($variation)
                                                     <span
                                                         class="text-success fw-bold fs-5">${{ number_format($variation->sale_price, 2) }}</span>
-                                                    @if($hasDiscount)
+                                                    @if ($hasDiscount)
                                                         <span
                                                             class="text-muted text-decoration-line-through small ms-1">${{ number_format($variation->regular_price, 2) }}</span>
                                                     @endif
                                                 @endif
                                             </div>
+                                        </div>
+                                        <div class="position-absolute bottom-0 end-0 m-2 d-flex gap-2">
+                                            <button type="button" class="btn btn-sm btn-outline-danger wishlist-btn"
+                                                data-product-id="{{ $product->id }}">
+                                                <i class="bi bi-heart"></i>
+                                            </button>
+
+                                            <button type="button" class="btn btn-sm btn-success add-to-cart-btn"
+                                                data-product-id="{{ $product->id }}"
+                                                data-variation-id="{{ $variation->id ?? '' }}"
+                                                {{ !$variation || !$inStock ? 'disabled' : '' }}>
+                                                <i class="bi bi-cart-plus"></i>
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -256,7 +272,7 @@
         //? submit filter form with disabled empty inputs
         function submitFilterForm() {
             $('#filterForm')
-                .find('input, select').each(function () {
+                .find('input, select').each(function() {
                     if ($(this).val() === '') {
                         $(this).prop('disabled', true);
                     } else {
@@ -269,78 +285,78 @@
         }
 
         //? Sort by dropdown
-        $('#sortByDropdown').change(function () {
+        $('#sortByDropdown').change(function() {
             $('#sortByInput').val($(this).val());
             submitFilterForm();
         });
 
         //? Filter by category
-        $('input[name="category"]').on('change', function () {
+        $('input[name="category"]').on('change', function() {
             submitFilterForm();
         });
 
         //? Filter by price range with debounce
         let timer;
-        $('input[name="min_price"], input[name="max_price"]').on('input', function () {
+        $('input[name="min_price"], input[name="max_price"]').on('input', function() {
             clearTimeout(timer);
-            timer = setTimeout(function () {
+            timer = setTimeout(function() {
                 submitFilterForm();
             }, 500);
         });
 
         //? Add to cart (async/await)
         async function addToCart(productId, variationId, quantity = 1) {
-                try {
-                    const response = await axios.post("{{ route('cart.add') }}", {
-                        product_id: productId,
-                        product_variation_id: variationId,
-                        quantity: quantity,
-                    });
-
-                    const data = response.data;
-                    
-                    const badge = document.getElementById('cartCountBadge');
-                    if (badge) {
-                        badge.textContent = data.cart_count;
-                        badge.classList.toggle('d-none', data.cart_count === 0);
-                    }
-
-                    iziToast.success({
-                        message: data.message,
-                        position: 'topRight',
-                        timeout: 5000,
-                        progressBarColor: '#00FF00'
-                    });
-                } catch (error) {
-                    const message = error.response?.data?.message || 'Something went wrong. Please try again.';
-                    iziToast.error({
-                        message: message,
-                        position: 'topRight',
-                        timeout: 5000,
-                        progressBarColor: '#FF0000'
-                    });
-                }
-            }
-
-            document.addEventListener('DOMContentLoaded', function () {              
-                document.body.addEventListener('click', function (e) {
-                    const btn = e.target.closest('.add-to-cart-btn');
-                    if (!btn) return;
-
-                    const productId = btn.dataset.productId;
-                    const variationId = btn.dataset.variationId;
-
-                    if (!variationId) {
-                        iziToast.error({
-                            message: 'This product is currently unavailable.',
-                            position: 'topRight',
-                            timeout: 5000,
-                        });
-                        return;
-                    }
-
-                    addToCart(productId, variationId, 1);
+            try {
+                const response = await axios.post("{{ route('cart.add') }}", {
+                    product_id: productId,
+                    product_variation_id: variationId,
+                    quantity: quantity,
                 });
+
+                const data = response.data;
+
+                const badge = document.getElementById('cartCountBadge');
+                if (badge) {
+                    badge.textContent = data.cart_count;
+                    badge.classList.toggle('d-none', data.cart_count === 0);
+                }
+
+                iziToast.success({
+                    message: data.message,
+                    position: 'topRight',
+                    timeout: 5000,
+                    progressBarColor: '#00FF00'
+                });
+            } catch (error) {
+                const message = error.response?.data?.message || 'Something went wrong. Please try again.';
+                iziToast.error({
+                    message: message,
+                    position: 'topRight',
+                    timeout: 5000,
+                    progressBarColor: '#FF0000'
+                });
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.body.addEventListener('click', function(e) {
+                const btn = e.target.closest('.add-to-cart-btn');
+                if (!btn) return;
+
+                const productId = btn.dataset.productId;
+                const variationId = btn.dataset.variationId;
+
+                if (!variationId) {
+                    iziToast.error({
+                        message: 'This product is currently unavailable.',
+                        position: 'topRight',
+                        timeout: 5000,
+                    });
+                    return;
+                }
+
+                addToCart(productId, variationId, 1);
             });
+        });
     </script>
 @endpush

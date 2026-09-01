@@ -61,16 +61,21 @@
                                 </div>
                             </div>
                         </a>
-                        <button type="button"
-                            class="btn btn-sm btn-success position-absolute bottom-0 end-0 m-2 add-to-cart-btn"
-                            data-product-id="{{ $product->id }}" data-variation-id="{{ $variation->id ?? '' }}"
-                            {{ !$variation || !$inStock ? 'disabled' : '' }}>
-                            <i class="bi bi-cart-plus"></i>
-                        </button>
+                        <div class="position-absolute bottom-0 end-0 m-2 d-flex gap-2">
+                            <button type="button" class="btn btn-sm btn-outline-danger wishlist-btn"
+                                data-product-id="{{ $product->id }}">
+                                <i class="bi bi-heart"></i>
+                            </button>
+
+                            <button type="button" class="btn btn-sm btn-success add-to-cart-btn"
+                                data-product-id="{{ $product->id }}" data-variation-id="{{ $variation->id ?? '' }}"
+                                {{ !$variation || !$inStock ? 'disabled' : '' }}>
+                                <i class="bi bi-cart-plus"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
             @endforeach
         </div>
     </div>
 </section>
-
