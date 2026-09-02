@@ -21,7 +21,8 @@
                         @endphp
                         @foreach ($categories as $category)
                             <li>
-                                <a class="dropdown-item" href="{{ route('products') }}?category={{ $category->slug }}">{{ $category->name }}</a>
+                                <a class="dropdown-item"
+                                    href="{{ route('products') }}?category={{ $category->slug }}">{{ $category->name }}</a>
                             </li>
                         @endforeach
                     </ul>
@@ -48,7 +49,17 @@
                 </div>
                 <a href="{{ route('wishlist') }}" class="btn btn-outline-success position-relative me-2">
                     <i class="bi bi-heart"></i>
+                    @auth
+                        @php
+                            $wishlistCount = \App\Models\Wishlist::where('user_id', auth('web')->id())->count();
+                        @endphp
+                        <span id="wishlistCountBadge"
+                            class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger {{ $wishlistCount == 0 ? 'd-none' : '' }}">
+                            {{ $wishlistCount }}
+                        </span>
+                    @endauth
                 </a>
+
                 @php
                     $cartCount = session('cart') ? collect(session('cart'))->sum('quantity') : 0;
                 @endphp

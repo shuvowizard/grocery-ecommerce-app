@@ -57,6 +57,7 @@ Route::middleware('user')->group(function () {
     Route::get('/order/invoice/{order_no}', [UserController::class, 'orderInvoice'])->name('order.invoice');
     Route::get('/order/invoice/download/{order_no}', [UserController::class, 'downloadInvoice'])->name('order.invoice.download');
     Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist');
+    Route::post('/wishlist/add', [WishlistController::class, 'addToWishlist'])->name('wishlist.add');
 });
 
 // -------- Authentication --------

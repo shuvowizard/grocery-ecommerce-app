@@ -36,9 +36,9 @@
                     <div class="product-info">
                         <!-- Badge -->
                         @php
-$firstVariation = $product->variations->first();
-$discount = $firstVariation->discount_percentage ?? 0;
-$inStock = ($firstVariation->stock ?? 0) > 0;
+                            $firstVariation = $product->variations->first();
+                            $discount = $firstVariation->discount_percentage ?? 0;
+                            $inStock = ($firstVariation->stock ?? 0) > 0;
                         @endphp
 
                         <div class="d-flex gap-2 mb-2">
@@ -68,8 +68,8 @@ $inStock = ($firstVariation->stock ?? 0) > 0;
 
                         <!-- Price -->
                         @php
-$firstVariation = $product->variations->first();
-$hasDiscount = $firstVariation->regular_price > 0;
+                            $firstVariation = $product->variations->first();
+                            $hasDiscount = $firstVariation->regular_price > 0;
                         @endphp
                         <div class="price-section mb-4">
                             <h3 class="text-success fw-bold d-inline" id="currentPrice">
@@ -139,7 +139,7 @@ $hasDiscount = $firstVariation->regular_price > 0;
                                 data-product-id="{{ $product->id }}">
                                 <i class="bi bi-cart-plus me-2"></i>Add to Cart
                             </button>
-                            <button class="btn btn-outline-success btn-lg" id="wishlistBtn">
+                            <button class="btn btn-outline-success btn-lg" id="wishlistBtn" data-product-id="{{ $product->id }}">
                                 <i class="bi bi-heart"></i>
                             </button>
                             <button class="btn btn-outline-success btn-lg" id="shareBtn">
@@ -357,7 +357,7 @@ $hasDiscount = $firstVariation->regular_price > 0;
 @push('scripts')
     <script>
         $(document).ready(function() {
-            console.log('Script loaded');
+            console.log('Script loaded'); 
 
             // get sale price and regular price
             var salePrice = parseFloat('{{ $product->variations->first()->sale_price }}');
@@ -549,5 +549,41 @@ $hasDiscount = $firstVariation->regular_price > 0;
 
             addToCart(productId, variationId, quantity);
         });
+
+        // Wishlist button click handler
+        $('#wishlistBtn').on('click', async function() {
+            @guest
+                window.location.href = "{{ route('login') }}";
+                return;
+            @endguest
+
+            const productId = $(this).data('product-id');
+
+            try {
+                const response = await axios.post("{{ route('wishlist.add') }}", {
+                    product_id: productId
+                });
+
+                const badge = document.getElementById('wishlistCountBadge');
+                if (badge) {
+                    badge.textContent = response.data.wishlist_count;
+                    badge.classList.toggle('d-none', response.data.wishlist_count === 0);
+                }
+
+                iziToast.success({
+                    message: response.data.message,
+                    position: 'topRight',
+                    timeout: 3000
+                });
+            } catch (error) {
+                iziToast.error({
+                    message: error.response?.data?.message ||
+                        'Something went wrong. Please try again.',
+                    position: 'topRight',
+                    timeout: 3000
+                });
+            }
+        });
+
     </script>
 @endpush

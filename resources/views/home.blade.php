@@ -69,6 +69,43 @@
 
                 addToCart(productId, variationId, 1);
             });
+
+            document.body.addEventListener('click', async function(event) {
+                @guest
+                    window.location.href = "{{ route('login') }}";
+                    return;
+                @endguest
+
+                const button = event.target.closest('.wishlist-btn');
+                if (!button) return;
+                const productId = button.dataset.productId;
+
+                try {
+                    const response = await axios.post("{{ route('wishlist.add') }}", {
+                        product_id: productId
+                    });
+
+                    const badge = document.getElementById('wishlistCountBadge');
+                    if (badge) {
+                        badge.textContent = response.data.wishlist_count;
+                        badge.classList.toggle('d-none', response.data.wishlist_count === 0);
+                    }
+
+                    iziToast.success({
+                        message: response.data.message,
+                        position: 'topRight',
+                        timeout: 3000
+                    });
+                } catch (error) {
+                    iziToast.error({
+                        message: error.response?.data?.message ||
+                            'Something went wrong. Please try again.',
+                        position: 'topRight',
+                        timeout: 3000
+                    });
+                }
+            });
+
         });
     </script>
 @endpush

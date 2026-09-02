@@ -1,0 +1,42 @@
+<?php
+
+namespace App\Http\Controllers\User;
+
+use App\Http\Controllers\Controller;
+use App\Models\Wishlist;
+use Illuminate\Http\Request;
+
+class WishlistController extends Controller
+{
+
+    public function index()
+    {
+        return view('user.wishlist');
+    }
+
+    public function addToWishlist(Request $request)
+    {
+        $request->validate([
+            'product_id' => 'required|exists:products,id',
+        ]);
+
+        $user = auth('web')->user();
+
+        // Check if the product is already in the wishlist
+        if ($user->wishlists()->where('product_id', $request->product_id)->exists()) {
+            return response()->json(['status' => false, 'message' => 'Product is already in your wishlist.'], 400);
+        }
+
+        // Add the product to the user's wishlist
+        $user->wishlists()->create([
+            'product_id' => $request->product_id,
+        ]);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Product added to your wishlist.',
+            'wishlist_count' => Wishlist::where('user_id', auth('web')->id())->count(),
+        ], 200);
+    }
+
+}
