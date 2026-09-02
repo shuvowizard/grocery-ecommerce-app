@@ -11,6 +11,7 @@ use App\Http\Controllers\Frontend\CartController;
 use App\Http\Controllers\Frontend\FrontendController;
 use App\Http\Controllers\Frontend\PaymentController;
 use App\Http\Controllers\User\UserController;
+use App\Http\Controllers\User\WishlistController;
 use Illuminate\Support\Facades\Route;
 
 // -------------- Frontend Route -------------- //
@@ -55,7 +56,7 @@ Route::middleware('user')->group(function () {
     Route::get('/orders', [UserController::class, 'orders'])->name('orders');
     Route::get('/order/invoice/{order_no}', [UserController::class, 'orderInvoice'])->name('order.invoice');
     Route::get('/order/invoice/download/{order_no}', [UserController::class, 'downloadInvoice'])->name('order.invoice.download');
-    Route::get('/wishlist', [UserController::class, 'wishlist'])->name('wishlist');
+    Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist');
 });
 
 // -------- Authentication --------

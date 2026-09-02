@@ -260,10 +260,4 @@ class UserController extends Controller
         $pdf = Pdf::loadView('user.invoice-pdf', compact('order'));
         return $pdf->download('order-invoice.pdf');
     }
-
-    public function wishlist()
-    {
-        return view('user.wishlist');
-    }
-
 }

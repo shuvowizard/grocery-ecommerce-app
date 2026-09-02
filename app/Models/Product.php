@@ -28,6 +28,11 @@ class Product extends Model
         return $this->hasMany(ProductVariation::class)->orderBy('sort_order', 'asc');
     }
 
+    public function wishlists()
+    {
+        return $this->hasMany(Wishlist::class);
+    }
+
     protected function isNew(): Attribute
     {
         return Attribute::make(
