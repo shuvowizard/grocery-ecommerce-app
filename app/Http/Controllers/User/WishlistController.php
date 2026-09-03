@@ -8,10 +8,14 @@ use Illuminate\Http\Request;
 
 class WishlistController extends Controller
 {
-
     public function index()
     {
-        return view('user.wishlist');
+        $wishlists = Wishlist::where('user_id', auth('web')->id())
+            ->with(['product.category', 'product.variations'])
+            ->latest()
+            ->get();
+            
+        return view('user.wishlist', compact('wishlists'));
     }
 
     public function addToWishlist(Request $request)
