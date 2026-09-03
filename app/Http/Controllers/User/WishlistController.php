@@ -14,7 +14,7 @@ class WishlistController extends Controller
             ->with(['product.category', 'product.variations'])
             ->latest()
             ->get();
-            
+
         return view('user.wishlist', compact('wishlists'));
     }
 
@@ -42,5 +42,38 @@ class WishlistController extends Controller
             'wishlist_count' => Wishlist::where('user_id', auth('web')->id())->count(),
         ], 200);
     }
+
+    public function removeWishlistItem(string $productId)
+    {
+        $user = auth('web')->user();
+        $wishlistItem = $user->wishlists()->where('product_id', $productId)->first();
+
+        if (!$wishlistItem) {
+            return response()->json(['status' => false, 'message' => 'Product not found in your wishlist'], 404);
+        }
+
+        $wishlistItem->delete();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Product removed from your wishlist.',
+            'wishlist_count' => Wishlist::where('user_id', auth('web')->id())->count(),
+        ], 200);
+    }
+
+    public function clearWishlist()
+    {
+        $user = auth('web')->user();
+        $user->wishlists()->delete();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Wishlist cleared successfully.',
+            'wishlist_count' => 0,
+        ], 200);
+    }
+
+    
+
 
 }

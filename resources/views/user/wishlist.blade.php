@@ -26,7 +26,9 @@
                 <div class="col-lg-9">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h3 class="fw-bold mb-0">My Wishlist</h3>
-                        <span class="text-muted" id="wishlistItemCount">{{ $wishlists->count() }} items</span>
+                        @if ($wishlists->count() > 0)
+                            <span class="text-muted" id="wishlistItemCount">{{ $wishlists->count() }} items</span>
+                        @endif
                     </div>
 
                     @if ($wishlists->count() > 0)
@@ -51,7 +53,7 @@
                                                     $inStock = ($variation->stock ?? 0) > 0;
                                                     $hasDiscount = $variation && $variation->regular_price > 0;
                                                 @endphp
-                                                <tr>
+                                                <tr class="wishlist-row" data-product-id="{{ $product->id }}">
                                                     <td class="px-4 py-3">
                                                         <div class="d-flex align-items-center">
                                                             <img src="{{ asset('uploads/product/' . $product->photo) }}"
@@ -96,11 +98,11 @@
                                                         @endif
                                                     </td>
                                                     <td class="py-3 align-middle">
-                                                        <button class="btn btn-success btn-sm mb-2">
-                                                            <i class="bi bi-cart-plus me-1"></i>Add to Cart
+                                                        <button class="btn btn-success btn-sm">
+                                                            <i class="bi bi-cart-plus me-1"></i>
                                                         </button>
                                                         <button type="button"
-                                                            class="btn btn-outline-danger btn-sm d-block wishlist-remove-btn"
+                                                            class="btn btn-outline-danger btn-sm wishlist-remove-btn"
                                                             data-product-id="{{ $product->id }}">
                                                             <i class="bi bi-trash"></i>
                                                         </button>
@@ -122,7 +124,7 @@
                                 <button class="btn btn-success">
                                     <i class="bi bi-cart-plus me-2"></i>Add All to Cart
                                 </button>
-                                <button class="btn btn-outline-danger">
+                                <button class="btn btn-outline-danger" id="clearWishlistBtn">
                                     <i class="bi bi-trash me-2"></i>Clear Wishlist
                                 </button>
                             </div>
@@ -138,3 +140,78 @@
         </div>
     </section>
 @endsection
+
+@push('scripts')
+    <script>
+        $(document).ready(function() {
+            // Count badge update
+            function updateWishlistCount(count) {
+                $('#wishlistItemCount').text(count + ' items');
+            }
+
+            // Remove single wishlist item
+            $(document).on('click', '.wishlist-remove-btn', async function() {
+                const $row = $(this).closest('.wishlist-row');
+                const productId = $(this).data('product-id');
+
+                try {
+                    const response = await axios.delete(`/wishlist/remove/${productId}`);
+
+                    $row.remove();
+                    updateWishlistCount(response.data.wishlist_count);
+
+                    const badge = document.getElementById('wishlistCountBadge');
+                    if (badge) {
+                        badge.textContent = response.data.wishlist_count;
+                        badge.classList.toggle('d-none', response.data.wishlist_count === 0);
+                    }
+
+                    iziToast.success({
+                        message: response.data.message,
+                        position: 'topRight',
+                        timeout: 3000
+                    });
+
+                    if (response.data.wishlist_count === 0) {
+                        location.reload();
+                    }
+                } catch (error) {
+                    const message = error.response?.data?.message ||
+                        'Something went wrong. Please try again.';
+                    iziToast.error({
+                        message: message,
+                        position: 'topRight',
+                        timeout: 3000
+                    });
+                }
+            });
+
+            // Clear entire wishlist
+            $('#clearWishlistBtn').on('click', async function() {
+                try {
+                    const response = await axios.delete("{{ route('wishlist.clear') }}");
+
+                    const badge = document.getElementById('wishlistCountBadge');
+                    if (badge) {
+                        badge.textContent = 0;
+                        badge.classList.add('d-none');
+                    }
+
+                    iziToast.success({
+                        message: response.data.message,
+                        position: 'topRight',
+                        timeout: 3000
+                    });
+                    location.reload();
+                } catch (error) {
+                    iziToast.error({
+                        message: 'Something went wrong.',
+                        position: 'topRight',
+                        timeout: 3000
+                    });
+                }
+            });
+
+        });
+    </script>
+@endpush

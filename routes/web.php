@@ -58,6 +58,8 @@ Route::middleware('user')->group(function () {
     Route::get('/order/invoice/download/{order_no}', [UserController::class, 'downloadInvoice'])->name('order.invoice.download');
     Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist');
     Route::post('/wishlist/add', [WishlistController::class, 'addToWishlist'])->name('wishlist.add');
+    Route::delete('/wishlist/remove/{product}', [WishlistController::class, 'removeWishlistItem'])->name('wishlist.remove');
+    Route::delete('/wishlist/clear', [WishlistController::class, 'clearWishlist'])->name('wishlist.clear');
 });
 
 // -------- Authentication --------
