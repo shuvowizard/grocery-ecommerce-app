@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\CouponCode;
 use App\Models\DeliveryOption;
 use App\Models\ProductVariation;
+use App\Models\Wishlist;
 use Illuminate\Http\Request;
 
 class CartController extends Controller
@@ -102,10 +103,13 @@ class CartController extends Controller
 
         session()->put('cart', $cart);
 
+        Wishlist::where('user_id', auth('web')->id())->where('product_id', $request->product_id)->delete();
+
         return response()->json([
             'status' => 'success',
             'message' => 'Product added to cart successfully!',
             'cart_count' => collect($cart)->sum('quantity'),
+            'wishlist_count' => Wishlist::where('user_id', auth('web')->id())->count(),
         ]);
     }
 

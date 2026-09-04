@@ -98,7 +98,10 @@
                                                         @endif
                                                     </td>
                                                     <td class="py-3 align-middle">
-                                                        <button class="btn btn-success btn-sm">
+                                                        <button class="btn btn-success btn-sm wishlist-add-to-cart-btn"
+                                                            data-product-id="{{ $product->id }}"
+                                                            data-variation-id="{{ $variation->id ?? '' }}"
+                                                            {{ !$variation || !$inStock ? 'disabled' : '' }}>
                                                             <i class="bi bi-cart-plus me-1"></i>
                                                         </button>
                                                         <button type="button"
@@ -121,10 +124,10 @@
                                 <i class="bi bi-arrow-left me-2"></i>Continue Shopping
                             </a>
                             <div class="d-flex gap-2">
-                                <button class="btn btn-success">
+                                <button class="btn btn-success" id="addAllToCartBtn">
                                     <i class="bi bi-cart-plus me-2"></i>Add All to Cart
                                 </button>
-                                <button class="btn btn-outline-danger" id="clearWishlistBtn">
+                                <button class="btn btn-outline-danger">
                                     <i class="bi bi-trash me-2"></i>Clear Wishlist
                                 </button>
                             </div>
@@ -206,6 +209,50 @@
                 } catch (error) {
                     iziToast.error({
                         message: 'Something went wrong.',
+                        position: 'topRight',
+                        timeout: 3000
+                    });
+                }
+            });
+
+            // Single Item Add to Cart
+            $(document).on('click', '.wishlist-add-to-cart-btn', async function() {
+                const $row = $(this).closest('.wishlist-row');
+                const productId = $(this).data('product-id');
+                const variationId = $(this).data('variation-id');
+
+                try {
+                    const response = await axios.post("{{ route('cart.add') }}", {
+                        product_id: productId,
+                        product_variation_id: variationId,
+                        quantity: 1,
+                    });
+
+                    $row.remove();
+                    updateWishlistCount(response.data.wishlist_count);
+
+                    const wishlistBadge = document.getElementById('wishlistCountBadge');
+                    wishlistBadge.textContent = response.data.wishlist_count;
+
+                    const badge = document.getElementById('cartCountBadge');
+                    if (badge) {
+                        badge.textContent = response.data.cart_count;
+                        badge.classList.toggle('d-none', response.data.cart_count === 0);
+                    }
+                    iziToast.success({
+                        message: response.data.message,
+                        position: 'topRight',
+                        timeout: 3000
+                    });
+
+                    if (response.data.wishlist_count === 0) {
+                        location.reload();
+                    }
+                } catch (error) {
+                    const message = error.response?.data?.message ||
+                        'Something went wrong. Please try again.';
+                    iziToast.error({
+                        message: message,
                         position: 'topRight',
                         timeout: 3000
                     });

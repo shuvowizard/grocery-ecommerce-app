@@ -73,7 +73,4 @@ class WishlistController extends Controller
         ], 200);
     }
 
-    
-
-
 }

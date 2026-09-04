@@ -516,6 +516,8 @@
                     badge.textContent = data.cart_count;
                     badge.classList.toggle('d-none', data.cart_count === 0);
                 }
+                const wishlistBadge = document.getElementById('wishlistCountBadge');
+                wishlistBadge.textContent = data.wishlist_count;
 
                 iziToast.success({
                     message: data.message,
