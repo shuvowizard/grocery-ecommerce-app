@@ -73,4 +73,62 @@ class WishlistController extends Controller
         ], 200);
     }
 
+     public function addAllToCart()
+    {
+        $wishlistItems = Wishlist::where('user_id', auth('web')->id())
+            ->with('product.variations')
+            ->get();
+
+        $cart = session()->get('cart', []);
+        $addedCount = 0;
+        $skippedCount = 0;
+        $addedProductIds = [];  // Keep track of added product IDs
+
+        foreach ($wishlistItems as $item) {
+            $variation = $item->product->variations->first();
+
+            if (!$variation || $variation->stock == 0) {
+                $skippedCount++;
+                continue;
+            }
+
+            $existingQty = $cart[$variation->id]['quantity'] ?? 0;
+
+            if ($existingQty + 1 > $variation->stock) {
+                $skippedCount++;
+                continue;
+            }
+
+            $cart[$variation->id] = [
+                'product_id' => $item->product_id,
+                'product_variation_id' => $variation->id,
+                'quantity' => $existingQty + 1,
+            ];
+
+            $addedProductIds[] = $item->product_id;
+            $addedCount++;
+        }
+
+        session()->put('cart', $cart);
+
+        // Remove the added items from the wishlist
+        if (!empty($addedProductIds)) {
+            Wishlist::where('user_id', auth('web')->id())
+                ->whereIn('product_id', $addedProductIds)
+                ->delete();
+        }
+
+        $message = "{$addedCount} item(s) added to cart.";
+        if ($skippedCount > 0) {
+            $message .= " {$skippedCount} item(s) skipped (out of stock).";
+        }
+
+        return response()->json([
+            'status' => true,
+            'message' => $message,
+            'cart_count' => collect($cart)->sum('quantity'),
+            'wishlist_count' => Wishlist::where('user_id', auth('web')->id())->count(),
+        ], 200);
+    }
+
 }

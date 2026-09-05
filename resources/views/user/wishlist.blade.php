@@ -259,6 +259,35 @@
                 }
             });
 
+            // All items Add to Cart
+            $('#addAllToCartBtn').on('click', async function() {
+                try {
+                    const response = await axios.post("{{ route('wishlist.addAllToCart') }}");
+
+                    document.getElementById('cartCountBadge').textContent = response.data.cart_count;
+                    const badge = document.getElementById('wishlistCountBadge');
+                    if (badge) {
+                        badge.textContent = response.data.wishlist_count;
+                        badge.classList.toggle('d-none', response.data.wishlist_count === 0);
+                    }
+
+                    iziToast.success({
+                        message: response.data.message,
+                        position: 'topRight',
+                        timeout: 4000
+                    });
+
+                    if (response.data.wishlist_count === 0) {
+                        location.reload();
+                    }
+                } catch (error) {
+                    iziToast.error({
+                        message: 'Something went wrong.',
+                        position: 'topRight',
+                        timeout: 3000
+                    });
+                }
+            });
         });
     </script>
 @endpush

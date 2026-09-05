@@ -60,6 +60,7 @@ Route::middleware('user')->group(function () {
     Route::post('/wishlist/add', [WishlistController::class, 'addToWishlist'])->name('wishlist.add');
     Route::delete('/wishlist/remove/{product}', [WishlistController::class, 'removeWishlistItem'])->name('wishlist.remove');
     Route::delete('/wishlist/clear', [WishlistController::class, 'clearWishlist'])->name('wishlist.clear');
+    Route::post('/wishlist/add-all-to-cart', [WishlistController::class, 'addAllToCart'])->name('wishlist.addAllToCart');
 });
 
 // -------- Authentication --------
