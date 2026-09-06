@@ -56,14 +56,24 @@
 
                         <!-- Rating -->
                         <div class="d-flex align-items-center mb-3">
-                            <span class="text-warning fs-5">
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-half"></i>
+                            <span class="text-warning">
+                                @for($i = 1; $i <= 5; $i++)
+                                    @if($i <= floor($product->average_rating))
+                                        <i class="bi bi-star-fill"></i>
+                                    @elseif($i - 0.5 <= $product->average_rating)
+                                        <i class="bi bi-star-half"></i>
+                                    @else
+                                        <i class="bi bi-star"></i>
+                                    @endif
+                                @endfor
                             </span>
-                            <span class="ms-2 text-muted">(4.5) 128 Reviews</span>
+                            <small class="text-muted ms-2">
+                                @if($product->review_count > 0)
+                                    ({{ $product->average_rating }}) · {{ $product->review_count }} reviews
+                                @else
+                                    No reviews yet
+                                @endif
+                            </small>
                         </div>
 
                         <!-- Price -->
@@ -175,7 +185,7 @@
                         <li class="nav-item" role="presentation">
                             <button class="nav-link" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews"
                                 type="button">
-                                Reviews (128)
+                                Reviews @if($product->review_count > 0) ({{ $product->review_count}}) @endif
                             </button>
                         </li>
                     </ul>
@@ -223,74 +233,67 @@
                             <h5 class="mb-4">Customer Reviews</h5>
 
                             <!-- Review Item -->
-                            <div class="review-item border-bottom pb-4 mb-4">
-                                <div class="d-flex align-items-center mb-2">
-                                    <div class="avatar-circle bg-success text-white rounded-circle d-flex align-items-center justify-content-center me-3"
-                                        style="width: 50px; height: 50px;">
-                                        <strong>JD</strong>
-                                    </div>
-                                    <div>
-                                        <h6 class="mb-0">John Doe</h6>
-                                        <div class="text-warning">
-                                            <i class="bi bi-star-fill"></i>
-                                            <i class="bi bi-star-fill"></i>
-                                            <i class="bi bi-star-fill"></i>
-                                            <i class="bi bi-star-fill"></i>
-                                            <i class="bi bi-star-fill"></i>
+                            @forelse($product->reviews()->with('user')->latest()->get() as $review)
+                                <div class="review-item border-bottom pb-4 mb-4">
+                                    <div class="d-flex align-items-center mb-2">
+                                        @if($review->user->photo)
+                                            <img src="{{ asset('uploads/user/' . $review->user->photo) }}" class="rounded-circle me-3" style="width: 50px; height: 50px;"/>
+                                        @else
+                                            <div class="avatar-circle bg-success text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
+                                                <strong>{{ strtoupper(substr($review->user->name, 0, 2)) }}</strong>
+                                            </div>
+                                        @endif
+                                        <div>
+                                            <h6 class="mb-0">{{ $review->user->name }}</h6>
+                                            <div class="text-warning">
+                                                @for($i = 1; $i <= 5; $i++)
+                                                    <i class="bi bi-star{{ $i <= $review->rating ? '-fill' : '' }}"></i>
+                                                @endfor
+                                            </div>
                                         </div>
                                     </div>
+                                    <p class="text-muted mb-2"><small>Reviewed on {{ $review->created_at->format('F j, Y') }}</small></p>
+                                    @if($review->comment)
+                                        <p>{{ $review->comment }}</p>
+                                    @endif
                                 </div>
-                                <p class="text-muted mb-2"><small>Reviewed on November 5, 2025</small></p>
-                                <p>Excellent quality apples! Very fresh and crisp. Will definitely order again.</p>
-                            </div>
-
-                            <!-- Review Item -->
-                            <div class="review-item border-bottom pb-4 mb-4">
-                                <div class="d-flex align-items-center mb-2">
-                                    <div class="avatar-circle bg-success text-white rounded-circle d-flex align-items-center justify-content-center me-3"
-                                        style="width: 50px; height: 50px;">
-                                        <strong>SM</strong>
-                                    </div>
-                                    <div>
-                                        <h6 class="mb-0">Sarah Miller</h6>
-                                        <div class="text-warning">
-                                            <i class="bi bi-star-fill"></i>
-                                            <i class="bi bi-star-fill"></i>
-                                            <i class="bi bi-star-fill"></i>
-                                            <i class="bi bi-star-fill"></i>
-                                            <i class="bi bi-star"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                                <p class="text-muted mb-2"><small>Reviewed on November 3, 2025</small></p>
-                                <p>Great taste and perfect for baking. A bit pricey but worth it for the quality.</p>
-                            </div>
-
+                            @empty
+                                <p class="text-muted">No reviews yet. Be the first to review this product!</p>
+                            @endforelse
+                            
                             <!-- Add Review Form -->
-                            <div class="mt-5">
-                                <h5 class="mb-3">Write a Review</h5>
-                                <form>
-                                    <div class="mb-3">
-                                        <label class="form-label">Your Rating</label>
-                                        <div class="rating-input">
-                                            <i class="bi bi-star text-warning fs-4 me-1"></i>
-                                            <i class="bi bi-star text-warning fs-4 me-1"></i>
-                                            <i class="bi bi-star text-warning fs-4 me-1"></i>
-                                            <i class="bi bi-star text-warning fs-4 me-1"></i>
-                                            <i class="bi bi-star text-warning fs-4 me-1"></i>
+                            @auth
+                                @if($product->canBeReviewedBy(auth()->id()))
+                                    @if(!$product->reviews()->where('user_id', auth()->id())->exists())
+                                        <div class="mt-5">
+                                            <h5 class="mb-3">Write a Review</h5>
+                                            <form id="reviewForm">
+                                                @csrf
+                                                <div class="mb-3">
+                                                    <label class="form-label">Your Rating</label>
+                                                    <div class="rating-input" id="starRatingInput">
+                                                        @for($i = 1; $i <= 5; $i++)
+                                                            <i class="bi bi-star text-warning fs-4 me-1 star-option" data-value="{{ $i }}"></i>
+                                                        @endfor
+                                                    </div>
+                                                    <input type="hidden" id="selectedRating" value="0">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Your Review</label>
+                                                    <textarea class="form-control" id="reviewComment" rows="4"></textarea>
+                                                </div>
+                                                <button type="button" class="btn btn-success" id="submitReviewBtn">Submit Review</button>
+                                            </form>
                                         </div>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">Your Name</label>
-                                        <input type="text" class="form-control" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">Your Review</label>
-                                        <textarea class="form-control" rows="4" required></textarea>
-                                    </div>
-                                    <button type="submit" class="btn btn-success">Submit Review</button>
-                                </form>
-                            </div>
+                                    @else
+                                        <p class="text-success mt-4">You have already reviewed this product.</p>
+                                    @endif
+                                @else
+                                    <p class="text-danger mt-4">You need to purchase this product to write a review.</p>
+                                @endif
+                            @else
+                                <p class="text-muted mt-4">Please <a href="{{ route('login') }}">Login</a> to write a review (verified purchase required).</p>
+                            @endauth
                         </div>
                     </div>
                 </div>
@@ -325,14 +328,24 @@
                                             </a>
                                         </h6>
                                         <div class="d-flex align-items-center mb-2">
-                                            <span class="text-warning small">
-                                                <i class="bi bi-star-fill"></i>
-                                                <i class="bi bi-star-fill"></i>
-                                                <i class="bi bi-star-fill"></i>
-                                                <i class="bi bi-star-fill"></i>
-                                                <i class="bi bi-star-half"></i>
+                                            <span class="text-warning">
+                                                @for($i = 1; $i <= 5; $i++)
+                                                    @if($i <= floor($relatedProduct->average_rating))
+                                                        <i class="bi bi-star-fill"></i>
+                                                    @elseif($i - 0.5 <= $relatedProduct->average_rating)
+                                                        <i class="bi bi-star-half"></i>
+                                                    @else
+                                                        <i class="bi bi-star"></i>
+                                                    @endif
+                                                @endfor
                                             </span>
-                                            <small class="text-muted ms-2">(4.7)</small>
+                                             <small class="text-muted ms-2">
+                                                @if($relatedProduct->review_count > 0)
+                                                    ({{ $relatedProduct->average_rating }})
+                                                @else
+                                                    No reviews yet
+                                                @endif
+                                            </small>
                                         </div>
                                         @foreach ($relatedProduct->variations as $variation)
                                             <span
@@ -581,6 +594,52 @@
                 iziToast.error({
                     message: error.response?.data?.message ||
                         'Something went wrong. Please try again.',
+                    position: 'topRight',
+                    timeout: 3000
+                });
+            }
+        });
+
+        // Star click handler
+        let selectedRating = 0;        
+        
+        $('.star-option').on('click', function () {
+            selectedRating = $(this).data('value');
+            $('#selectedRating').val(selectedRating);
+
+            $('.star-option').each(function () {
+                const val = $(this).data('value');
+                $(this).toggleClass('bi-star', val > selectedRating);
+                $(this).toggleClass('bi-star-fill', val <= selectedRating);
+            });
+        });
+
+        $('#submitReviewBtn').on('click', async function () {
+            if (selectedRating === 0) {
+                iziToast.warning({
+                    message: 'Please select a rating.', 
+                    position: 'topRight', 
+                    timeout: 3000 
+                });
+                return;
+            }
+
+            try {
+                const { data } = await axios.post("{{ route('review.store', $product->id) }}", {
+                    rating: selectedRating,
+                    comment: $('#reviewComment').val(),
+                });
+
+                iziToast.success({
+                    message: data.message,
+                    position: 'topRight',
+                    timeout: 3000
+                });
+                location.reload();
+            } catch (error) {
+                const message = error.response?.data?.message || 'Something went wrong.';
+                iziToast.error({
+                    message: message,
                     position: 'topRight',
                     timeout: 3000
                 });

@@ -273,6 +273,12 @@ html {
 /* Rating Stars */
 .text-warning i {
     font-size: 0.875rem;
+    pointer-events: none;
+    cursor: default;
+}
+.text-warning i:hover {
+    color: inherit !important;
+    transform: none !important;
 }
 
 /* Button Hover Effects */

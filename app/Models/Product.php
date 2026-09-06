@@ -59,4 +59,18 @@ class Product extends Model
         );
     }
 
+    // Helper method for check product can be reviewed by user or not
+    public function canBeReviewedBy(string $userId): bool
+    {
+        if (!$userId) {
+            return false;
+        }
+
+        // Check if the user has purchased the product 
+        return OrderDetail::whereHas('order', function ($q) use ($userId) {
+                $q->where('user_id', $userId);
+            })
+            ->where('product_id', $this->id)
+            ->exists();
+    }
 }

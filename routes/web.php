@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Frontend\CartController;
 use App\Http\Controllers\Frontend\FrontendController;
 use App\Http\Controllers\Frontend\PaymentController;
+use App\Http\Controllers\User\ReviewController;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\User\WishlistController;
 use Illuminate\Support\Facades\Route;
@@ -61,6 +62,7 @@ Route::middleware('user')->group(function () {
     Route::delete('/wishlist/remove/{product}', [WishlistController::class, 'removeWishlistItem'])->name('wishlist.remove');
     Route::delete('/wishlist/clear', [WishlistController::class, 'clearWishlist'])->name('wishlist.clear');
     Route::post('/wishlist/add-all-to-cart', [WishlistController::class, 'addAllToCart'])->name('wishlist.addAllToCart');
+     Route::post('/product/{product}/review', [ReviewController::class, 'store'])->name('review.store');
 });
 
 // -------- Authentication --------
