@@ -67,12 +67,24 @@
                                                                 <small class="text-muted">Category:
                                                                     {{ $product->category->name }}</small>
                                                                 <div class="text-warning small mt-1">
-                                                                    <i class="bi bi-star-fill"></i>
-                                                                    <i class="bi bi-star-fill"></i>
-                                                                    <i class="bi bi-star-fill"></i>
-                                                                    <i class="bi bi-star-fill"></i>
-                                                                    <i class="bi bi-star-half"></i>
-                                                                    <span class="text-muted ms-1">(4.5)</span>
+                                                                    <span class="text-warning">
+                                                                        @for($i = 1; $i <= 5; $i++)
+                                                                            @if($i <= floor($product->average_rating))
+                                                                                <i class="bi bi-star-fill"></i>
+                                                                            @elseif($i - 0.5 <= $product->average_rating)
+                                                                                <i class="bi bi-star-half"></i>
+                                                                            @else
+                                                                                <i class="bi bi-star"></i>
+                                                                            @endif
+                                                                        @endfor
+                                                                    </span>
+                                                                    <small class="text-muted ms-2">
+                                                                        @if($product->review_count > 0)
+                                                                            ({{ $product->average_rating }})
+                                                                        @else
+                                                                            No reviews yet
+                                                                        @endif
+                                                                    </small>
                                                                 </div>
                                                             </div>
                                                         </div>
