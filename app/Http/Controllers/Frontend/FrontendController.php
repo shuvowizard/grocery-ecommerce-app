@@ -72,6 +72,7 @@ class FrontendController extends Controller
                 }
             ])
             ->withMin('variations', 'sale_price') # Get the minimum sale price of variations on the product table and alias it as `variations_min_sale_price` 
+            ->withAvg('reviews', 'rating') # Get the average rating of reviews on the product table and alias it as `reviews_avg_rating` column.
             ->when($request->filled('category'), function ($query) use ($request) {
                 $query->whereHas('category', function ($query) use ($request) {
                     $query->where('slug', $request->category);
@@ -82,6 +83,10 @@ class FrontendController extends Controller
                     $query->whereBetween('sale_price', [$min, $max]);
                 });
             })
+            ->when($request->filled('rating'), function ($query) use ($request) {
+                $minRating = (int) $request->rating;
+                $query->where('reviews_avg_rating', '>=', $minRating);
+            })
             ->when(
                 $request->filled('sort_by'),
                 function ($query) use ($request) {
@@ -90,6 +95,8 @@ class FrontendController extends Controller
                         'price_desc' => $query->orderByDesc('variations_min_sale_price'),
                         'name_asc' => $query->orderBy('name'),
                         'name_desc' => $query->orderByDesc('name'),
+                        'rating_asc' => $query->orderBy('reviews_avg_rating'),
+                        'rating_desc' => $query->orderByDesc('reviews_avg_rating'),
                         default => $query->latest(),
                     };
                 },

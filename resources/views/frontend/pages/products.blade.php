@@ -64,13 +64,15 @@
                             <div class="filter-widget mb-4">
                                 <h5 class="fw-bold mb-3">Rating</h5>
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input" type="radio" name="rating" id="ratingAll" checked>
+                                    <input class="form-check-input" type="radio" name="rating" id="ratingAll" value=""
+                                        {{ request('rating') == '' ? 'checked' : '' }}>
                                     <label class="form-check-label" for="ratingAll">
                                         All Ratings
                                     </label>
                                 </div>
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input" type="radio" name="rating" id="rating5">
+                                    <input class="form-check-input" type="radio" name="rating" id="rating5" value="5"
+                                        {{ request('rating') == '5' ? 'checked' : '' }}>
                                     <label class="form-check-label" for="rating5">
                                         <span class="text-warning">
                                             <i class="bi bi-star-fill"></i>
@@ -82,7 +84,8 @@
                                     </label>
                                 </div>
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input" type="radio" name="rating" id="rating4">
+                                    <input class="form-check-input" type="radio" name="rating" id="rating4" value="4"
+                                        {{ request('rating') == '4' ? 'checked' : '' }}>
                                     <label class="form-check-label" for="rating4">
                                         <span class="text-warning">
                                             <i class="bi bi-star-fill"></i>
@@ -94,7 +97,8 @@
                                     </label>
                                 </div>
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input" type="radio" name="rating" id="rating3">
+                                    <input class="form-check-input" type="radio" name="rating" id="rating3" value="3"
+                                        {{ request('rating') == '3' ? 'checked' : '' }}>
                                     <label class="form-check-label" for="rating3">
                                         <span class="text-warning">
                                             <i class="bi bi-star-fill"></i>
@@ -106,8 +110,9 @@
                                     </label>
                                 </div>
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input" type="radio" name="rating" id="rating4">
-                                    <label class="form-check-label" for="rating4">
+                                    <input class="form-check-input" type="radio" name="rating" id="rating2" value="2"
+                                        {{ request('rating') == '2' ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="rating2">
                                         <span class="text-warning">
                                             <i class="bi bi-star-fill"></i>
                                             <i class="bi bi-star-fill"></i>
@@ -118,8 +123,9 @@
                                     </label>
                                 </div>
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input" type="radio" name="rating" id="rating5">
-                                    <label class="form-check-label" for="rating5">
+                                    <input class="form-check-input" type="radio" name="rating" id="rating1" value="1"
+                                        {{ request('rating') == '1' ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="rating1">
                                         <span class="text-warning">
                                             <i class="bi bi-star-fill"></i>
                                             <i class="bi bi-star"></i>
@@ -171,6 +177,8 @@
                                 <option value="name_desc" {{ request('sort_by') == 'name_desc' ? 'selected' : '' }}>Name:
                                     Z to
                                     A</option>
+                                <option value="rating_asc" {{ request('sort_by') == 'rating_asc' ? 'selected' : '' }}>Rating: Low to High</option>
+                                <option value="rating_desc" {{ request('sort_by') == 'rating_desc' ? 'selected' : '' }}>Rating: High to Low</option>
                             </select>
                         </div>
                     </div>
@@ -284,7 +292,7 @@
                     }
                 });
 
-            $('input[name="rating"]').prop('disabled', true);
+            // $('input[name="rating"]').prop('disabled', true);
             $('#filterForm').submit();
         }
 
@@ -306,6 +314,11 @@
             timer = setTimeout(function() {
                 submitFilterForm();
             }, 500);
+        });
+
+        //? Filter by rating
+        $('input[name="rating"]').on('change', function () {
+            submitFilterForm();
         });
 
         //? Add to cart (async/await)
