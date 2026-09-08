@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\AdminCouponCodeController;
 use App\Http\Controllers\Admin\AdminDeliveryOptionController;
 use App\Http\Controllers\Admin\AdminOrderController;
 use App\Http\Controllers\Admin\AdminProductController;
+use App\Http\Controllers\Admin\AdminRatingController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Frontend\CartController;
 use App\Http\Controllers\Frontend\FrontendController;
@@ -137,6 +138,9 @@ Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
     Route::patch('/order/{order}/status', [AdminOrderController::class, 'updateOrderStatus'])->name('order.status.update');
     Route::get('/order/{order_no}/invoice', [AdminOrderController::class, 'orderInvoice'])->name('order.invoice');
     Route::delete('/order/{order}/delete', [AdminOrderController::class, 'OrderDestroy'])->name('order.delete');
+    # Review Management Routs
+    Route::get('/rating', [AdminRatingController::class, 'index'])->name('rating.index');
+    Route::delete('/rating/{review}', [AdminRatingController::class, 'destroy'])->name('rating.destroy');
 });
 
 Route::prefix('admin')->name('admin.')->group(function () {

@@ -56,6 +56,10 @@
                     href="{{ route('admin.order.index') }}"><i class="fas fa-list"></i>
                     <span>Manage Orders</span></a></li>
 
+            <li class="{{ request()->routeIs('admin.rating.*') ? 'active' : '' }}"><a class="nav-link"
+                    href="{{ route('admin.rating.index') }}"><i class="fas fa-star"></i>
+                    <span>Manage Rating</span></a></li>
+
             <li><a class="nav-link" href="{{ route('admin.logout') }}"><i class="fas fa-sign-out-alt"></i>
                     <span>Logout</span></a></li>
 
