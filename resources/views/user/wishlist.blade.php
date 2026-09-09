@@ -139,7 +139,7 @@
                                 <button class="btn btn-success" id="addAllToCartBtn">
                                     <i class="bi bi-cart-plus me-2"></i>Add All to Cart
                                 </button>
-                                <button class="btn btn-outline-danger">
+                                <button class="btn btn-outline-danger" id="clearWishlistBtn">
                                     <i class="bi bi-trash me-2"></i>Clear Wishlist
                                 </button>
                             </div>
