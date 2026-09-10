@@ -102,8 +102,18 @@ class CartController extends Controller
         }
 
         session()->put('cart', $cart);
-
         Wishlist::where('user_id', auth('web')->id())->where('product_id', $request->product_id)->delete();
+
+        // Subtotal calculation
+        $subtotal = 0;
+        foreach ($cart as $item) {
+            $v = ProductVariation::find($item['product_variation_id']);
+            $subtotal += ($v->sale_price ?? 0) * $item['quantity'];
+        }
+
+        // Recalculate coupon discount based on new subtotal
+        $this->recalculateCouponDiscount($subtotal);
+
 
         return response()->json([
             'status' => 'success',
@@ -206,6 +216,10 @@ class CartController extends Controller
         unset($cart[$variationId]);
         session()->put('cart', $cart);
 
+        if (empty($cart)) {
+            session()->forget(['cart', 'coupon', 'delivery_option_id', 'delivery_option_charge']);        
+        }
+
         // Subtotal calculation
         $subtotal = 0;
         foreach ($cart as $item) {
@@ -231,7 +245,7 @@ class CartController extends Controller
 
     public function cartClear(Request $request)
     {
-        session()->forget('cart');
+        session()->forget(['cart', 'coupon', 'delivery_option_id', 'delivery_option_charge']);
 
         return response()->json([
             'status' => true,
