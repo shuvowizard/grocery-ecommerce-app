@@ -3,6 +3,11 @@
 namespace App\Models;
 
 use App\Models\Category;
+use App\Models\OrderDetail;
+use App\Models\ProductSpecification;
+use App\Models\ProductVariation;
+use App\Models\Review;
+use App\Models\Wishlist;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 
@@ -36,6 +41,11 @@ class Product extends Model
     public function reviews()
     {
         return $this->hasMany(Review::class);
+    }
+
+    public function specifications()
+    {
+        return $this->hasMany(ProductSpecification::class);
     }
 
     protected function averageRating(): Attribute
