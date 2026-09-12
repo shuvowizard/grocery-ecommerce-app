@@ -63,7 +63,7 @@ Route::middleware('user')->group(function () {
     Route::delete('/wishlist/remove/{product}', [WishlistController::class, 'removeWishlistItem'])->name('wishlist.remove');
     Route::delete('/wishlist/clear', [WishlistController::class, 'clearWishlist'])->name('wishlist.clear');
     Route::post('/wishlist/add-all-to-cart', [WishlistController::class, 'addAllToCart'])->name('wishlist.addAllToCart');
-     Route::post('/product/{product}/review', [ReviewController::class, 'store'])->name('review.store');
+    Route::post('/product/{product}/review', [ReviewController::class, 'store'])->name('review.store');
 });
 
 // -------- Authentication --------
@@ -141,6 +141,11 @@ Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
     # Review Management Routs
     Route::get('/rating', [AdminRatingController::class, 'index'])->name('rating.index');
     Route::delete('/rating/{review}', [AdminRatingController::class, 'destroy'])->name('rating.destroy');
+    # Product Specification Management Routes
+    Route::get('/product/{product}/specifications', [AdminProductController::class, 'specification'])->name('product.specification');
+    Route::post('/product/{product}/specifications', [AdminProductController::class, 'storeSpecification'])->name('product.specification.store');
+    Route::put('/specifications/{specification}', [AdminProductController::class, 'updateSpecification'])->name('specification.update');
+    Route::delete('/specifications/{specification}', [AdminProductController::class, 'destroySpecification'])->name('specification.destroy');
 });
 
 Route::prefix('admin')->name('admin.')->group(function () {

@@ -31,8 +31,8 @@
                                     @foreach ($products as $product)
                                         <tr class="text-center">
                                             <td>{{ $loop->iteration }}</td>
-                                            <td><img src="{{ asset('uploads/product/' . $product->photo) }}" alt="product image"
-                                                    width="50px" height="auto"></td>
+                                            <td><img src="{{ asset('uploads/product/' . $product->photo) }}"
+                                                    alt="product image" width="50px" height="auto"></td>
                                             <td>{{ $product->name }}</td>
                                             <td>{{ $product->slug }}</td>
                                             <td>{{ $product->category->name }}</td>
@@ -45,14 +45,17 @@
                                             </td>
                                             <td>
                                                 <a href="{{ route('admin.product.variation', $product->id) }}"
-                                                    class="btn btn-info btn-md">Variation</a>
+                                                    class="btn btn-info btn-sm">Variation</a>
+                                                <a href="{{ route('admin.product.specification', $product->id) }}"
+                                                    class="btn btn-primary btn-sm">Specifications</a>
+
                                             </td>
                                             <td>
                                                 <a href="{{ route('admin.product.edit', $product->id) }}"
                                                     class="btn btn-warning btn-md "><i class="fas fa-edit"></i></a>
                                                 {{-- Delete Button --}}
-                                                <form action="{{ route('admin.product.delete', $product->id) }}" method="POST"
-                                                    class="d-inline"
+                                                <form action="{{ route('admin.product.delete', $product->id) }}"
+                                                    method="POST" class="d-inline"
                                                     onsubmit="return confirm('Are you sure you want to delete this product?');">
                                                     @csrf
                                                     @method('DELETE')

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\ProductSpecification;
 use App\Models\ProductVariation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -102,13 +103,13 @@ class AdminProductController extends Controller
         return redirect()->route('admin.product.index')->with('success', 'Product deleted successfully!');
     }
 
-    public function variationIndex(String $id)
+    public function variationIndex(string $id)
     {
         $product = Product::with('variations')->findOrFail($id);
         return view('admin.product.variations', ['product' => $product]);
     }
 
-    public function variationStore(Request $request, String $id)
+    public function variationStore(Request $request, string $id)
     {
         # Validate Input
         $validated = $request->validate([
@@ -126,7 +127,7 @@ class AdminProductController extends Controller
         return redirect()->back()->with('success', 'Product variation added successfully!');
     }
 
-    public function variationUpdate(Request $request, String $id)
+    public function variationUpdate(Request $request, string $id)
     {
         # Validate Input
         $validated = $request->validate([
@@ -142,5 +143,55 @@ class AdminProductController extends Controller
         $variation->update($validated);
 
         return redirect()->back()->with('success', 'Product variation updated successfully!');
+    }
+
+    /**
+     * Product Specification Management.
+     */
+    public function specification(Product $product)
+    {
+        $specifications = $product->specifications()->orderBy('id', 'desc')->get();
+
+        return view('admin.product.specification', compact('product', 'specifications'));
+    }
+
+    public function storeSpecification(Request $request, Product $product)
+    {
+        $request->validate([
+            'label' => 'required|string|max:255',
+            'value' => 'required|string|max:255',
+        ]);
+
+        ProductSpecification::create([
+            'product_id' => $product->id,
+            'label' => $request->label,
+            'value' => $request->value,
+        ]);
+
+        return redirect()->back()->with('success', 'Specification added successfully!');
+    }
+
+    public function updateSpecification(Request $request, ProductSpecification $specification)
+    {
+        $request->validate([
+            'label' => 'required|string|max:255',
+            'value' => 'required|string|max:255',
+        ]);
+
+        $specification->update([
+            'label' => $request->label,
+            'value' => $request->value,
+        ]);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Specification updated successfully!',
+        ]);
+    }
+
+    public function destroySpecification(ProductSpecification $specification)
+    {
+        $specification->delete();
+        return redirect()->back()->with('success', 'Specification removed successfully!');
     }
 }
