@@ -198,34 +198,20 @@
                         <!-- Additional Info Tab -->
                         <div class="tab-pane fade" id="info">
                             <h5 class="mb-3">Additional Information</h5>
-                            <table class="table table-bordered">
-                                <tbody>
-                                    <tr>
-                                        <th width="30%">Weight</th>
-                                        <td>1 kg, 2 kg, 5 kg</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Origin</th>
-                                        <td>USA</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Quality</th>
-                                        <td>Organic</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Check</th>
-                                        <td>Healthy</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Shelf Life</th>
-                                        <td>7-10 days when refrigerated</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Storage</th>
-                                        <td>Store in a cool, dry place or refrigerate</td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                            @if($product->specifications->count() > 0)
+                                <table class="table table-bordered">
+                                    <tbody>
+                                        @foreach($product->specifications as $spec)
+                                            <tr>
+                                                <th width="30%">{{ $spec->label }}</th>
+                                                <td>{{ $spec->value }}</td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            @else
+                                <p class="text-muted">No additional information available for this product.</p>
+                            @endif
                         </div>
 
                         <!-- Reviews Tab -->
