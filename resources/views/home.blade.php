@@ -71,13 +71,14 @@
             });
 
             document.body.addEventListener('click', async function(event) {
-                @guest
+                    const button = event.target.closest('.wishlist-btn');
+                    if (!button) return;
+
+                    @guest
                     window.location.href = "{{ route('login') }}";
                     return;
                 @endguest
 
-                const button = event.target.closest('.wishlist-btn');
-                if (!button) return;
                 const productId = button.dataset.productId;
 
                 try {

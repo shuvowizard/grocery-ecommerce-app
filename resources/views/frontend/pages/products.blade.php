@@ -64,15 +64,15 @@
                             <div class="filter-widget mb-4">
                                 <h5 class="fw-bold mb-3">Rating</h5>
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input" type="radio" name="rating" id="ratingAll" value=""
-                                        {{ request('rating') == '' ? 'checked' : '' }}>
+                                    <input class="form-check-input" type="radio" name="rating" id="ratingAll"
+                                        value="" {{ request('rating') == '' ? 'checked' : '' }}>
                                     <label class="form-check-label" for="ratingAll">
                                         All Ratings
                                     </label>
                                 </div>
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input" type="radio" name="rating" id="rating5" value="5"
-                                        {{ request('rating') == '5' ? 'checked' : '' }}>
+                                    <input class="form-check-input" type="radio" name="rating" id="rating5"
+                                        value="5" {{ request('rating') == '5' ? 'checked' : '' }}>
                                     <label class="form-check-label" for="rating5">
                                         <span class="text-warning">
                                             <i class="bi bi-star-fill"></i>
@@ -84,8 +84,8 @@
                                     </label>
                                 </div>
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input" type="radio" name="rating" id="rating4" value="4"
-                                        {{ request('rating') == '4' ? 'checked' : '' }}>
+                                    <input class="form-check-input" type="radio" name="rating" id="rating4"
+                                        value="4" {{ request('rating') == '4' ? 'checked' : '' }}>
                                     <label class="form-check-label" for="rating4">
                                         <span class="text-warning">
                                             <i class="bi bi-star-fill"></i>
@@ -97,8 +97,8 @@
                                     </label>
                                 </div>
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input" type="radio" name="rating" id="rating3" value="3"
-                                        {{ request('rating') == '3' ? 'checked' : '' }}>
+                                    <input class="form-check-input" type="radio" name="rating" id="rating3"
+                                        value="3" {{ request('rating') == '3' ? 'checked' : '' }}>
                                     <label class="form-check-label" for="rating3">
                                         <span class="text-warning">
                                             <i class="bi bi-star-fill"></i>
@@ -110,8 +110,8 @@
                                     </label>
                                 </div>
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input" type="radio" name="rating" id="rating2" value="2"
-                                        {{ request('rating') == '2' ? 'checked' : '' }}>
+                                    <input class="form-check-input" type="radio" name="rating" id="rating2"
+                                        value="2" {{ request('rating') == '2' ? 'checked' : '' }}>
                                     <label class="form-check-label" for="rating2">
                                         <span class="text-warning">
                                             <i class="bi bi-star-fill"></i>
@@ -123,8 +123,8 @@
                                     </label>
                                 </div>
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input" type="radio" name="rating" id="rating1" value="1"
-                                        {{ request('rating') == '1' ? 'checked' : '' }}>
+                                    <input class="form-check-input" type="radio" name="rating" id="rating1"
+                                        value="1" {{ request('rating') == '1' ? 'checked' : '' }}>
                                     <label class="form-check-label" for="rating1">
                                         <span class="text-warning">
                                             <i class="bi bi-star-fill"></i>
@@ -177,8 +177,10 @@
                                 <option value="name_desc" {{ request('sort_by') == 'name_desc' ? 'selected' : '' }}>Name:
                                     Z to
                                     A</option>
-                                <option value="rating_asc" {{ request('sort_by') == 'rating_asc' ? 'selected' : '' }}>Rating: Low to High</option>
-                                <option value="rating_desc" {{ request('sort_by') == 'rating_desc' ? 'selected' : '' }}>Rating: High to Low</option>
+                                <option value="rating_asc" {{ request('sort_by') == 'rating_asc' ? 'selected' : '' }}>
+                                    Rating: Low to High</option>
+                                <option value="rating_desc" {{ request('sort_by') == 'rating_desc' ? 'selected' : '' }}>
+                                    Rating: High to Low</option>
                             </select>
                         </div>
                     </div>
@@ -221,8 +223,8 @@
                                                 class="text-decoration-none text-dark">{{ $product->name }}</a></h6>
                                         <div class="d-flex align-items-center mb-2">
                                             <span class="text-warning">
-                                                @for($i = 1; $i <= 5; $i++)
-                                                    @if($i <= floor($product->average_rating))
+                                                @for ($i = 1; $i <= 5; $i++)
+                                                    @if ($i <= floor($product->average_rating))
                                                         <i class="bi bi-star-fill"></i>
                                                     @elseif($i - 0.5 <= $product->average_rating)
                                                         <i class="bi bi-star-half"></i>
@@ -232,7 +234,7 @@
                                                 @endfor
                                             </span>
                                             <small class="text-muted ms-2">
-                                                @if($product->review_count > 0)
+                                                @if ($product->review_count > 0)
                                                     ({{ $product->average_rating }})
                                                 @else
                                                     No reviews yet
@@ -317,7 +319,7 @@
         });
 
         //? Filter by rating
-        $('input[name="rating"]').on('change', function () {
+        $('input[name="rating"]').on('change', function() {
             submitFilterForm();
         });
 
@@ -376,13 +378,14 @@
             });
 
             document.body.addEventListener('click', async function(event) {
-                @guest
+                    const button = event.target.closest('.wishlist-btn');
+                    if (!button) return;
+
+                    @guest
                     window.location.href = "{{ route('login') }}";
                     return;
                 @endguest
-                
-                const button = event.target.closest('.wishlist-btn');
-                if (!button) return;
+
                 const productId = button.dataset.productId;
 
                 try {
@@ -403,13 +406,14 @@
                     });
                 } catch (error) {
                     iziToast.error({
-                        message: error.response?.data?.message || 'Something went wrong. Please try again.',
+                        message: error.response?.data?.message ||
+                            'Something went wrong. Please try again.',
                         position: 'topRight',
                         timeout: 3000
                     });
                 }
             });
-            
+
         });
     </script>
 @endpush
