@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\AdminDeliveryOptionController;
 use App\Http\Controllers\Admin\AdminOrderController;
 use App\Http\Controllers\Admin\AdminProductController;
 use App\Http\Controllers\Admin\AdminRatingController;
+use App\Http\Controllers\Admin\AdminSliderController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Frontend\CartController;
 use App\Http\Controllers\Frontend\FrontendController;
@@ -146,6 +147,13 @@ Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
     Route::post('/product/{product}/specifications', [AdminProductController::class, 'storeSpecification'])->name('product.specification.store');
     Route::put('/specifications/{specification}', [AdminProductController::class, 'updateSpecification'])->name('specification.update');
     Route::delete('/specifications/{specification}', [AdminProductController::class, 'destroySpecification'])->name('specification.destroy');
+    # Slider Management Routs
+    Route::get('/slider/index', [AdminSliderController::class, 'index'])->name('slider.index');
+    Route::get('/slider/create', [AdminSliderController::class, 'create'])->name('slider.create');
+    Route::post('/slider/store', [AdminSliderController::class, 'store'])->name('slider.store');
+    Route::get('/slider/edit/{id}', [AdminSliderController::class, 'edit'])->name('slider.edit');
+    Route::put('/slider/update/{id}', [AdminSliderController::class, 'update'])->name('slider.update');
+    Route::delete('/slider/delete/{id}', [AdminSliderController::class, 'destroy'])->name('slider.delete');
 });
 
 Route::prefix('admin')->name('admin.')->group(function () {
