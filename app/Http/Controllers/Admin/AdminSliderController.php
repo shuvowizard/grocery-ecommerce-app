@@ -47,4 +47,39 @@ class AdminSliderController extends Controller
 
         return redirect()->route('admin.slider.index')->with('success', 'Slider added successfully!');
     }
+
+    public function edit(string $id)
+    {
+        $slider = Slider::findOrFail($id);
+        return view('admin.slider.edit', compact('slider'));
+    }
+
+    public function update(Request $request, string $id)
+    {
+        $slider = Slider::findOrFail($id);
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'subtitle' => 'required|string|max:255',
+            'photo' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'button_text' => 'nullable|string|max:100',
+            'button_link' => 'nullable|string|max:255',
+            'sort_order' => 'nullable|integer',
+            'status' => 'required|in:0,1',
+        ]);
+
+        $data = $request->only(['title', 'subtitle', 'button_text', 'button_link', 'sort_order', 'status']);
+
+        if ($request->hasFile('photo')) {
+            $oldPath = public_path('uploads/slider/' . $slider->photo);
+            if (file_exists($oldPath)) unlink($oldPath);
+
+            $photoName = time() . '_' . Str::random(6) . '.' . $request->photo->extension();
+            $request->photo->move(public_path('uploads/slider'), $photoName);
+            $data['photo'] = $photoName;
+        }
+
+        $slider->update($data);
+
+        return redirect()->route('admin.slider.index')->with('success', 'Slider updated successfully!');
+    }
 }

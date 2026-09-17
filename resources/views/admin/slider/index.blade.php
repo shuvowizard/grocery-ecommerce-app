@@ -34,7 +34,7 @@
                                         </span>
                                     </td>
                                     <td>
-                                        <a href="#"
+                                        <a href="{{ route('admin.slider.edit', $slider->id) }}"
                                             class="btn btn-warning btn-sm"><i class="fas fa-pen"></i></a>
                                         <form action="#" method="POST"
                                             class="d-inline" onsubmit="return confirm('Delete this slider?');">
