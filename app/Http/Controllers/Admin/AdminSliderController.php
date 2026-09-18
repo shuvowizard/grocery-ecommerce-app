@@ -20,7 +20,7 @@ class AdminSliderController extends Controller
         return view('admin.slider.create');
     }
 
-        public function store(Request $request)
+    public function store(Request $request)
     {
         $request->validate([
             'title' => 'required|string|max:255',
@@ -71,7 +71,8 @@ class AdminSliderController extends Controller
 
         if ($request->hasFile('photo')) {
             $oldPath = public_path('uploads/slider/' . $slider->photo);
-            if (file_exists($oldPath)) unlink($oldPath);
+            if (file_exists($oldPath))
+                unlink($oldPath);
 
             $photoName = time() . '_' . Str::random(6) . '.' . $request->photo->extension();
             $request->photo->move(public_path('uploads/slider'), $photoName);
@@ -81,5 +82,21 @@ class AdminSliderController extends Controller
         $slider->update($data);
 
         return redirect()->route('admin.slider.index')->with('success', 'Slider updated successfully!');
+    }
+
+    public function destroy(string $id)
+    {
+        $slider = Slider::findOrFail($id);
+
+        # Photo delete
+        $oldPath = public_path('uploads/slider/' . $slider->photo);
+        if ($slider->photo && file_exists($oldPath)) {
+            unlink($oldPath);
+        }
+
+        # Slider delete
+        $slider->delete();
+
+        return redirect()->back()->with('success', 'Slider deleted successfully!');
     }
 }

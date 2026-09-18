@@ -36,7 +36,7 @@
                                     <td>
                                         <a href="{{ route('admin.slider.edit', $slider->id) }}"
                                             class="btn btn-warning btn-sm"><i class="fas fa-pen"></i></a>
-                                        <form action="#" method="POST"
+                                        <form action="{{ route('admin.slider.delete', $slider->id) }}" method="POST"
                                             class="d-inline" onsubmit="return confirm('Delete this slider?');">
                                             @csrf
                                             @method('DELETE')
