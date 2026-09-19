@@ -2,9 +2,14 @@
 
 @section('content')
 <section class="section">
-    <div class="section-header">
-        <h1>Edit Slider</h1>
-    </div>
+    <div class="section-header justify-content-between">
+            <h1>Edit Slider</h1>
+            <div class="ml-auto">
+                <a href="{{ route('admin.slider.index') }}" class="btn btn-primary">
+                    <i class="fas fa-arrow-left"></i> Back to Slider
+                </a>
+            </div>
+        </div>
     <div class="section-body">
         <div class="card">
             <div class="card-body">

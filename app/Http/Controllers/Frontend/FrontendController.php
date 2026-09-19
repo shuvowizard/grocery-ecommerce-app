@@ -8,6 +8,7 @@ use App\Models\CouponCode;
 use App\Models\DeliveryOption;
 use App\Models\Product;
 use App\Models\ProductVariation;
+use App\Models\Slider;
 use Illuminate\Http\Request;
 
 class FrontendController extends Controller
@@ -16,7 +17,8 @@ class FrontendController extends Controller
     {
         $categories = Category::where('status', 1)->orderBy('name', 'asc')->get();
         $products = Product::where('status', 1)->with(['category', 'variations'])->latest()->get();
-        return view('home', ['categories' => $categories, 'products' => $products]);
+        $sliders = Slider::where('status', 1)->orderBy('sort_order')->get();
+        return view('home', compact('categories', 'products', 'sliders'));
     }
 
     public function about()
