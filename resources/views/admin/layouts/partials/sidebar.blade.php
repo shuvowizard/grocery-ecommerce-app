@@ -64,6 +64,10 @@
                     href="{{ route('admin.slider.index') }}"><i class="fas fa-images"></i>
                     <span>Manage Slider</span></a></li>
 
+            <li class="{{ request()->routeIs('admin.faq.*') ? 'active' : '' }}"><a class="nav-link"
+                    href="{{ route('admin.faq.index') }}"><i class="fas fa-question-circle"></i>
+                    <span>Manage FAQ</span></a></li>
+
             <li><a class="nav-link" href="{{ route('admin.logout') }}"><i class="fas fa-sign-out-alt"></i>
                     <span>Logout</span></a></li>
 

@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AdminCategoryController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\AdminCouponCodeController;
 use App\Http\Controllers\Admin\AdminDeliveryOptionController;
+use App\Http\Controllers\Admin\AdminFaqController;
 use App\Http\Controllers\Admin\AdminOrderController;
 use App\Http\Controllers\Admin\AdminProductController;
 use App\Http\Controllers\Admin\AdminRatingController;
@@ -154,6 +155,13 @@ Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/slider/edit/{id}', [AdminSliderController::class, 'edit'])->name('slider.edit');
     Route::put('/slider/update/{id}', [AdminSliderController::class, 'update'])->name('slider.update');
     Route::delete('/slider/delete/{id}', [AdminSliderController::class, 'destroy'])->name('slider.delete');
+    # FAQ Management Routs
+    Route::get('/faq/index', [AdminFaqController::class, 'index'])->name('faq.index');
+    Route::get('/faq/create', [AdminFaqController::class, 'create'])->name('faq.create');
+    Route::post('/faq/store', [AdminFaqController::class, 'store'])->name('faq.store');
+    Route::get('/faq/edit/{id}', [AdminFaqController::class, 'edit'])->name('faq.edit');
+    Route::put('/faq/update/{id}', [AdminFaqController::class, 'update'])->name('faq.update');
+    Route::delete('/faq/delete/{id}', [AdminFaqController::class, 'destroy'])->name('faq.delete');
 });
 
 Route::prefix('admin')->name('admin.')->group(function () {
