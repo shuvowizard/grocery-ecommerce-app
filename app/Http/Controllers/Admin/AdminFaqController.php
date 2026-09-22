@@ -60,4 +60,10 @@ class AdminFaqController extends Controller
         return redirect()->route('admin.faq.index')->with('success', 'FAQ updated successfully!');
     }
 
+    public function destroy(string $id)
+    {
+        $faq = Faq::findOrFail($id);
+        $faq->delete();
+        return redirect()->back()->with('success', 'FAQ deleted successfully!');
+    }
 }

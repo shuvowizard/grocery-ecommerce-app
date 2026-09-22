@@ -27,7 +27,7 @@
                                     <td>{{ $faq->sort_order }}</td>
                                     <td>
                                         <a href="{{  route('admin.faq.edit', $faq->id) }}" class="btn btn-warning btn-sm"><i class="fas fa-pen"></i></a>
-                                        <form action="#" method="POST" class="d-inline"
+                                        <form action="{{ route('admin.faq.delete', $faq->id) }}" method="POST" class="d-inline"
                                             onsubmit="return confirm('Delete this FAQ?');">
                                             @csrf 
                                             @method('DELETE')
