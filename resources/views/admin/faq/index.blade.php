@@ -26,7 +26,7 @@
                                     <td class="text-start">{{ Str::limit($faq->question, 80) }}</td>
                                     <td>{{ $faq->sort_order }}</td>
                                     <td>
-                                        <a href="#" class="btn btn-warning btn-sm"><i class="fas fa-pen"></i></a>
+                                        <a href="{{  route('admin.faq.edit', $faq->id) }}" class="btn btn-warning btn-sm"><i class="fas fa-pen"></i></a>
                                         <form action="#" method="POST" class="d-inline"
                                             onsubmit="return confirm('Delete this FAQ?');">
                                             @csrf 

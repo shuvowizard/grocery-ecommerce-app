@@ -36,4 +36,28 @@ class AdminFaqController extends Controller
         return redirect()->route('admin.faq.index')->with('success', 'FAQ added successfully!');
     }
 
+    public function edit(string $id)
+    {
+        $faq = Faq::findOrFail($id);
+        return view('admin.faq.edit', compact('faq'));
+    }
+
+    public function update(Request $request, string $id)
+    {
+        $faq = Faq::findOrFail($id);
+        $request->validate([
+            'question' => 'required|string|max:500',
+            'answer' => 'required|string',
+            'sort_order' => 'nullable|integer',
+        ]);
+
+        $faq->update([
+            'question' => $request->question,
+            'answer' => $request->answer,
+            'sort_order' => $request->sort_order ?? 0,
+        ]);
+
+        return redirect()->route('admin.faq.index')->with('success', 'FAQ updated successfully!');
+    }
+
 }
