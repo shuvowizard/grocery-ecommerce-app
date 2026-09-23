@@ -28,58 +28,25 @@
                 <div class="col-lg-8 mx-auto">
                     <!-- Accordion -->
                     <div class="accordion" id="faqAccordion">
-
-                        <!-- FAQ 1 -->
-                        <div class="accordion-item border-0 shadow-sm mb-3">
-                            <h2 class="accordion-header" id="faq1">
-                                <button class="accordion-button" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#collapse1">
-                                    What is FreshMart?
-                                </button>
-                            </h2>
-                            <div id="collapse1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
-                                <div class="accordion-body">
-                                    FreshMart is your online grocery store offering fresh, organic, and high-quality
-                                    products delivered right to your doorstep. We source our products from trusted local
-                                    farms and suppliers to ensure the best quality for our customers.
+                        @forelse($faqs as $faq)
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button {{ $loop->first ? '' : 'collapsed' }}" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#faqCollapse{{ $faq->id }}">
+                                        {{ $faq->question }}
+                                    </button>
+                                </h2>
+                                <div id="faqCollapse{{ $faq->id }}"
+                                    class="accordion-collapse collapse {{ $loop->first ? 'show' : '' }}"
+                                    data-bs-parent="#faqAccordion">
+                                    <div class="accordion-body">
+                                        {{ $faq->answer }}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-
-                        <!-- FAQ 2 -->
-                        <div class="accordion-item border-0 shadow-sm mb-3">
-                            <h2 class="accordion-header" id="faq2">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#collapse2">
-                                    How do I place an order?
-                                </button>
-                            </h2>
-                            <div id="collapse2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                                <div class="accordion-body">
-                                    Simply browse our products, add items to your cart, proceed to checkout, fill in your
-                                    delivery details, choose your payment method, and confirm your order. You'll receive an
-                                    order confirmation email immediately after placing your order.
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- FAQ 3 -->
-                        <div class="accordion-item border-0 shadow-sm mb-3">
-                            <h2 class="accordion-header" id="faq3">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#collapse3">
-                                    What payment methods do you accept?
-                                </button>
-                            </h2>
-                            <div id="collapse3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                                <div class="accordion-body">
-                                    We accept all major credit cards (Visa, Mastercard, American Express), debit cards,
-                                    PayPal, and cash on delivery. All online payments are processed through secure payment
-                                    gateways.
-                                </div>
-                            </div>
-                        </div>
-
+                        @empty
+                            <p class="text-muted">No FAQs available yet.</p>
+                        @endforelse
                     </div>
                 </div>
             </div>

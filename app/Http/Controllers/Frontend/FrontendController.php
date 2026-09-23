@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\CouponCode;
 use App\Models\DeliveryOption;
+use App\Models\Faq;
 use App\Models\Product;
 use App\Models\ProductVariation;
 use App\Models\Slider;
@@ -33,7 +34,8 @@ class FrontendController extends Controller
 
     public function faq()
     {
-        return view('frontend.pages.faq');
+        $faqs = Faq::orderBy('sort_order')->get();
+        return view('frontend.pages.faq', compact('faqs'));
     }
 
     public function blog()
